@@ -1,4 +1,23 @@
 # 2023sp-420-SNEK
-World Hello
-Hello World 12
-This is Bogdan
+# Spelling Bee - SNEK
+
+# Description
+
+    -A Spelling Bee game 
+
+# Contributers
+
+    -Aitor Cantero
+    -Bogdan Balagurak
+    -Josue Perez-Crespo
+    -Miguel Armedariz Llanos
+    -Nick Hoopes
+    -Stephen Clugston
+
+# Neccessary Libraries
+
+    -Under Construction
+
+# Instructions for Building and Playing
+
+    -Under Construction
