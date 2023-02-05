@@ -13,9 +13,9 @@ in the CLI.
 class showStatus:
 
     # tests
-    points = [152]
+    points = [350]
     userInput = input()
-    status = "152"
+    status = "temp"
 
     # shuffles letters in list
     # using random.shuffle.
@@ -27,6 +27,7 @@ class showStatus:
     # element 0 form original list and join the
     # shuffled list to it.
     def statusCheck(points, status):
+        
         if status == "":
 
             print ("Please open a puzzle to see rank!")
@@ -35,16 +36,33 @@ class showStatus:
 
             print("Here are your stats for this puzzle")
 
-            if any(x in points for x in range(50, 150)):
-                print("You are a Beginner")
-                status = "Beginner"
+            if any(x in points for x in range(0, 150)):
+
+                print("You are a Novice")
+                status = "Novice"
                 print (str(*points) + " Points") 
 
-            if any(x in points for x in range(151, 250)):
-                print("You are a Getting better")
-                status = "Novice"
+            if any(x in points for x in range(150, 250)):
+
+                print("You are a getting better!")
+                print("You are an Intermediate")
+                status = "Intermediate"
                 print (str(*points) + " Points")
-                
+
+            if any(x in points for x in range(250, 350)):
+
+                print("Wow, look at you!")
+                print("You are Advanced")
+                status = "Advanced"
+                print (str(*points) + " Points")
+            
+            if any(x in points for x in range(350, 450)):
+
+                print("Bruh, you crazy!")
+                print("You are a Master")
+                status = "Master"
+                print (str(*points) + " Points")
+
         return status
 
     # take user input and if it is "shuffle"
