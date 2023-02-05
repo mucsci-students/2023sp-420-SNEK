@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "ingsoft",
+            "database": "${workspaceFolder:2023sp-420-SNEK}/example.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
