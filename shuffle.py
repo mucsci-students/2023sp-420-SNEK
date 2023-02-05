@@ -36,7 +36,7 @@ class shufflePuzzle:
     # it will display the new shuffled puzzle after completing
     # function and will then ask then to type "shuffle" if
     # they want to shuffle the puzzle again
-    if userInput == "shuffle":
+    # if userInput == "shuffle":
         print("Here is the shuffled puzzle")
         #shuffle(letters)
         print (shuffle(letters))
