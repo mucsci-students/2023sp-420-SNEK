@@ -46,10 +46,7 @@ class Puzzle:
     def __init__(self, word):
         # Check that word has enough unique letters
         uniqueLetters = ""
-        for i in word:
-            if i not in uniqueLetters:
-                uniqueLetters += i
-        if len(uniqueLetters) != 7:
+        if len(set(list(word))) != 7:
             print(word + ' does not have exactly 7 unique letters!')
             return
         
@@ -66,5 +63,5 @@ class Puzzle:
         random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
         self.word = word                 # The word itself
 
-        # self.wordsList = DataSource.grabWordsFor(word)   # List of possible words for the puzzle
-        # length = len(self.wordsList)                     # Defining number of possible words for the puzzle
+        # self.wordsList = DataSource.grabWordsFor(word, wordPuzzle[0])   # List of possible words for the puzzle
+        # wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
