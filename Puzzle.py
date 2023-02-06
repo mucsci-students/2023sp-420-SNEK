@@ -33,7 +33,6 @@
 #           zombify
 import random
 
-# wordList = DataSource.grabWords()
 wordList = []
 wordList = sorted(wordList)
 
@@ -43,7 +42,8 @@ class Puzzle:
     points = 0                # Current number of points for the puzzle
     wordListSize = 0          # Number of possible words for the puzzle
 
-    def __init__(self, word):
+    def __init__(self, word, dataSource):
+        # wordList = dataSource.grabWords()
         # Check that word has enough unique letters
         uniqueLetters = ""
         if len(set(list(word))) != 7:
@@ -63,5 +63,5 @@ class Puzzle:
         random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
         self.word = word                 # The word itself
 
-        # self.wordsList = DataSource.grabWordsFor(word, wordPuzzle[0])   # List of possible words for the puzzle
+        # self.wordsList = dataSource.grabWordsFor(word, wordPuzzle[0])   # List of possible words for the puzzle
         # wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
