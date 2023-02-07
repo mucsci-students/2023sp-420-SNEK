@@ -1,7 +1,9 @@
 import json
 import os
 from Puzzle import Puzzle
-
+from customExcept import SaveNotFound
+from customExcept import MasterFileNotFound
+from customExcept import WrongSaveType
 
 #State class holding all save, load, and related methods
 class state:
@@ -23,7 +25,7 @@ class state:
                 return -1
         else:
             #if master save file does not exist throw exception
-            raise Exception("No master save file found")
+            raise MasterFileNotFound
 
     #Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     #This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
@@ -39,7 +41,7 @@ class state:
             self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
         else:
             #if save type does not match any of the above, an exception will be raised
-            raise Exception("Incorrect saving type")
+            raise WrongSaveType
         
         
 
@@ -78,7 +80,7 @@ class state:
                     save.append(data)
                 else:
                     #if save type != overwrite, raise exception
-                    raise Exception("Save file in use")
+                    raise SaveNotFound
         #if master file does not exist create json list
         else:
             save = [data]
@@ -98,7 +100,7 @@ class state:
             with open("saveFile.json", "r") as f:
                 save = json.load(f)
         else:
-            raise Exception("No master save file found")
+            raise MasterFileNotFound
         
         #translate data from json format to a list
         #in the form of [[wordPuzzle], [wordList], [foundWords], "status", points, wordListSize]
