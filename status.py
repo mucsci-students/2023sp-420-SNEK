@@ -1,31 +1,33 @@
 """
-shuffle.py
+status.py
 Bogdan Balagurak
-This class takes the list of letters of the puzzle and 
-shuffles the letters around if the user enters the shuffle command
-in the CLI. 
+This class takes points and status from the Puzzle.py
+file and lets the user know their points
+and their rank 
 
 """
 
 # import required file 
-# import state
+import Puzzle
+
+# new variables to use here after
+# importing from Puzzle.py
+new_status = Puzzle.status
+new_points = Puzzle.points
 
 class showStatus:
 
     # tests
-    points = [350]
-    userInput = input()
-    status = "temp"
+    # points = [350]
+    # userInput = input()
+    # status = "temp"
 
-    # shuffles letters in list
-    # using random.shuffle.
-    # first slice list where all but 0 is rearranged
-    # 0 is the center letter that is not
-    # supposed to be rearranged.
-    # after slice, use random shuffle on the
-    # new list that was created and then return 
-    # element 0 form original list and join the
-    # shuffled list to it.
+    # statusCheck definitions checks first if a puzzle is 
+    # open and lets the user know to open one
+    # to see their rank if they havent already
+    # then it uses an any function to compare user 
+    # points and assigns the proper status and lets
+    # the user know hoe many points they have
     def statusCheck(points, status):
         
         if status == "":
@@ -65,11 +67,9 @@ class showStatus:
 
         return status
 
-    # take user input and if it is "shuffle"
-    # then it will let user know that here is a new shuffle
-    # it will display the new shuffled puzzle after completing
-    # function and will then ask then to type "shuffle" if
-    # they want to shuffle the puzzle again
-    if userInput == "status":
+    # take user input and if it is "status"
+    # then it will let user know their points
+    # and level that they are currently at
+    # if userInput == "status":
 
-        statusCheck(points,status)
+    #    statusCheck(points,status)
