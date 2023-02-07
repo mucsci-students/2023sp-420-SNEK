@@ -55,6 +55,7 @@ class Puzzle:
     wordListSize = 0          # Number of possible words for the puzzle
     wordPuzzle = []           # The word split into an array of characters
     word = ""                 # The word itself
+    wordsList = []            # Words relative to the puzzle
 
     def createPuzzle(self, word, dataSource):
         # wordList = dataSource.grabWords()
@@ -75,7 +76,7 @@ class Puzzle:
         self.word = word                 # The word itself
 
         # self.wordsList = dataSource.grabWordsFor(word, self.wordPuzzle[0])   # List of possible words for the puzzle
-        # wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
+        # self.wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
 
     # sets the foundWords variable.
     # Usage: Puzzle.setFoundWords(Puzzle, [])
