@@ -8,9 +8,11 @@ from customExcept import WrongSaveType
 #State class holding all save, load, and related methods
 class state:
 
+    def _init_(self):
+       pass
 
     #isSaved checks the filename in the master save file to see if it is already an inuse save name
-    def isSaved(saveName):
+    def isSaved(self, saveName):
         #Check if master save file exists
         if os.path.exists("saveFile.json"):
             #open master save file and store contents in save
@@ -32,13 +34,13 @@ class state:
     def save(self, saveName, type):
         #type "current" = current, "scratch" = scratch, "OverS" = Overwrite Scratch, "OverC" = Overwrite Current
         if(type.lower() == "scratch"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList)
         elif(type.lower() == "overs"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, type = 1)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, type = 1)
         elif(type.lower() == "current"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
         elif(type.lower() == "overc"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
         else:
             #if save type does not match any of the above, an exception will be raised
             raise WrongSaveType
@@ -73,6 +75,8 @@ class state:
                 i = self.isSaved(saveName)
                 if(type != 0):
                     #if saved pop old save file of same name then add new data
+                    if(i == -1):
+                        raise SaveNotFound
                     save.pop(i)
                     save.append(data)
                 elif(i == -1):
@@ -115,11 +119,11 @@ class state:
         Puzzle.points = retData[4]
         Puzzle.wordListSize = retData[5]
 
-        return 0
+        return 0 
 
 
     #Translate from variables into json format, parse from json format into variables
-    def saveParse(saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, data = []):
+    def saveParse(self, saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, data = []):
 
         retData = []
         #if data value not given translate to json format
@@ -142,7 +146,6 @@ class state:
         
         #if data has a json entry or loaded file, parse from json to dictionary
         elif(data != []):
-            
             for i in data:
                 if(list(i)[0] == saveName):
                     retData.append(list(i.values()))
@@ -151,3 +154,5 @@ class state:
                     
 
         return retData
+
+
