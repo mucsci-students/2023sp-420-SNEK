@@ -11,6 +11,25 @@ class state:
     def _init_(self):
        pass
 
+    #Display all save names held in json master save file
+    def allSaveNames(self):
+        #list that is returned
+        retNames = []
+        #check if file exists, otherwise raise exception
+        if os.path.exists("saveFile.json"):
+            #while master file open, enumerate saves and appen every save name into list (retNames)
+            with open("saveFile.json", "r") as f:
+                save = json.load(f)
+                for i, val in enumerate(save):
+                    retNames.append(list(val.keys())[0])
+        else:
+            raise MasterFileNotFound
+        #sort lsit alphanumerically
+        retNames.sort()
+        
+        return retNames
+
+
     #isSaved checks the filename in the master save file to see if it is already an inuse save name
     def isSaved(self, saveName):
         #Check if master save file exists
