@@ -2,7 +2,7 @@ import numpy as np
 import sqlite3
 
 class DataSource:
-    numberOfWords = 0
+    numberOfLetters = 0
     wordList = dict()##this is going to be a dicctionary just contianing the words
     def __init__(self, mandatoryLetter, optionalLetters):
         con = sqlite3.connect("example2.db")
@@ -25,6 +25,9 @@ class DataSource:
             auxSet = set(treatmentMat[:,0])
             letterSet = letterSet.union(auxSet)
         con.close()
+        self.wordList = letterSet
+        numberLettersList = [len(set(list(word))) for word in self.wordList]
+        self.numberOfLetters = sum(numberLettersList)
     def __init__():
         print("to be done")
 
