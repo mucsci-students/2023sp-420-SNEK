@@ -10,6 +10,10 @@ class noReqLetter(Exception):
 class lessThanFourLetters(Exception):
     "Raised when the guess is less than 4 letters long"
     pass
+
+class guessAlreadyMade(Exception):
+"Raised when the guess was already correctly guessed previously"
+pass
 #######################################################
 #State Class###########################################
 class SaveNotFound(Exception):
