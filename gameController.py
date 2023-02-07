@@ -12,7 +12,7 @@ class gameController:
     
     # Guess function to handle the functionailty of making a guess.
     # Stephen Clugston
-    def newGuess(userGuess):
+    def guess(userGuess):
         if userGuess >= 4:
             
             if userGuess.contains(puzzle.wordPuzzle[0]):
