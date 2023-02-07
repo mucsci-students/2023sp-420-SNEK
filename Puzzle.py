@@ -36,7 +36,14 @@
 #       or by using the built in functions 
 #           (Puzzle.setWord(Puzzle, "zombify"))/(return Puzzle.getWord(Puzzle))
 #
+# Two exceptions may be raised when calling createPuzzle():
+#       UniqueLetterException - If given word does not contain 7 unique letter
+#       WordNotFoundException - If given word is not found in the dictionary
+#
+
 import random
+from customExcept import UniqueLetterException
+from customExcept import WordNotFoundException
 
 wordList = []
 wordList = sorted(wordList)
@@ -53,13 +60,11 @@ class Puzzle:
         # wordList = dataSource.grabWords()
         # Check that word has enough unique letters
         if len(set(list(word))) != 7:
-            print(word + ' does not have exactly 7 unique letters!')
-            return
+            raise UniqueLetterException
         
         # Word is not in the database of words
         if word not in wordList:  # Statement may need to change to include the ability to look into 
-            print(word + " is not in the dictionary!")  # the DB and make sure word is in there.
-            return
+            raise WordNotFoundException
         
         # Split word into a puzzle (array of characters that make up word).
         self.wordPuzzle = []
@@ -69,7 +74,7 @@ class Puzzle:
         random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
         self.word = word                 # The word itself
 
-        # self.wordsList = dataSource.grabWordsFor(word, wordPuzzle[0])   # List of possible words for the puzzle
+        # self.wordsList = dataSource.grabWordsFor(word, self.wordPuzzle[0])   # List of possible words for the puzzle
         # wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
 
     # sets the foundWords variable.
