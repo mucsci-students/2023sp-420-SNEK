@@ -42,6 +42,8 @@
 #
 
 import random
+from customExcept import UniqueLetterException
+from customExcept import WordNotFoundException
 
 wordList = []
 wordList = sorted(wordList)
@@ -72,7 +74,7 @@ class Puzzle:
         random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
         self.word = word                 # The word itself
 
-        # self.wordsList = dataSource.grabWordsFor(word, wordPuzzle[0])   # List of possible words for the puzzle
+        # self.wordsList = dataSource.grabWordsFor(word, self.wordPuzzle[0])   # List of possible words for the puzzle
         # wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
 
     # sets the foundWords variable.
@@ -140,10 +142,3 @@ class Puzzle:
     # Returns string
     def getWord(self):
         return self.word
-
-class UniqueLetterException(Exception):
-    "Raised when the given word does not have 7 unique letters"
-    pass
-class WordNotFoundException(Exception):
-    "Raised when the given word is not found in dictionary"
-    pass
