@@ -32,13 +32,13 @@ class state:
     def save(self, saveName, type):
         #type "current" = current, "scratch" = scratch, "OverS" = Overwrite Scratch, "OverC" = Overwrite Current
         if(type.lower() == "scratch"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordList)
+            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList)
         elif(type.lower() == "overs"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordList, type = 1)
+            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, type = 1)
         elif(type.lower() == "current"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
+            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
         elif(type.lower() == "overc"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
+            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
         else:
             #if save type does not match any of the above, an exception will be raised
             raise WrongSaveType
@@ -109,7 +109,7 @@ class state:
         
         #shove them straight into puzzle class
         Puzzle.wordPuzzle = retData[0]
-        Puzzle.wordList = retData[1]
+        Puzzle.wordsList = retData[1]
         Puzzle.foundWords = retData[2]
         Puzzle.status = retData[3]
         Puzzle.points = retData[4]
