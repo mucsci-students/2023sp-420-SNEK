@@ -23,7 +23,9 @@ class Main():
 
     def __saveGame(self, normalMode, overMode):
         saveFileName = self.myUserInterface.getSaveFileName()
-        saveNum = self.myGameController.isSaved(saveFileName)
+        puzzle = self.myGameController.getPuzzle()
+        state = puzzle.getState()
+        saveNum = state.isSaved(saveFileName)
         if saveNum != -1:
             while saveGame and saveNum != -1:
                 self.myUserInterface.showError(
@@ -33,8 +35,9 @@ class Main():
                 if saveGame:
                     try:
                         saveFileName = self.myUserInterface.getSaveFileName()
-                        self.myGameController.save(
-                            saveFileName, overMode)
+                        puzzle = self.myGameController.getPuzzle()
+                        state = puzzle.getState()
+                        state.save(saveFileName, overMode)
                         self.playing = False
                     except:
                         self.myUserInterface.showError(
@@ -42,7 +45,9 @@ class Main():
                         return
         else:
             try:
-                self.myGameController.save(saveFileName, normalMode)
+                puzzle = self.myGameController.getPuzzle()
+                state = puzzle.getState()
+                state.save(saveFileName, overMode)
             except:
                 self.myUserInterface.showError(
                     "Something went wrong with the saveing.", "Sorry, try again.")
@@ -67,7 +72,9 @@ class Main():
 
     def __askForLoading(self) -> None:
         saveFileName = self.myUserInterface.getSaveFileName()
-        saveNum = self.myGameController.isSaved(saveFileName)
+        puzzle = self.myGameController.getPuzzle()
+        state = puzzle.getState()
+        saveNum = state.isSaved(saveFileName)
         loadGame = True
         while loadGame and saveNum == -1:
             self.myUserInterface.showError("That file does not exist.")
@@ -75,7 +82,9 @@ class Main():
                 self.__STILL_LLOAD_MSG)
             if loadGame:
                 saveFileName = self.myUserInterface.getSaveFileName()
-                saveNum = self.myGameController.isSaved(saveFileName)
+                puzzle = self.myGameController.getPuzzle()
+                state = puzzle.getState()
+                saveNum = state.isSaved(saveFileName)
 
         if loadGame:
             try:
@@ -88,7 +97,7 @@ class Main():
                     "Something went wrong with the loading.", "Sorry, try again.")
 
     def __playGame(self) -> None:
-        while self.playing and not self.myGameController.gameEnded():
+        while self.playing and not self.myGameController.gameEnded:
             myPuzzle = self.myGameController.getPuzzle()
             self.myUserInterface.showPuzzle(myPuzzle)
             userInput = self.myUserInterface.getUserInput()
