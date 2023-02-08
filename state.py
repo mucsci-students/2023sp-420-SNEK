@@ -73,7 +73,7 @@ class state:
     # ^ but with type 1 will overwrite the savefile with scratch
     #full parameters without a type will save current
     #^ but with type 1 will overwrite the savefile with current
-    def saveData(self, saveName, puzzle, wordList, foundWords = [], status = "Beginner", points = 0, wordListSize = None, type = 0):
+    def saveData(self, saveName, puzzle, wordList, foundWords = [], status = "Beginner", points = 0, wordListSize = None, numberOfLetters = Puzzle.numberOfLetters, type = 0):
 
         #checking if the wordListSize is None, meaning a scratch or overwrite scratch
         if(wordListSize == None):
@@ -81,7 +81,7 @@ class state:
             wordListSize = len(wordList)
 
         #transform data from variables into json format to dump into file
-        data = self.saveParse(saveName, puzzle, wordList, foundWords, status, points, wordListSize)
+        data = self.saveParse(saveName, puzzle, wordList, foundWords, status, points, wordListSize, numberOfLetters)
     
         #check if file exists
         if os.path.exists("saveFile.json"):
@@ -103,7 +103,7 @@ class state:
                     save.append(data)
                 else:
                     #if save type != overwrite, raise exception
-                    raise SaveNotFound
+                    raise OverwriteSave
         #if master file does not exist create json list
         else:
             save = [data]
@@ -140,12 +140,13 @@ class state:
         Puzzle.status = retData[3]
         Puzzle.points = retData[4]
         Puzzle.wordListSize = retData[5]
+        Puzzle.numberOfLetters = retData[6]
 
         return 0 
 
 
     #Translate from variables into json format, parse from json format into variables
-    def saveParse(self, saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, data = []):
+    def saveParse(self, saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, numberOfLetters = Puzzle.numberOfLetters, data = []):
 
         retData = []
         #if data value not given translate to json format
@@ -161,7 +162,8 @@ class state:
                         'foundWords' : foundWords,
                         'status' : status,
                         'percent' : points,
-                        'wordListSize' : wordListSize
+                        'wordListSize' : wordListSize,
+                        'totalWordLength' : numberOfLetters
                     }
                 ]
             }
