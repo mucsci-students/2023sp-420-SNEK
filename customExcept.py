@@ -27,6 +27,10 @@ class MasterFileNotFound(Exception):
 class WrongSaveType(Exception):
     "Raised when save type is not one of the given"
     pass
+
+class OverwriteSave(Exception):
+    "Raised when trying to overwrite a save without using an overwrite type"
+    pass
 ######################################################
 #Puzzle Class#########################################
 class UniqueLetterException(Exception):

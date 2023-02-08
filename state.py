@@ -8,9 +8,30 @@ from customExcept import WrongSaveType
 #State class holding all save, load, and related methods
 class state:
 
+    def _init_(self):
+       pass
+
+    #Display all save names held in json master save file
+    def allSaveNames(self):
+        #list that is returned
+        retNames = []
+        #check if file exists, otherwise raise exception
+        if os.path.exists("saveFile.json"):
+            #while master file open, enumerate saves and appen every save name into list (retNames)
+            with open("saveFile.json", "r") as f:
+                save = json.load(f)
+                for i, val in enumerate(save):
+                    retNames.append(list(val.keys())[0])
+        else:
+            raise MasterFileNotFound
+        #sort lsit alphanumerically
+        retNames.sort()
+        
+        return retNames
+
 
     #isSaved checks the filename in the master save file to see if it is already an inuse save name
-    def isSaved(saveName):
+    def isSaved(self, saveName):
         #Check if master save file exists
         if os.path.exists("saveFile.json"):
             #open master save file and store contents in save
@@ -32,13 +53,13 @@ class state:
     def save(self, saveName, type):
         #type "current" = current, "scratch" = scratch, "OverS" = Overwrite Scratch, "OverC" = Overwrite Current
         if(type.lower() == "scratch"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList)
         elif(type.lower() == "overs"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, type = 1)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, type = 1)
         elif(type.lower() == "current"):
-            ret = self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 0)
         elif(type.lower() == "overc"):
-            self.saveData(self, saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
+            self.saveData(saveName, Puzzle.wordPuzzle, Puzzle.wordsList, Puzzle.foundWords, Puzzle.status, Puzzle.points, Puzzle.wordListSize, 1)
         else:
             #if save type does not match any of the above, an exception will be raised
             raise WrongSaveType
@@ -52,7 +73,7 @@ class state:
     # ^ but with type 1 will overwrite the savefile with scratch
     #full parameters without a type will save current
     #^ but with type 1 will overwrite the savefile with current
-    def saveData(self, saveName, puzzle, wordList, foundWords = [], status = "Beginner", points = 0, wordListSize = None, type = 0):
+    def saveData(self, saveName, puzzle, wordList, foundWords = [], status = "Beginner", points = 0, wordListSize = None, numberOfLetters = Puzzle.numberOfLetters, type = 0):
 
         #checking if the wordListSize is None, meaning a scratch or overwrite scratch
         if(wordListSize == None):
@@ -60,7 +81,7 @@ class state:
             wordListSize = len(wordList)
 
         #transform data from variables into json format to dump into file
-        data = self.saveParse(saveName, puzzle, wordList, foundWords, status, points, wordListSize)
+        data = self.saveParse(saveName, puzzle, wordList, foundWords, status, points, wordListSize, numberOfLetters)
     
         #check if file exists
         if os.path.exists("saveFile.json"):
@@ -73,6 +94,8 @@ class state:
                 i = self.isSaved(saveName)
                 if(type != 0):
                     #if saved pop old save file of same name then add new data
+                    if(i == -1):
+                        raise SaveNotFound
                     save.pop(i)
                     save.append(data)
                 elif(i == -1):
@@ -80,7 +103,7 @@ class state:
                     save.append(data)
                 else:
                     #if save type != overwrite, raise exception
-                    raise SaveNotFound
+                    raise OverwriteSave
         #if master file does not exist create json list
         else:
             save = [data]
@@ -104,6 +127,9 @@ class state:
         
         #translate data from json format to a list
         #in the form of [[wordPuzzle], [wordList], [foundWords], "status", points, wordListSize]
+        if(self.isSaved(saveName) == -1):
+            raise SaveNotFound
+        
         data = self.saveParse(saveName, data = save)
         retData = list(data.values())
         
@@ -114,12 +140,13 @@ class state:
         Puzzle.status = retData[3]
         Puzzle.points = retData[4]
         Puzzle.wordListSize = retData[5]
+        Puzzle.numberOfLetters = retData[6]
 
-        return 0
+        return 0 
 
 
     #Translate from variables into json format, parse from json format into variables
-    def saveParse(saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, data = []):
+    def saveParse(self, saveName = "tempName", puzzle = [], wordList = [], foundWords = [], status = "Beginner", points = 0, wordListSize = 0, numberOfLetters = Puzzle.numberOfLetters, data = []):
 
         retData = []
         #if data value not given translate to json format
@@ -135,14 +162,14 @@ class state:
                         'foundWords' : foundWords,
                         'status' : status,
                         'percent' : points,
-                        'wordListSize' : wordListSize
+                        'wordListSize' : wordListSize,
+                        'totalWordLength' : numberOfLetters
                     }
                 ]
             }
         
         #if data has a json entry or loaded file, parse from json to dictionary
         elif(data != []):
-            
             for i in data:
                 if(list(i)[0] == saveName):
                     retData.append(list(i.values()))
@@ -151,3 +178,5 @@ class state:
                     
 
         return retData
+
+
