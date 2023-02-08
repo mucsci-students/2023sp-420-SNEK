@@ -57,10 +57,10 @@ class Main():
     def __askForSaveing(self) -> None:
         saveGame = self.myUserInterface.getConfirmation(self.__SAVE_MSG)
         if saveGame:
-            scrachMode = self.myUserInterface.getConfirmation(
-                "How do you want to save?", okStr="scrach", nokStr="current")
-            if scrachMode:
-                self.__saveGame("scrach", "overS")
+            scratchMode = self.myUserInterface.getConfirmation(
+                "How do you want to save?", okStr="scratch", nokStr="current")
+            if scratchMode:
+                self.__saveGame("scratch", "overS")
             else:
                 self.__saveGame("current", "overC")
 
@@ -132,10 +132,10 @@ class Main():
 
         elif command == Commands.SAVE:
             if self.playing:
-                scrachMode = self.myUserInterface.getConfirmation(
-                    "How do you want to save?", okStr="scrach", nokStr="current")
-                if scrachMode:
-                    self.__saveGame("scrach", "overS")
+                scratchMode = self.myUserInterface.getConfirmation(
+                    "How do you want to save?", okStr="scratch", nokStr="current")
+                if scratchMode:
+                    self.__saveGame("scratch", "overS")
                 else:
                     self.__saveGame("current", "overC")
             else:
