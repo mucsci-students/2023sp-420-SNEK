@@ -127,6 +127,9 @@ class state:
         
         #translate data from json format to a list
         #in the form of [[wordPuzzle], [wordList], [foundWords], "status", points, wordListSize]
+        if(self.isSaved(saveName) == -1):
+            raise SaveNotFound
+        
         data = self.saveParse(saveName, data = save)
         retData = list(data.values())
         
