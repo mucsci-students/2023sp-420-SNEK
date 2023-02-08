@@ -10,6 +10,8 @@ class TerminalInterface(UserInterface):
         self.__CMD_PRFX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
         self.__DONE_PROGRESS = Fore.YELLOW + "⬢" + Style.RESET_ALL
         self.__LEFT_PROGRESS = "⬡" + Style.RESET_ALL
+        self.__RANK_LABELS = = ["Beginner", "Good Start", "Moving Up", "Good",
+             "Solid", "Nice", "Great", "Amazing", "Genius"]
 
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PRFX + message + " ").strip()
@@ -96,13 +98,13 @@ class TerminalInterface(UserInterface):
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
         print(YB + '''
-						 ___
-					 ___╱ {} ╲___
-					╱ {} ╲___╱ {} ╲
-					╲___╱ {} ╲___╱
-					╱ {} ╲___╱ {} ╲ 
-					╲___╱ {} ╲___╱
-						╲___╱ '''.format(N + letters[1] + YB,
+                         ___
+                     ___╱ {} ╲___
+                    ╱ {} ╲___╱ {} ╲
+                    ╲___╱ {} ╲___╱
+                    ╱ {} ╲___╱ {} ╲ 
+                    ╲___╱ {} ╲___╱
+                        ╲___╱ '''.format(N + letters[1] + YB,
                        N + letters[2] + YB,
                        N + letters[3] + YB,
                        Y + letters[0] + YB,
@@ -118,10 +120,10 @@ class TerminalInterface(UserInterface):
     def showHelp(self) -> None:
         self.__boldPrint("Found Words:")
 
-    def showRanking(self, rankingLables: list, maxPoints: int) -> None:
+    def showRanking(self, maxPoints: int) -> None:
         print("The ranking points change based on the specific game you are playing:")
         self.__boldPrint("Ranking for this game:")
-        rankingPoints: dict = self.__rankLablePoints(rankingLables, maxPoints)
+        rankingPoints: dict = self.__rankLablePoints(self.__RANK_LABELS, maxPoints)
         for lable in rankingLables:
             points = rankingPoints[lable]
 
@@ -133,12 +135,12 @@ class TerminalInterface(UserInterface):
             print("\t" + word)
 
     def showEnd(self) -> None:
-        print("				🐝")
+        print("                🐝")
 
         self.__boldPrint("Congratulations!", endStr=" ")
         print("You found all the words!")
         print("\tYou are the " + Fore.LIGHTYELLOW_EX +
-              "bee" + Fore.RESET + "st\t\t	🍯")
+              "bee" + Fore.RESET + "st\t\t    🍯")
 
     def showExit(self) -> None:
         self.__boldPrint("Exiting...")
