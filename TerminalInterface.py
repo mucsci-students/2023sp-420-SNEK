@@ -23,6 +23,22 @@ class TerminalInterface(UserInterface):
         if description != "":
             print("\t" + description)
 
+    def __rankLablePoints(self, lableList: list, maxPoints: int) -> dict:
+        n = len(lableList)
+        if maxPoints < (n - 1):
+            return None
+
+        rankingFunction: function = lambda x: (maxPoints/((n-1)**2)) * x**2
+
+        pointList = [round(rankingFunction(i)) for i in range(n)]
+        for i in range(1, n-1):
+            if pointList[i] <= pointList[i-1]:
+                pointList[i] += (pointList[i-1] - pointList[i] + 1)
+                pointList[i+1] -= (pointList[i-1] - pointList[i] + 1)
+
+        rankDict = dict(zip(lableList, pointList))
+        return rankDict
+
     def getUserInput(self):
         userInput = self.__getUserInput()
 
@@ -46,8 +62,17 @@ class TerminalInterface(UserInterface):
     def showStatus(self) -> None:
         pass
 
-    def showProgress(self, progress) -> None:
-        level = "Good Start"
+    def showProgress(self, rankLabels, points, maxPoints) -> None:
+        progress = points/maxPoints
+        ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        for i, rank in enumerate(rankLabels):
+            if points == ranks[rank]:
+                level = rank
+                break
+            elif points < ranks[rank]:
+                level = rankLabels[i-1]
+                break
+
         print(Style.BRIGHT + f"\n  {level:12s} ", end=Style.RESET_ALL)
         status = 0
         print(" 🍯  ", end="")
@@ -93,10 +118,13 @@ class TerminalInterface(UserInterface):
     def showHelp(self) -> None:
         self.__boldPrint("Found Words:")
 
-    def showRanking(self, rankingLables: list, rankingPoints) -> None:  # Ns Hulio
+    def showRanking(self, rankingLables: list, maxPoints: int) -> None:
         print("The ranking points change based on the specific game you are playing:")
         self.__boldPrint("Ranking for this game:")
-        for lable, points in zip(rankingLables, rankingPoints):
+        rankingPoints: dict = self.__rankLablePoints(rankingLables, maxPoints)
+        for lable in rankingLables:
+            points = rankingPoints[lable]
+
             print("\t" + f"{lable:10}" + ": " + str(points))
 
     def showFoundWords(self, foundWords: list) -> None:
