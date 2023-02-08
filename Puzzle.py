@@ -65,7 +65,7 @@ class Puzzle:
             raise UniqueLetterException
         
         # Word is not in the database of words
-        if not dataSource.checkWord(word):  # Statement may need to change to include the ability to look into 
+        if not dataSource.checkWord(word): 
             raise WordNotFoundException
         
         # Split word into a puzzle (array of characters that make up word).
