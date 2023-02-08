@@ -8,18 +8,16 @@ class DataSource:
     def __init__(self, mandatoryLetter, optionalLetters):
         con = sqlite3.connect("example2.db")
         cur = con.cursor()
-        if len(mandatoryLetter) > 1:
+        if len(mandatoryLetter) > 1:#to avoid the user makes an injection
             return
         cur.execute("SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
         print(len(output))
-        #for row in output:
-        #   print(row[0])
         con.commit()
 
         treatmentMat = np.array(output)
         wordSet = set(treatmentMat[:,0])
-        
+        #just keep the words that contain only the desired letters
         treatmentMat = np.array(output)
         wordSet = set(treatmentMat[:,0])
         boolList = []
@@ -30,21 +28,14 @@ class DataSource:
                     approved = False
             boolList.append(approved)
         wordDF = pd.DataFrame(wordSet)
-        wordDF = wordDF[boolList] #just keep the words that contain only the desired letters
+        wordDF = wordDF[boolList] 
 
-        # for letter in optionalLetters:
-        #     cur.execute("SELECT word FROM word_list WHERE word like '%"+letter+"%'")
-        #     output = cur.fetchall()
-        #     con.commit()
-        #     treatmentMat = np.array(output) 
-        #     auxSet = set(treatmentMat[:,0])
-        #     letterSet = letterSet.union(auxSet)
         con.close()
         self.wordList = wordDF
         numberLettersList = [len(set(list(word))) for word in self.wordList]
         self.numberOfLetters = sum(numberLettersList)
     
-
+    ##checks if a word is in the db
     def checkWord(searchedWord):
         con = sqlite3.connect("example2.db")
         cur = con.cursor()
@@ -54,7 +45,10 @@ class DataSource:
         con.commit()
         con.close()
         return len(output) > 0
-        
-    def grabWordsFor(word, mandatoryLetter):
-        return DataSource( mandatoryLetter,list(word))
     
+    ##returns a  dataSource object built with the word and the mandatory letter
+    def grabWordsFor(word, mandatoryLetter):
+        dt = DataSource( mandatoryLetter,list(word))
+        
+        
+
