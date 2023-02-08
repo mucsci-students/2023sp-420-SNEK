@@ -21,7 +21,7 @@ class gameController:
                     if not puzzle.foundWords.contains(userGuess) and puzzle.wordsList.contains(userGuess):
                     
                         # If this guess is the last possible guess, increment points, decrement wordListSize and set class variable gameOver to true
-                        if puzzle.wordListSize == 0:
+                        if puzzle.wordListSize == 1:
                             puzzle.points += userGuess.length()
                             --puzzle.wordListSize
                             gameOver = True
