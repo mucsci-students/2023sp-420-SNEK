@@ -45,6 +45,7 @@ import random
 from customExcept import UniqueLetterException
 from customExcept import WordNotFoundException
 from state import state
+import dataSource
 
 
 wordList = []
@@ -58,6 +59,7 @@ class Puzzle:
     wordPuzzle = []           # The word split into an array of characters
     word = ""                 # The word itself
     wordsList = []            # Words relative to the puzzle
+    numberOfLetters = 0       # Total number of letters for score
 
     def createPuzzle(self, word, dataSource):
         # Check that word has enough unique letters
@@ -76,8 +78,10 @@ class Puzzle:
         random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
         self.word = word                 # The word itself
 
-        self.wordsList = dataSource.grabWordsFor(word, self.wordPuzzle[0])   # List of possible words for the puzzle
-        self.wordListSize = len(self.wordsList)                     # Defining number of possible words for the puzzle
+        dSource = dataSource.grabWordsFor(word, self.wordPuzzle[0])
+        self.wordsList = dSource.wordList                 # List of possible words for the puzzle
+        self.numberOfLetters = dSource.numberOfLetters    # Total number of letters for score
+        self.wordListSize = len(self.wordsList)           # Defining number of possible words for the puzzle
 
     # sets the foundWords variable.
     # Usage: Puzzle.setFoundWords(Puzzle, [])
