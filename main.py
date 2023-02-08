@@ -183,6 +183,16 @@ class Main():
                 self.myGameController.newPuzzle(baseWord)
                 self.playing = True
                 self.__playGame()
+                
+        elif command == Commands.SHOW_STATUS:
+            if self.playing:
+                myPuzzle = self.myGameController.getPuzzle()
+                status = myPuzzle.status
+                points = myPuzzle.points
+                self.myUserInterface.showStatus(status, points)
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "Help" to show all posibilities')
