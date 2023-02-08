@@ -1,6 +1,7 @@
 import numpy as np
 import sqlite3
 import pandas as pd
+import random
 
 class DataSource:
     numberOfLetters = 0
@@ -46,6 +47,17 @@ class DataSource:
         con.close()
         return len(output) > 0
     
+    def getRandomWord():
+        con = sqlite3.connect("example3.db")
+        cur = con.cursor()
+        
+        cur.execute("SELECT word FROM word_list WHERE numLetter = 7")
+        output = cur.fetchall()
+        con.commit()
+        con.close()
+        numero = random.randint(0, len(output)-1)
+        return output[numero]
+
     ##returns a  dataSource object built with the word and the mandatory letter
     def grabWordsFor(self,word, mandatoryLetter):
         dt = DataSource( mandatoryLetter,list(word))
