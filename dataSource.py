@@ -47,8 +47,10 @@ class DataSource:
         return len(output) > 0
     
     ##returns a  dataSource object built with the word and the mandatory letter
-    def grabWordsFor(word, mandatoryLetter):
+    def grabWordsFor(self,word, mandatoryLetter):
         dt = DataSource( mandatoryLetter,list(word))
+        self.numberOfLetters = dt.numberOfLetters
+        self.wordList = dt.wordList
         
         
 
