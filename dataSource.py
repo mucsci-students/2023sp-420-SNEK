@@ -8,7 +8,8 @@ class DataSource:
     def __init__(self, mandatoryLetter, optionalLetters):
         con = sqlite3.connect("example2.db")
         cur = con.cursor()
-
+        if len(mandatoryLetter) > 1:
+            return
         cur.execute("SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
         print(len(output))
@@ -17,19 +18,19 @@ class DataSource:
         con.commit()
 
         treatmentMat = np.array(output)
-        letterSet = set(treatmentMat[:,0])
+        wordSet = set(treatmentMat[:,0])
         
         treatmentMat = np.array(output)
-        letterSet = set(treatmentMat[:,0])
+        wordSet = set(treatmentMat[:,0])
         boolList = []
-        for word in letterSet:
+        for word in wordSet:
             approved = True
-            for letter in word:
+            for letter in word:#
                 if(letter not in optionalLetters):
                     approved = False
             boolList.append(approved)
-        wordDF = pd.DataFrame(letterSet)
-        wordDF = wordDF[boolList]
+        wordDF = pd.DataFrame(wordSet)
+        wordDF = wordDF[boolList] #just keep the words that contain only the desired letters
 
         # for letter in optionalLetters:
         #     cur.execute("SELECT word FROM word_list WHERE word like '%"+letter+"%'")
@@ -39,7 +40,7 @@ class DataSource:
         #     auxSet = set(treatmentMat[:,0])
         #     letterSet = letterSet.union(auxSet)
         con.close()
-        self.wordList = letterSet
+        self.wordList = wordDF
         numberLettersList = [len(set(list(word))) for word in self.wordList]
         self.numberOfLetters = sum(numberLettersList)
     
@@ -53,6 +54,7 @@ class DataSource:
         con.commit()
         con.close()
         return len(output) > 0
+        
     def grabWordsFor(word, mandatoryLetter):
         return DataSource( mandatoryLetter,list(word))
     
