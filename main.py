@@ -27,6 +27,7 @@ class Main():
         state = puzzle.getState()
         saveNum = state.isSaved(saveFileName)
         if saveNum != -1:
+            saveGame = True
             while saveGame and saveNum != -1:
                 self.myUserInterface.showError(
                     "That file name is already in use.")
@@ -34,7 +35,6 @@ class Main():
                     self.__OVERRIDE_MSG)
                 if saveGame:
                     try:
-                        saveFileName = self.myUserInterface.getSaveFileName()
                         puzzle = self.myGameController.getPuzzle()
                         state = puzzle.getState()
                         state.save(saveFileName, overMode)
@@ -47,12 +47,12 @@ class Main():
             try:
                 puzzle = self.myGameController.getPuzzle()
                 state = puzzle.getState()
-                state.save(saveFileName, overMode)
+                state.save(saveFileName, normalMode)
+                self.playing = False
             except:
                 self.myUserInterface.showError(
                     "Something went wrong with the saveing.", "Sorry, try again.")
 
-            self.playing = False
 
     def __askForSaveing(self) -> None:
         saveGame = self.myUserInterface.getConfirmation(self.__SAVE_MSG)
@@ -144,8 +144,9 @@ class Main():
 
         elif command == Commands.RANK:
             if self.playing:
-                rank = self.myGameController.getRank()
-                self.myUserInterface.showRank(rank)
+                puzzle = self.myGameController.getPuzzle()
+                maxPoints = puzzle.numberOfLetters
+                self.myUserInterface.showRanking(maxPoints)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("the rank of"))
@@ -170,6 +171,9 @@ class Main():
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
                 self.__askExitAndSave()
+                self.myGameController.newPuzzle()
+                self.playing = True
+                self.__playGame()
             else:
                 self.myGameController.newPuzzle()
                 self.playing = True
@@ -178,6 +182,9 @@ class Main():
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
                 self.__askExitAndSave()
+                self.myGameController.newPuzzle()
+                self.playing = True
+                self.__playGame()
             else:
                 baseWord = self.myUserInterface.getBaseWord()
                 self.myGameController.newPuzzle(baseWord)
@@ -201,7 +208,7 @@ class Main():
 def main():
     myDataSource = DataSource()
     myGameController = GameController(myDataSource)
-    myUserInterface = UserInterface()
+    myUserInterface = TerminalInterface()
 
     myMain = Main(myGameController, myUserInterface)
 
