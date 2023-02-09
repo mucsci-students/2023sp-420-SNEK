@@ -27,7 +27,10 @@ class Main():
         saveFileName = self.myUserInterface.getSaveFileName()
         puzzle: Puzzle = self.myGameController.getPuzzle()
         state: State = puzzle.getState()
-        saveNum = state.isSaved(saveFileName)
+        try:
+            saveNum = state.isSaved(saveFileName)
+        except MasterFileNotFound:
+            saveNum = -1
         if saveNum != -1:
             saveGame = True
             while saveGame and saveNum != -1:
@@ -39,18 +42,19 @@ class Main():
                     try:
                         puzzle = self.myGameController.getPuzzle()
                         state = puzzle.getState()
+                        print(overMode)
                         state.save(saveFileName, overMode)
-                        self.playing = False
+                        self.playing = True
                     except:
                         self.myUserInterface.showError(
                             "Something went wrong with the saveing.", "Sorry, try again.")
-                        return
+                    return
         else:
             try:
                 puzzle = self.myGameController.getPuzzle()
                 state = puzzle.getState()
                 state.save(saveFileName, normalMode)
-                self.playing = False
+                self.playing = True
             except:
                 self.myUserInterface.showError(
                     "Something went wrong with the saveing.", "Sorry, try again.")
@@ -75,7 +79,10 @@ class Main():
         saveFileName = self.myUserInterface.getSaveFileName()
         puzzle = self.myGameController.getPuzzle()
         state: State = puzzle.getState()
-        saveNum = state.isSaved(saveFileName)
+        try:
+            saveNum = state.isSaved(saveFileName)
+        except MasterFileNotFound:
+            self.myUserInterface.showError("That file does not exist.")
         loadGame = True
         while loadGame and saveNum == -1:
             self.myUserInterface.showError("That file does not exist.")
