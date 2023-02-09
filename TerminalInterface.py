@@ -1,6 +1,7 @@
 from UserInterface import UserInterface
 from colorama import Fore, Back, Style
 from Commands import Commands
+from math import sqrt
 
 
 class TerminalInterface(UserInterface):
@@ -21,7 +22,7 @@ How to play:
    center of the honeycomb.  Every word that you guess
    requires that the center letter be used, otherwise you
    will not receive credit for the guess.  The word that
-   you guess also needs to be a valid word in the 
+   you guess also needs to be a valid word in the
    Scrabble dictionary.  Every puzzle has a corresponding
    pangram that it is generated from.  The pangram will
    include every letter in the honeycomb.
@@ -93,7 +94,7 @@ Commands:
 
     def showProgress(self, points, maxPoints) -> None:
         rankLabels = self.__RANK_LABELS
-        progress = points/maxPoints
+        n = len(rankLabels)
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
         for i, rank in enumerate(rankLabels):
             if points == ranks[rank]:
@@ -103,23 +104,22 @@ Commands:
                 level = rankLabels[i-1]
                 break
 
+        rankItems = list(ranks.items())
+
         print(Style.BRIGHT + f"\n  {level:12s} ", end=Style.RESET_ALL)
-        status = 0
         print(" 🍯  ", end="")
-
-        if progress < status:
+        if points > rankItems[0][1]:
+            print(self.__DONE_PROGRESS + "╶──", end="")
+        else:
             print(self.__LEFT_PROGRESS + "╶──", end="")
-            status += 1/10
 
-        while status <= 7/10:
-            print(f"status = {status}, progress = {progress}")
-            if progress >= status:
+        for rank, rankPoints in rankItems[1:-1]:
+            if points >= rankPoints:
                 print(self.__DONE_PROGRESS + "╶──", end="")
             else:
                 print(self.__LEFT_PROGRESS + "╶──", end="")
-            status += 1/10
 
-        if status < progress:
+        if points >= rankItems[-1][1]:
             print(self.__DONE_PROGRESS + "  🐝")
         else:
             print(self.__LEFT_PROGRESS + "  🐝")

@@ -38,8 +38,6 @@ class GameController:
 
     def guess(self, userGuess: str):
         if len(userGuess) >= 4:
-            print(self.puzzle.wordPuzzle[0], list(userGuess))
-            print(self.puzzle.wordPuzzle[0] in list(userGuess))
 
             if self.puzzle.wordPuzzle[0] in list(userGuess):
                 rankDict = self.__rankDict(self.puzzle.numberOfLetters)
@@ -87,13 +85,17 @@ class GameController:
                     self.puzzle.foundWords.append(userGuess)
 
                     return True
+                else:
+                    print("The word is either incorrect or you already guessed it")
+                    return False
+
+            else:
+                print("The guess is does not have the required letter")
                 return False
 
-                # The guess did not contain the required letter
-                raise noReqLetter
-
-            # The guess was less than 4 letters
-            raise lessThanFourLetters
+        else:
+            print("The guess is less than 4 letters long")
+            return False
 
     """
     shuffle function

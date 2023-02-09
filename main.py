@@ -42,7 +42,6 @@ class Main():
                     try:
                         puzzle = self.myGameController.getPuzzle()
                         state = puzzle.getState()
-                        print(overMode)
                         state.save(saveFileName, overMode)
                         self.playing = True
                     except:
@@ -106,6 +105,7 @@ class Main():
     def __playGame(self) -> None:
         while self.playing and not self.myGameController.gameOver:
             myPuzzle = self.myGameController.getPuzzle()
+            print(myPuzzle.wordsList)
             self.myUserInterface.showProgress(
                 myPuzzle.points, myPuzzle.numberOfLetters)
             self.myUserInterface.showPuzzle(
@@ -114,8 +114,6 @@ class Main():
             if Commands.isCommand(userInput):
                 self.processCommand(userInput)
             elif not self.myGameController.guess(userInput):
-                print("self.myGameController.guess(userInput):", end="\t")
-                print(self.myGameController.guess(userInput))
                 self.myUserInterface.showWrongGuess()
 
         if self.myGameController.gameOver:
@@ -183,13 +181,9 @@ class Main():
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                print("Nola")
                 self.__askExitAndSave()
-                print("ABAJO")
                 Puzzle.createPuzzle()
-                print("NO IDEA")
                 self.playing = True
-                print("JUGANDO=")
                 self.__playGame()
             else:
                 Puzzle.createPuzzle()
@@ -213,7 +207,6 @@ class Main():
             if self.playing:
                 myPuzzle = self.myGameController.getPuzzle()
                 status = myPuzzle.status
-                print("status", status)
                 points = myPuzzle.points
                 self.myUserInterface.showStatus(status, points)
             else:

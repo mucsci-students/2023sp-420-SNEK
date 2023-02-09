@@ -52,20 +52,20 @@ class State:
 
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
-    def save(self, saveName, type):
+    def save(self, saveName, typeSave):
         # type "current" = current, "scratch" = scratch, "OverS" = Overwrite Scratch, "OverC" = Overwrite Current
-        if (type.lower() == "scratch"):
+        if (typeSave.lower() == "scratch"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle,
                           self.myPuzzle.wordsList)
-        elif (type.lower() == "overs"):
+        elif (typeSave.lower() == "overs"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle,
-                          self.myPuzzle.wordsList, type=1)
-        elif (type.lower() == "current"):
+                          self.myPuzzle.wordsList, typeSave=1)
+        elif (typeSave.lower() == "current"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
-                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, 0)
-        elif (type.lower() == "overc"):
+                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.numberOfLetters, 0)
+        elif (typeSave.lower() == "overc"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
-                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, 1)
+                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.myPuzzle.numberOfLetters, 1)
         else:
             # if save type does not match any of the above, an exception will be raised
             raise WrongSaveType
@@ -78,7 +78,7 @@ class State:
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
 
-    def saveData(self, saveName, puzzle, wordList, foundWords=[], status="Beginner", points=0, wordListSize=None, numberOfLetters=0, type=0):
+    def saveData(self, saveName, puzzle, wordList, foundWords=[], status="Beginner", points=0, wordListSize=None, numberOfLetters=0, typeSave=0):
         numberOfLetters = self.myPuzzle.numberOfLetters
 
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
@@ -99,7 +99,7 @@ class State:
                 # if saved return index of save, if not return -1 meaning that the save file is usable
                 # if not overwrite, raise Exception
                 i = self.isSaved(saveName)
-                if (type != 0):
+                if (typeSave != 0):
                     # if saved pop old save file of same name then add new data
                     if (i == -1):
                         raise SaveNotFound
@@ -108,9 +108,6 @@ class State:
                 elif (i == -1):
                     # if not saved, append new save file
                     save.append(data)
-                else:
-                    # if save type != overwrite, raise exception
-                    raise OverwriteSave
         # if master file does not exist create json list
         else:
             save = [data]

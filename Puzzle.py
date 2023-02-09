@@ -71,8 +71,6 @@ class Puzzle:
         if word == "":
             word = dataSource.getRandomWord()
 
-        print(f"\n\tThis is the word: {word}\n")
-
         # Check that word has enough unique letters
         if len(set(list(word))) != 7:
             raise UniqueLetterException
@@ -89,8 +87,6 @@ class Puzzle:
         cls.word = word                 # The word itself
         dSource: DataSource = dataSource.grabWordsFor(word, cls.wordPuzzle[0])
         # List of possible words for the puzzle
-        print("dSource.wordList", end="\t")
-        print(dSource.wordList)
         cls.wordsList = dSource.wordList
         # Total number of letters for score
         cls.numberOfLetters = dSource.numberOfLetters
