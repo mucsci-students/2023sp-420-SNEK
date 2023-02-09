@@ -47,16 +47,22 @@ class DataSource:
         con.close()
         return len(output) > 0
     
-    def getRandomWord():
+    def getRandomWord(self):
         con = sqlite3.connect("example3.db")
         cur = con.cursor()
-        
-        cur.execute("SELECT word FROM word_list WHERE numLetter = 7")
+
+        cur.execute(
+            "SELECT word,differentLetters FROM word_list WHERE numLetter = 7")
         output = cur.fetchall()
         con.commit()
-        con.close()
         numero = random.randint(0, len(output)-1)
-        return output[numero]
+        while (len(output[numero][1]) < 7):
+            cur.execute(
+                "SELECT word,differentLetters FROM word_list WHERE numLetter = 7")
+            output = cur.fetchall()
+        numero = random.randint(0, len(output)-1)
+        con.close()
+        return output[numero][0]
 
     ##returns a  dataSource object built with the word and the mandatory letter
     def grabWordsFor(self,word, mandatoryLetter):
