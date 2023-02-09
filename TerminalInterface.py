@@ -38,7 +38,13 @@ Commands:
    -!status - Display you status for the current puzzle.
    -!save - Bring up the prompts for saving your current game.
    -!load - Bring up the prompts for loading a saved game.
-   -!help - Prints out the help menu'''
+   -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
+               the order of the letter randomly other than the 
+               required center letter.  You can use this to
+               help you find other words.
+   -!guessed - Shows all the already correctly guessed words.
+   -!help - Prints out the help menu.
+   -!exit - Exits the game. Will prompt to save.'''
 
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PRFX + message + " ").strip()
@@ -89,12 +95,20 @@ Commands:
         return Commands.getCommandFromName(command)
 
     def showStatus(self, status, points) -> None:
+        rankLabels = self.__RANK_LABELS
+        ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        for i, rank in enumerate(rankLabels):
+            if points == ranks[rank]:
+                level = rank
+                break
+            elif points < ranks[rank]:
+                level = rankLabels[i-1]
+                break
 
-        self.__boldPrint(status + ": " + str(points))
+        self.__boldPrint(level + ": " + str(points))
 
     def showProgress(self, points, maxPoints) -> None:
         rankLabels = self.__RANK_LABELS
-        n = len(rankLabels)
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
         for i, rank in enumerate(rankLabels):
             if points == ranks[rank]:
@@ -125,6 +139,7 @@ Commands:
             print(self.__LEFT_PROGRESS + "  🐝")
 
     def showPuzzle(self, letters: list, progress: float) -> None:
+        myLetters = list(''.join(letters).upper())
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
@@ -135,13 +150,13 @@ Commands:
                     ╲___╱ {} ╲___╱
                     ╱ {} ╲___╱ {} ╲ 
                     ╲___╱ {} ╲___╱
-                        ╲___╱ '''.format(N + letters[1] + YB,
-                                         N + letters[2] + YB,
-                                         N + letters[3] + YB,
-                                         Y + letters[0] + YB,
-                                         N + letters[4] + YB,
-                                         N + letters[5] + YB,
-                                         N + letters[6] + YB)
+                        ╲___╱ '''.format(N + myLetters[1] + YB,
+                                         N + myLetters[2] + YB,
+                                         N + myLetters[3] + YB,
+                                         Y + myLetters[0] + YB,
+                                         N + myLetters[4] + YB,
+                                         N + myLetters[5] + YB,
+                                         N + myLetters[6] + YB)
               + Style.RESET_ALL)
 
     def showError(self, errorMessage, errorDescription="") -> None:

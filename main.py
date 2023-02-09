@@ -13,8 +13,7 @@ class Main():
     __STILL_LLOAD_MSG = "Do you want to load another game?"
     __NO_GAME_TITLE = "Not Currently in game:"
 
-    @property
-    def __NO_GAME_DESC(description):
+    def __NO_GAME_DESC(self, description):
         return f"You can't {description} a game if you are not playing one."
 
     def __init__(self, myGameController: GameController, myUserInterface: UserInterface) -> None:
@@ -22,6 +21,7 @@ class Main():
         self.myUserInterface = myUserInterface
         self.exitProgram = False
         self.playing = False
+        self.newLoad = False
 
     def __saveGame(self, normalMode, overMode):
         saveFileName = self.myUserInterface.getSaveFileName()
@@ -95,6 +95,7 @@ class Main():
 
         if loadGame:
             try:
+                self.newLoad = True
                 state.load(saveFileName)
                 self.playing = True
                 self.__playGame()
@@ -103,7 +104,8 @@ class Main():
                     "Something went wrong with the loading.", "Sorry, try again.")
 
     def __playGame(self) -> None:
-        while self.playing and not self.myGameController.gameOver:
+        self.newLoad = False
+        while self.playing and not self.myGameController.gameOver and not self.newLoad:
             myPuzzle = self.myGameController.getPuzzle()
             print(myPuzzle.wordsList)
             self.myUserInterface.showProgress(
@@ -136,6 +138,8 @@ class Main():
                 if exitGame:
                     self.playing = False
                     self.__askForSaveing()
+                    self.__askForLoading()
+                else:
                     self.__askForLoading()
             else:
                 self.__askForLoading()

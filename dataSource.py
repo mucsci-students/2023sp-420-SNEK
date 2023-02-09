@@ -19,7 +19,6 @@ class DataSource:
         cur.execute(
             "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
-        print(len(output))
         con.commit()
 
         treatmentMat = np.array(output)
@@ -66,7 +65,6 @@ class DataSource:
         wordDF = (treatmentMat[:, 1])
         depWordDF = pd.DataFrame(treatmentMat[:, 0])
 
-        print(wordDF)
         boolList = []
         for word in wordDF:
             approved = True
@@ -75,7 +73,6 @@ class DataSource:
             boolList.append(approved)
 
         depWordDF = depWordDF[boolList]
-        print(depWordDF)
         con.commit()
         numero = random.randint(0, len(depWordDF)-1)
 

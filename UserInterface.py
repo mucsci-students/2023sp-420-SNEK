@@ -56,6 +56,10 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
+    def showProgress(self):
+        pass
+
+    @abstractmethod
     def getSaveFileName(self):
         pass
 

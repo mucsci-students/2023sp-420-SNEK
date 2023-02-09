@@ -62,7 +62,7 @@ class State:
                           self.myPuzzle.wordsList, typeSave=1)
         elif (typeSave.lower() == "current"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
-                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.numberOfLetters, 0)
+                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.myPuzzle.numberOfLetters, 0)
         elif (typeSave.lower() == "overc"):
             self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
                           self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.myPuzzle.numberOfLetters, 1)
