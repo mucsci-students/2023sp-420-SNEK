@@ -15,6 +15,7 @@ class Commands(Enum):
     SHUFFLE = auto()
     GUESSED_WORDS = auto()
     RANK = auto()
+    SHOW_STATUS = auto()
 
     class Constant:  # use Constant(object) if in Python 2
         def __init__(self, value):
@@ -31,13 +32,14 @@ class Commands(Enum):
         {
             "exit": EXIT,
             "help": HELP,
-            "new game": NEW_GAME_WRD,
-            "new game": NEW_GAME_RND,
+            "new wrd": NEW_GAME_WRD,
+            "new rnd": NEW_GAME_RND,
             "save": SAVE,
             "load": LOAD,
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
-            "rank": RANK
+            "rank": RANK,
+            "status": SHOW_STATUS
         })
 
     @ classmethod
@@ -53,8 +55,11 @@ class Commands(Enum):
         return commandConstant
 
     @ classmethod
-    def isCommand(cls, name: str) -> bool:
-        name = name.strip().lower()
+    def isCommand(cls, name) -> bool:
+        if type(name) == str:
+            name = name.strip().lower()
 
-        return (name.startswith(cls.__CMD_MARK) and
-                name[len(cls.__CMD_MARK):] in cls.__CMD_DIC.keys())
+            return (name.startswith(cls.__CMD_MARK) and
+                    name[len(cls.__CMD_MARK):] in cls.__CMD_DIC.keys())
+        else:
+            return True

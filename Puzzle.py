@@ -20,8 +20,8 @@
 # Class can be used in two ways to create a word:
 #       1. Word is given by the user
 #       2. Word is pulled randomly from DB
-#       
-#       The call for both will work the same, you simply pass a 
+#
+#       The call for both will work the same, you simply pass a
 #       word into the createPuzzle function:
 #       EX:
 #           Puzzle.createPuzzle(Puzzle, "zombify")
@@ -31,9 +31,9 @@
 #           ['o', 'm', 'b', 'i', 'z', 'y', 'f']
 #           ['o', 'm', 'b', 'i', 'z', 'y', 'f']
 #
-#       You can also set or get any class variable by either reaching 
+#       You can also set or get any class variable by either reaching
 #       directly into the class (Puzzle.word = "zombify")/(return Puzzle.word)
-#       or by using the built in functions 
+#       or by using the built in functions
 #           (Puzzle.setWord(Puzzle, "zombify"))/(return Puzzle.getWord(Puzzle))
 #
 # Two exceptions may be raised when calling createPuzzle():
@@ -44,12 +44,13 @@
 import random
 from customExcept import UniqueLetterException
 from customExcept import WordNotFoundException
-from state import state
-import dataSource
+from State import State
+from DataSource import DataSource
 
 
 wordList = []
 wordList = sorted(wordList)
+
 
 class Puzzle:
     foundWords = []           # Already guessed words
@@ -61,27 +62,40 @@ class Puzzle:
     wordsList = []            # Words relative to the puzzle
     numberOfLetters = 0       # Total number of letters for score
 
-    def createPuzzle(self, word, dataSource):
+    def __init__(self) -> None:
+        pass
+
+    @classmethod
+    def createPuzzle(cls, word=""):
+        dataSource = DataSource()
+        if word == "":
+            word = dataSource.getRandomWord()
+
+        print(f"\n\tThis is the word: {word}\n")
+
         # Check that word has enough unique letters
         if len(set(list(word))) != 7:
             raise UniqueLetterException
-        
-        # Word is not in the database of words
-        if not dataSource.checkWord(word): 
-            raise WordNotFoundException
-        
-        # Split word into a puzzle (array of characters that make up word).
-        self.wordPuzzle = []
-        for i in word:
-            self.wordPuzzle.append(i)
-        
-        random.shuffle(self.wordPuzzle)  # Shuffles the character array for the first time
-        self.word = word                 # The word itself
 
-        dSource = dataSource.grabWordsFor(word, self.wordPuzzle[0])
-        self.wordsList = dSource.wordList                 # List of possible words for the puzzle
-        self.numberOfLetters = dSource.numberOfLetters    # Total number of letters for score
-        self.wordListSize = len(self.wordsList)           # Defining number of possible words for the puzzle
+        # Word is not in the database of words
+        if not dataSource.checkWord(word):
+            raise WordNotFoundException
+
+        # Split word into a puzzle (array of characters that make up word).
+        cls.wordPuzzle = list(set(word))
+
+        # Shuffles the character array for the first time
+        random.shuffle(cls.wordPuzzle)
+        cls.word = word                 # The word itself
+        dSource: DataSource = dataSource.grabWordsFor(word, cls.wordPuzzle[0])
+        # List of possible words for the puzzle
+        print("dSource.wordList", end="\t")
+        print(dSource.wordList)
+        cls.wordsList = dSource.wordList
+        # Total number of letters for score
+        cls.numberOfLetters = dSource.numberOfLetters
+        # Defining number of possible words for the puzzle
+        cls.wordListSize = len(cls.wordsList)
 
     # sets the foundWords variable.
     # Usage: Puzzle.setFoundWords(Puzzle, [])
@@ -98,13 +112,13 @@ class Puzzle:
     # Usage: Puzzle.setStatus(Puzzle, "")
     def setStatus(self, stat):
         self.status = stat
-    
+
     # gets the status variable.
     # Usage: Puzzle.getStatus(Puzzle)
     # Returns string
     def getStatus(self):
         return self.status
-    
+
     # sets the points variable.
     # Usage: Puzzle.setPoints(Puzzle, 0)
     def setPoints(self, pts):
@@ -115,7 +129,7 @@ class Puzzle:
     # Returns int
     def getPoints(self):
         return self.points
-    
+
     # sets the size variable.
     # Usage: Puzzle.setSize(Puzzle, 0)
     def setSize(self, size):
@@ -126,7 +140,7 @@ class Puzzle:
     # Returns int
     def getSize(self):
         return self.wordListSize
-    
+
     # sets the wordPuzzle variable.
     # Usage: Puzzle.setWordPuzzle(Puzzle, [])
     def setWordPuzzle(self, puzzle):
@@ -137,7 +151,7 @@ class Puzzle:
     # Returns array of chars
     def getWordPuzzle(self):
         return self.wordPuzzle
-    
+
     # sets the word variable.
     # Usage: Puzzle.setWord(Puzzle, "")
     def setWord(self, wrd):
@@ -149,6 +163,6 @@ class Puzzle:
     def getWord(self):
         return self.word
 
-    def getState():
-        state = state()
+    def getState(self):
+        state = State(self)
         return state

@@ -2,6 +2,8 @@ from DataSource import *
 from UserInterface import *
 from GameController import *
 from Commands import Commands
+from TerminalInterface import TerminalInterface
+from State import State
 
 
 class Main():
@@ -23,8 +25,8 @@ class Main():
 
     def __saveGame(self, normalMode, overMode):
         saveFileName = self.myUserInterface.getSaveFileName()
-        puzzle = self.myGameController.getPuzzle()
-        state = puzzle.getState()
+        puzzle: Puzzle = self.myGameController.getPuzzle()
+        state: State = puzzle.getState()
         saveNum = state.isSaved(saveFileName)
         if saveNum != -1:
             saveGame = True
@@ -53,7 +55,6 @@ class Main():
                 self.myUserInterface.showError(
                     "Something went wrong with the saveing.", "Sorry, try again.")
 
-
     def __askForSaveing(self) -> None:
         saveGame = self.myUserInterface.getConfirmation(self.__SAVE_MSG)
         if saveGame:
@@ -73,7 +74,7 @@ class Main():
     def __askForLoading(self) -> None:
         saveFileName = self.myUserInterface.getSaveFileName()
         puzzle = self.myGameController.getPuzzle()
-        state = puzzle.getState()
+        state: State = puzzle.getState()
         saveNum = state.isSaved(saveFileName)
         loadGame = True
         while loadGame and saveNum == -1:
@@ -88,8 +89,7 @@ class Main():
 
         if loadGame:
             try:
-                self.myGameController.loadGame(
-                    saveFileName)
+                state.load(saveFileName)
                 self.playing = True
                 self.__playGame()
             except:
@@ -97,16 +97,21 @@ class Main():
                     "Something went wrong with the loading.", "Sorry, try again.")
 
     def __playGame(self) -> None:
-        while self.playing and not self.myGameController.gameEnded:
+        while self.playing and not self.myGameController.gameOver:
             myPuzzle = self.myGameController.getPuzzle()
-            self.myUserInterface.showPuzzle(myPuzzle)
+            self.myUserInterface.showProgress(
+                myPuzzle.points, myPuzzle.numberOfLetters)
+            self.myUserInterface.showPuzzle(
+                myPuzzle.wordPuzzle, myPuzzle.points/myPuzzle.numberOfLetters)
             userInput = self.myUserInterface.getUserInput()
             if Commands.isCommand(userInput):
                 self.processCommand(userInput)
-            elif not self.myGameController.makeGuess(userInput):
-                self.myUserInterface.showWrongGuess(userInput)
+            elif not self.myGameController.guess(userInput):
+                print("self.myGameController.guess(userInput):", end="\t")
+                print(self.myGameController.guess(userInput))
+                self.myUserInterface.showWrongGuess()
 
-        if self.myGameController.gameEnded():
+        if self.myGameController.gameOver:
             self.myUserInterface.showEnd()
 
     def processCommand(self, command) -> None:
@@ -153,8 +158,8 @@ class Main():
 
         elif command == Commands.GUESSED_WORDS:
             if self.playing:
-                guessedWords = self.myGameController.getGuessedWords()
-                self.myUserInterface.showGuessedWords(guessedWords)
+                puzzle: Puzzle = self.myGameController.getPuzzle()
+                self.myUserInterface.showGuessedWords(puzzle.foundWords)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show guessed words"))
@@ -163,38 +168,45 @@ class Main():
             if self.playing:
                 self.myGameController.shuffle()
                 myPuzzle = self.myGameController.getPuzzle()
-                self.myUserInterface.showPuzzle(myPuzzle)
+                self.myUserInterface.showPuzzle(
+                    myPuzzle.wordPuzzle, myPuzzle.points/myPuzzle.numberOfLetters)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("shuffle letters of"))
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
+                print("Nola")
                 self.__askExitAndSave()
-                self.myGameController.newPuzzle()
+                print("ABAJO")
+                Puzzle.createPuzzle()
+                print("NO IDEA")
                 self.playing = True
+                print("JUGANDO=")
                 self.__playGame()
             else:
-                self.myGameController.newPuzzle()
+                Puzzle.createPuzzle()
                 self.playing = True
                 self.__playGame()
 
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
                 self.__askExitAndSave()
-                self.myGameController.newPuzzle()
+                baseWord = self.myUserInterface.getBaseWord()
+                Puzzle.createPuzzle(baseWord)
                 self.playing = True
                 self.__playGame()
             else:
                 baseWord = self.myUserInterface.getBaseWord()
-                self.myGameController.newPuzzle(baseWord)
+                Puzzle.createPuzzle(baseWord)
                 self.playing = True
                 self.__playGame()
-                
+
         elif command == Commands.SHOW_STATUS:
             if self.playing:
                 myPuzzle = self.myGameController.getPuzzle()
                 status = myPuzzle.status
+                print("status", status)
                 points = myPuzzle.points
                 self.myUserInterface.showStatus(status, points)
             else:
@@ -206,12 +218,12 @@ class Main():
 
 
 def main():
-    myDataSource = DataSource()
-    myGameController = GameController(myDataSource)
+    myGameController = GameController()
     myUserInterface = TerminalInterface()
 
     myMain = Main(myGameController, myUserInterface)
 
+    myUserInterface.showHelp()
     while not myMain.exitProgram:
         command = myUserInterface.getCommand()
         myMain.processCommand(command)
