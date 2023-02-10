@@ -73,6 +73,8 @@ class Main():
         if exitGame:
             self.playing = False
             self.__askForSaveing()
+        else:
+            return -1
 
     def __askForLoading(self) -> None:
         saveFileName = self.myUserInterface.getSaveFileName()
@@ -190,7 +192,9 @@ class Main():
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                self.__askExitAndSave()
+                retVal = self.__askExitAndSave()
+                if(retVal == -1):
+                    return
                 self.myGameController = GameController()
                 Puzzle.createPuzzle()
                 self.playing = True
@@ -203,7 +207,9 @@ class Main():
 
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
-                self.__askExitAndSave()
+                retVal = self.__askExitAndSave()
+                if(retVal == -1):
+                    return
                 baseWord = self.myUserInterface.getBaseWord()
                 self.myGameController = GameController()
                 Puzzle.createPuzzle(baseWord)
