@@ -35,7 +35,8 @@ class GameController:
         return rankDict
 
     # Guess function to handle the functionailty of making a guess.
-    # Stephen Clugston
+    # Stephen Clugston 
+    
 
     def guess(self, userGuess: str):
         if len(userGuess) >= 4:
