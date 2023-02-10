@@ -94,14 +94,15 @@ class Main():
                 saveNum = state.isSaved(saveFileName)
 
         if loadGame:
-            try:
-                self.newLoad = True
-                state.load(saveFileName)
-                self.playing = True
-                self.__playGame()
-            except:
-                self.myUserInterface.showError(
-                    "Something went wrong with the loading.", "Sorry, try again.")
+            self.newLoad = True
+            if(state.load(saveFileName) == -1):
+                print("No save file folder created.")
+                return
+            elif(self.load(saveFileName) == -2):
+                print("No save file of that name found.")
+                return
+            self.playing = True
+            self.__playGame()
 
     def __playGame(self) -> None:
         self.newLoad = False
@@ -186,10 +187,12 @@ class Main():
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
                 self.__askExitAndSave()
+                self.myGameController = GameController()
                 Puzzle.createPuzzle()
                 self.playing = True
                 self.__playGame()
             else:
+                self.myGameController = GameController()
                 Puzzle.createPuzzle()
                 self.playing = True
                 self.__playGame()
@@ -198,11 +201,13 @@ class Main():
             if self.playing:
                 self.__askExitAndSave()
                 baseWord = self.myUserInterface.getBaseWord()
+                self.myGameController = GameController()
                 Puzzle.createPuzzle(baseWord)
                 self.playing = True
                 self.__playGame()
             else:
                 baseWord = self.myUserInterface.getBaseWord()
+                self.myGameController = GameController()
                 Puzzle.createPuzzle(baseWord)
                 self.playing = True
                 self.__playGame()
