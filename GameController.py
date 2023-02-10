@@ -14,12 +14,14 @@ class GameController:
 
     def __init__(self) -> None:
         self.puzzle = Puzzle()
-        self.labelList = ["Beginner", "Good Start", "Moving Up", "Good",
+        self.lableList = ["Beginner", "Good Start", "Moving Up", "Good",
                           "Solid", "Nice", "Great", "Amazing", "Genius"]
 
+    def newObj(self):
+        self.puzzle = Puzzle()
 
     def __rankDict(self, maxPoints):
-        n = len(self.labelList)
+        n = len(self.lableList)
         if maxPoints < (n - 1):
             return None
 
@@ -31,12 +33,14 @@ class GameController:
                 pointList[i] += (pointList[i-1] - pointList[i] + 1)
                 pointList[i+1] -= (pointList[i-1] - pointList[i] + 1)
 
-        rankDict = dict(zip(self.labelList, pointList))
+        rankDict = dict(zip(self.lableList, pointList))
         return rankDict
 
     # Guess function to handle the functionailty of making a guess.
-    # Stephen Clugston 
-    
+    # Stephen Clugston
+
+    def setGameOver(self):
+        self.gameOver = False
 
     def guess(self, userGuess: str):
         if len(userGuess) >= 4:
@@ -45,49 +49,56 @@ class GameController:
                 rankDict = self.__rankDict(self.puzzle.numberOfLetters)
 
                 # If this guess is a valid correct guess
-                if not userGuess in self.puzzle.foundWords:
+                if not userGuess in self.puzzle.foundWords and userGuess in self.puzzle.wordsList:
 
-                    if userGuess in self.puzzle.wordsList:
+                    # If this guess is the last possible guess, increment points, decrement wordListSize and set class variable gameOver to true
+                    if self.puzzle.wordListSize == 1:
+                        self.puzzle.points += len(userGuess)
+                        level = self.lableList[0]
+                        for i, rank in enumerate(self.lableList):
+                            if self.puzzle.points == rankDict[rank]:
+                                level = rank
+                                break
+                            elif self.puzzle.points < rankDict[rank]:
+                                level = self.lableList[i-1]
+                                break
+                        self.puzzle.status = level
+                        --self.puzzle.wordListSize
+                        self.gameOver = True
+                        return self.gameOver
 
-                        # If this guess is the last possible guess, increment points, decrement wordListSize and set class variable gameOver to true
-                        if self.puzzle.wordListSize == 1:
-                            self.puzzle.points += len(userGuess)
-                            level = self.labelList[0]
-                            for i, rank in enumerate(self.labelList):
-                                if self.puzzle.points == rankDict[rank]:
-                                    level = rank
-                                    break
-                                elif self.puzzle.points < rankDict[rank]:
-                                    level = self.labelList[i-1]
-                                    break
-                            self.puzzle.status = level
-                            --self.puzzle.wordListSize
-                            gameOver = True
-                            return gameOver
-                        else:
-                            # If there are still possible guesses, increments points, and add the word to found words
-                            self.puzzle.points += len(userGuess)
-                            level = self.labelList[0]
-                            for i, rank in enumerate(self.labelList):
-                                if self.puzzle.points == rankDict[rank]:
-                                    level = rank
-                                    break
-                                elif self.puzzle.points < rankDict[rank]:
-                                    level = self.labelList[i-1]
-                                    break
-                                self.puzzle.status = level
-                            --self.puzzle.wordListSize
-                            self.puzzle.foundWords.append(userGuess)
-                            return True
-                    else:
-                        print("The word is either incorrect")
-                        return False
+                    # If the guessed word was already correctly guessed
+                    if userGuess in self.puzzle.foundWords:
+                        raise guessAlreadyMade
+
+                    # If the guessed word is not in the array of possible solutions
+                    if not userGuess in self.puzzle.wordsList:
+                        # Output error saying the guess was incorrect
+                        raise incorrectGuess
+
+                    # If there are still possible guesses, increments points, and add the word to found words
+                    self.puzzle.points += len(userGuess)
+                    level = self.lableList[0]
+                    for i, rank in enumerate(self.lableList):
+                        if self.puzzle.points == rankDict[rank]:
+                            level = rank
+                            break
+                        elif self.puzzle.points < rankDict[rank]:
+                            level = self.lableList[i-1]
+                            break
+                        self.puzzle.status = level
+                    --self.puzzle.wordListSize
+                    self.puzzle.foundWords.append(userGuess)
+
+                    return True
                 else:
-                    print("You already guessed this word")
+                    print("The word is either incorrect or you already guessed it")
                     return False
+
             else:
                 print("The guess is does not have the required letter")
                 return False
+
         else:
             print("The guess is less than 4 letters long")
             return False

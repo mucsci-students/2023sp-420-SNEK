@@ -122,6 +122,9 @@ class Main():
 
         if self.myGameController.gameOver:
             self.myUserInterface.showEnd()
+            self.playing = False
+            self.myGameController.setGameOver()
+            return
 
     def processCommand(self, command) -> None:
         if command == Commands.EXIT:
