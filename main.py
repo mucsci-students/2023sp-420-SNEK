@@ -95,10 +95,11 @@ class Main():
 
         if loadGame:
             self.newLoad = True
-            if(state.load(saveFileName) == -1):
+            retVal = state.load(saveFileName)
+            if(retVal == -1):
                 print("No save file folder created.")
                 return
-            elif(self.load(saveFileName) == -2):
+            elif(retVal == -2):
                 print("No save file of that name found.")
                 return
             self.playing = True
