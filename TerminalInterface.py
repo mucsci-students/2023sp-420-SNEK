@@ -97,16 +97,16 @@ Commands:
     def showStatus(self, points, maxPoints) -> None:
         rankLabels = self.__RANK_LABELS
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        level = rankLabels[-1]
+
         for i, rank in enumerate(rankLabels):
-            if rank == None:
-                level = "Beginner"
-            elif points == ranks[rank]:
+            if points == ranks[rank]:
                 level = rank
                 break
             elif points < ranks[rank]:
                 level = rankLabels[i-1]
                 break
-            
+
 
         self.__boldPrint(level + ": " + str(points))
 
