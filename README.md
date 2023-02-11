@@ -4,7 +4,9 @@
 
 ## Description
 
-    -A Spelling Bee game 
+    -A Spelling Bee game, like the implemented in Python with an SQLite database
+
+                        ![Screenshot](SNEKTransperent.png)
 
 ### Contributers
 
