@@ -110,6 +110,7 @@ Commands:
     def showProgress(self, points, maxPoints) -> None:
         rankLabels = self.__RANK_LABELS
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        level = rankLabels[-1]
         for i, rank in enumerate(rankLabels):
             if points == ranks[rank]:
                 level = rank
