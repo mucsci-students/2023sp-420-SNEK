@@ -92,6 +92,7 @@ class Puzzle:
         cls.numberOfLetters = dSource.numberOfLetters
         # Defining number of possible words for the puzzle
         cls.wordListSize = len(cls.wordsList)
+        cls.foundWords = []
 
     # sets the foundWords variable.
     # Usage: Puzzle.setFoundWords(Puzzle, [])

@@ -17,6 +17,9 @@ class GameController:
         self.lableList = ["Beginner", "Good Start", "Moving Up", "Good",
                           "Solid", "Nice", "Great", "Amazing", "Genius"]
 
+    def setStatus(self, status):
+        self.puzzle.status = status
+
     def newObj(self):
         self.puzzle = Puzzle()
 
@@ -63,7 +66,7 @@ class GameController:
                                 level = self.lableList[i-1]
                                 break
                         self.puzzle.status = level
-                        --self.puzzle.wordListSize
+                        self.puzzle.wordListSize = self.puzzle.wordListSize - 1
                         self.gameOver = True
                         return self.gameOver
 
@@ -87,7 +90,9 @@ class GameController:
                             level = self.lableList[i-1]
                             break
                         self.puzzle.status = level
-                    --self.puzzle.wordListSize
+                    print(self.puzzle.wordListSize)
+                    self.puzzle.wordListSize = self.puzzle.wordListSize - 1
+                    print(self.puzzle.wordListSize)
                     self.puzzle.foundWords.append(userGuess)
 
                     return True

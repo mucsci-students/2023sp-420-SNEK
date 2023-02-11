@@ -112,8 +112,9 @@ class Main():
         while self.playing and not self.myGameController.gameOver and not self.newLoad:
             myPuzzle = self.myGameController.getPuzzle()
             print(myPuzzle.wordsList)
-            self.myUserInterface.showProgress(
+            statVal = self.myUserInterface.showProgress(
                 myPuzzle.points, myPuzzle.numberOfLetters)
+            self.myGameController.setStatus(statVal)
             self.myUserInterface.showPuzzle(
                 myPuzzle.wordPuzzle, myPuzzle.points/myPuzzle.numberOfLetters)
             userInput = self.myUserInterface.getUserInput()
@@ -145,8 +146,6 @@ class Main():
                 if exitGame:
                     self.playing = False
                     self.__askForSaveing()
-                    self.__askForLoading()
-                else:
                     self.__askForLoading()
             else:
                 self.__askForLoading()
@@ -225,9 +224,9 @@ class Main():
         elif command == Commands.SHOW_STATUS:
             if self.playing:
                 myPuzzle = self.myGameController.getPuzzle()
-                status = myPuzzle.status
-                points = myPuzzle.points
-                self.myUserInterface.showStatus(status, points)
+                points = myPuzzle.getPoints()
+                maxPoints = myPuzzle.numberOfLetters
+                self.myUserInterface.showStatus(points, maxPoints)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))

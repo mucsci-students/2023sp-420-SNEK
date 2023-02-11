@@ -33,7 +33,7 @@ class State:
             return 1
         else:
             # if master save file does not exist throw exception
-            raise MasterFileNotFound
+            return -1
 
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")

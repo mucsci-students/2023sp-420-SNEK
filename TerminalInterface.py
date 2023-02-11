@@ -94,16 +94,19 @@ Commands:
 
         return Commands.getCommandFromName(command)
 
-    def showStatus(self, status, points) -> None:
+    def showStatus(self, points, maxPoints) -> None:
         rankLabels = self.__RANK_LABELS
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
         for i, rank in enumerate(rankLabels):
-            if points == ranks[rank]:
+            if rank == None:
+                level = "Beginner"
+            elif points == ranks[rank]:
                 level = rank
                 break
             elif points < ranks[rank]:
                 level = rankLabels[i-1]
                 break
+            
 
         self.__boldPrint(level + ": " + str(points))
 
@@ -118,7 +121,6 @@ Commands:
             elif points < ranks[rank]:
                 level = rankLabels[i-1]
                 break
-
         rankItems = list(ranks.items())
 
         print(Style.BRIGHT + f"\n  {level:12s} ", end=Style.RESET_ALL)
@@ -138,6 +140,7 @@ Commands:
             print(self.__DONE_PROGRESS + "  🐝")
         else:
             print(self.__LEFT_PROGRESS + "  🐝")
+        return level
 
     def showPuzzle(self, letters: list, progress: float) -> None:
         myLetters = list(''.join(letters).upper())
