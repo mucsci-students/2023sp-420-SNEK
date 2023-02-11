@@ -6,7 +6,8 @@
 
     -A Spelling Bee game, implemented in Python with an SQLite database
 
-                        ![Screenshot](SNEKTransperent.png)
+
+![Screenshot](SNEKTransperent.png)
 
 ### Contributers
 
@@ -85,7 +86,7 @@
        Side note: If you do not have the pip installer, well, installed,
        https://pip.pypa.io/en/stable/installation/, could help
 
-    2. locate and open the launch.ipynb file with your perffered code
+    2. locate and open the launch.ipynb file with your preferred code
        editor.
 
     3. Within the code editor, locate the first and last cell in the launch.ipynb file, and
@@ -137,7 +138,7 @@
 
 ### And Remember
     
-# ***`No Step On Snek`***
+#  ***`No Step On Snek`*** 
 
         
 
