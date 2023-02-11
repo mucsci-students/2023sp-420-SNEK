@@ -90,9 +90,7 @@ class GameController:
                             level = self.lableList[i-1]
                             break
                         self.puzzle.status = level
-                    print(self.puzzle.wordListSize)
                     self.puzzle.wordListSize = self.puzzle.wordListSize - 1
-                    print(self.puzzle.wordListSize)
                     self.puzzle.foundWords.append(userGuess)
 
                     return True

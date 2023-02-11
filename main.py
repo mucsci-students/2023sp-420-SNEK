@@ -111,7 +111,6 @@ class Main():
         self.newLoad = False
         while self.playing and not self.myGameController.gameOver and not self.newLoad:
             myPuzzle = self.myGameController.getPuzzle()
-            print(myPuzzle.wordsList)
             statVal = self.myUserInterface.showProgress(
                 myPuzzle.points, myPuzzle.numberOfLetters)
             self.myGameController.setStatus(statVal)
@@ -120,7 +119,7 @@ class Main():
             userInput = self.myUserInterface.getUserInput()
             if Commands.isCommand(userInput):
                 self.processCommand(userInput)
-            elif not self.myGameController.guess(userInput):
+            elif not self.myGameController.guess(userInput.lower()):
                 self.myUserInterface.showWrongGuess()
 
         if self.myGameController.gameOver:
@@ -183,8 +182,6 @@ class Main():
             if self.playing:
                 self.myGameController.shuffle()
                 myPuzzle = self.myGameController.getPuzzle()
-                self.myUserInterface.showPuzzle(
-                    myPuzzle.wordPuzzle, myPuzzle.points/myPuzzle.numberOfLetters)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("shuffle letters of"))
@@ -211,13 +208,13 @@ class Main():
                     return
                 baseWord = self.myUserInterface.getBaseWord()
                 self.myGameController = GameController()
-                Puzzle.createPuzzle(baseWord)
+                Puzzle.createPuzzle(baseWord.lower())
                 self.playing = True
                 self.__playGame()
             else:
                 baseWord = self.myUserInterface.getBaseWord()
                 self.myGameController = GameController()
-                Puzzle.createPuzzle(baseWord)
+                Puzzle.createPuzzle(baseWord.lower())
                 self.playing = True
                 self.__playGame()
 
@@ -243,8 +240,12 @@ def main():
 
     myUserInterface.showHelp()
     while not myMain.exitProgram:
-        command = myUserInterface.getCommand()
-        myMain.processCommand(command)
+        try:
+            command = myUserInterface.getCommand()
+            myMain.processCommand(command)
+        except KeyboardInterrupt:
+            print()
+            exit()
 
 
 if __name__ == "__main__":
