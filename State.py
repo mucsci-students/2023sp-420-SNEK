@@ -3,7 +3,7 @@ import os
 from customExcept import SaveNotFound
 from customExcept import MasterFileNotFound
 from customExcept import WrongSaveType
-from customExcept import OverwriteSave
+#from customExcept import OverwriteSave
 
 # State class holding all save, load, and related methods
 
@@ -18,34 +18,19 @@ class State:
         # list that is returned
         retNames = []
         # check if file exists, otherwise raise exception
-        if os.path.exists("saveFile.json"):
-            # while master file open, enumerate saves and appen every save name into list (retNames)
-            with open("saveFile.json", "r") as f:
-                save = json.load(f)
-                for i, val in enumerate(save):
-                    retNames.append(list(val.keys())[0])
-        else:
-            raise MasterFileNotFound
-        # sort lsit alphanumerically
-        retNames.sort()
-
+        if os.path.exists(f"saveFiles"):
+            tempList = os.listdir(f"saveFiles")
+            for i in tempList:
+                retNames.append(os.path.splitext(i)[0])
         return retNames
+
 
     # isSaved checks the filename in the master save file to see if it is already an inuse save name
 
     def isSaved(self, saveName):
         # Check if master save file exists
-        if os.path.exists("saveFile.json"):
-            # open master save file and store contents in save
-            with open("saveFile.json", "r") as f:
-                save = json.load(f)
-                # iterated through and check for saveName
-                for i, val in enumerate(save):
-                    if (list(val.keys())[0] == saveName):
-                        # return the enumerated index of the saveName if present
-                        return i
-                # return -1 if saveName is unused
-                return -1
+        if os.path.exists(f"saveFiles/{saveName}.json"):
+            return 1
         else:
             # if master save file does not exist throw exception
             raise MasterFileNotFound
@@ -89,23 +74,21 @@ class State:
         # transform data from variables into json format to dump into file
         data = self.saveParse(saveName, puzzle, wordList, foundWords,
                               status, points, wordListSize, numberOfLetters)
-
+        
         # check if file exists
-        if os.path.exists("saveFile.json"):
+        if os.path.exists(f"saveFiles/{saveName}.json"):
             # open file for reading
-            with open("saveFile.json", "r") as f:
+            with open(f"saveFiles/{saveName}.json", "r") as f:
                 # save contents of json into master save file
                 save = json.load(f)
                 # if saved return index of save, if not return -1 meaning that the save file is usable
                 # if not overwrite, raise Exception
-                print(saveName)
                 i = self.isSaved(saveName)
-                print(typeSave)
                 if (typeSave != 0):
                     # if saved pop old save file of same name then add new data
                     if (i == -1):
                         raise SaveNotFound
-                    save.pop(i)
+                    save.pop(0)
                     save.append(data)
                 elif (i == -1):
                     # if not saved, append new save file
@@ -114,7 +97,7 @@ class State:
         else:
             save = [data]
         # dump new save data into master file and create if none is present
-        with open("saveFile.json", "w") as f:
+        with open(f"saveFiles/{saveName}.json", "w") as f:
             json.dump(save, f, indent=2)
 
         return
@@ -125,8 +108,8 @@ class State:
 
         retData = []
         # check if master file exists, if not raise exception
-        if os.path.exists("saveFile.json"):
-            with open("saveFile.json", "r") as f:
+        if os.path.exists(f"saveFiles/{saveName}.json"):
+            with open(f"saveFiles/{saveName}.json", "r") as f:
                 save = json.load(f)
         else:
             raise MasterFileNotFound
