@@ -7,7 +7,7 @@
     -A Spelling Bee game, implemented in Python with an SQLite database
 
 
-<div align = "center"> ![Screenshot](SNEKTransperent.png) <div align = "center">
+<div align = "center"> ![Screenshot](SNEKTransperent.png) </div>
 
 ### Contributers
 
@@ -138,7 +138,7 @@
 
 ### And Remember
     
-# ***`No Step On Snek`***
+# <color = yellow>  ***`No Step On Snek`*** <color = yellow>
 
         
 
