@@ -2,8 +2,9 @@ from State import State
 from Puzzle import Puzzle
 import os
 import json
-class stateTest:
 
+class stateTest:
+    
     def _init_(self):
         pass
     
@@ -14,7 +15,6 @@ class stateTest:
         retActual = []
         for i in actual:
             retActual.append(os.path.splitext(i)[0])
-
         assert test == retActual, "Different save name lists"
 
         return
@@ -224,3 +224,4 @@ if os.path.exists("saveFiles/saveTest2.json"):
 if os.path.exists("saveFiles/saveTest3.json"):
     os.remove("saveFiles/saveTest3.json")
     
+print("All Tests have Passed!")
