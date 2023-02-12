@@ -167,4 +167,3 @@ class Puzzle:
     def getState(self):
         state = State(self)
         return state
-

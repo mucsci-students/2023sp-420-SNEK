@@ -7,7 +7,6 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
-
 from Puzzle import Puzzle
 from customExcept import UniqueLetterException
 from customExcept import WordNotFoundException
