@@ -1,6 +1,7 @@
 from UserInterface import UserInterface
 from colorama import Fore, Back, Style
 from Commands import Commands
+from math import sqrt
 
 
 class TerminalInterface(UserInterface):
@@ -10,8 +11,40 @@ class TerminalInterface(UserInterface):
         self.__CMD_PRFX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
         self.__DONE_PROGRESS = Fore.YELLOW + "⬢" + Style.RESET_ALL
         self.__LEFT_PROGRESS = "⬡" + Style.RESET_ALL
-        self.__RANK_LABELS = = ["Beginner", "Good Start", "Moving Up", "Good",
-             "Solid", "Nice", "Great", "Amazing", "Genius"]
+        self.__RANK_LABELS = ["Beginner", "Good Start", "Moving Up", "Good",
+                              "Solid", "Nice", "Great", "Amazing", "Genius"]
+        self.__HELP_TITLE = "\n\tSpelling Bee Game!              🍯 🐝"
+        self.__HELP_STRING = '''
+
+How to play:
+   You are given a word puzzle with a bunch of letters
+   and a required letter.  The Required letter is in the
+   center of the honeycomb.  Every word that you guess
+   requires that the center letter be used, otherwise you
+   will not receive credit for the guess.  The word that
+   you guess also needs to be a valid word in the
+   Scrabble dictionary.  Every puzzle has a corresponding
+   pangram that it is generated from.  The pangram will
+   include every letter in the honeycomb.
+
+Commands:
+   Call commands with a preceeding '!'. Commands may be
+   called at anytime.
+
+   -!new rnd - Generate a new random puzzle
+   -!new wrd - Genereate a new puzzle with a user given
+               word.  Console will prompt for the word after
+               command is given.
+   -!status - Display you status for the current puzzle.
+   -!save - Bring up the prompts for saving your current game.
+   -!load - Bring up the prompts for loading a saved game.
+   -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
+               the order of the letter randomly other than the 
+               required center letter.  You can use this to
+               help you find other words.
+   -!guessed - Shows all the already correctly guessed words.
+   -!help - Prints out the help menu.
+   -!exit - Exits the game. Will prompt to save.'''
 
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PRFX + message + " ").strip()
@@ -61,12 +94,11 @@ class TerminalInterface(UserInterface):
 
         return Commands.getCommandFromName(command)
 
-    def showStatus(self) -> None:
-        pass
-
-    def showProgress(self, rankLabels, points, maxPoints) -> None:
-        progress = points/maxPoints
+    def showStatus(self, points, maxPoints) -> None:
+        rankLabels = self.__RANK_LABELS
         ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        level = rankLabels[-1]
+
         for i, rank in enumerate(rankLabels):
             if points == ranks[rank]:
                 level = rank
@@ -75,25 +107,43 @@ class TerminalInterface(UserInterface):
                 level = rankLabels[i-1]
                 break
 
+
+        self.__boldPrint(level + ": " + str(points))
+
+    def showProgress(self, points, maxPoints) -> None:
+        rankLabels = self.__RANK_LABELS
+        ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
+        level = rankLabels[-1]
+        for i, rank in enumerate(rankLabels):
+            if points == ranks[rank]:
+                level = rank
+                break
+            elif points < ranks[rank]:
+                level = rankLabels[i-1]
+                break
+        rankItems = list(ranks.items())
+
         print(Style.BRIGHT + f"\n  {level:12s} ", end=Style.RESET_ALL)
-        status = 0
         print(" 🍯  ", end="")
-
-        while status < 8/9 and status < progress:
+        if points > rankItems[0][1]:
             print(self.__DONE_PROGRESS + "╶──", end="")
-            status += 1/9
-
-        while status < 8/9:
+        else:
             print(self.__LEFT_PROGRESS + "╶──", end="")
-            status += 1/9
 
-        if status < progress:
+        for rank, rankPoints in rankItems[1:-1]:
+            if points >= rankPoints:
+                print(self.__DONE_PROGRESS + "╶──", end="")
+            else:
+                print(self.__LEFT_PROGRESS + "╶──", end="")
+
+        if points >= rankItems[-1][1]:
             print(self.__DONE_PROGRESS + "  🐝")
         else:
             print(self.__LEFT_PROGRESS + "  🐝")
+        return level
 
     def showPuzzle(self, letters: list, progress: float) -> None:
-        self.showProgress(progress)
+        myLetters = list(''.join(letters).upper())
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
@@ -104,13 +154,13 @@ class TerminalInterface(UserInterface):
                     ╲___╱ {} ╲___╱
                     ╱ {} ╲___╱ {} ╲ 
                     ╲___╱ {} ╲___╱
-                        ╲___╱ '''.format(N + letters[1] + YB,
-                       N + letters[2] + YB,
-                       N + letters[3] + YB,
-                       Y + letters[0] + YB,
-                       N + letters[4] + YB,
-                       N + letters[5] + YB,
-                       N + letters[6] + YB)
+                        ╲___╱ '''.format(N + myLetters[1] + YB,
+                                         N + myLetters[2] + YB,
+                                         N + myLetters[3] + YB,
+                                         Y + myLetters[0] + YB,
+                                         N + myLetters[4] + YB,
+                                         N + myLetters[5] + YB,
+                                         N + myLetters[6] + YB)
               + Style.RESET_ALL)
 
     def showError(self, errorMessage, errorDescription="") -> None:
@@ -118,13 +168,15 @@ class TerminalInterface(UserInterface):
             Style.BRIGHT + Fore.RED + errorMessage + Style.RESET_ALL, errorDescription)
 
     def showHelp(self) -> None:
-        self.__boldPrint("Found Words:")
+        self.__boldPrint(self.__HELP_TITLE)
+        print(self.__HELP_STRING)
 
     def showRanking(self, maxPoints: int) -> None:
         print("The ranking points change based on the specific game you are playing:")
         self.__boldPrint("Ranking for this game:")
-        rankingPoints: dict = self.__rankLablePoints(self.__RANK_LABELS, maxPoints)
-        for lable in rankingLables:
+        rankingPoints: dict = self.__rankLablePoints(
+            self.__RANK_LABELS, maxPoints)
+        for lable in self.__RANK_LABELS:
             points = rankingPoints[lable]
 
             print("\t" + f"{lable:10}" + ": " + str(points))
@@ -167,7 +219,7 @@ class TerminalInterface(UserInterface):
             print(f"(Unrecogniced choice) [{okStr}/{nokStr}]: ")
             choice = self.getUserInput().lower()
 
-        confirmation = choice != okStr
+        confirmation = choice == okStr
         return confirmation
 
     def showMessage(self, message, endStr="\n"):
