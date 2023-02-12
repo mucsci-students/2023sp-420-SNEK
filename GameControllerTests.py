@@ -13,24 +13,24 @@ class TestGameController(unittest.TestCase):
         gameController = GameController()
         lableList = ["Beginner", "Good Start", "Moving Up", "Good",
                      "Solid", "Nice", "Great", "Amazing", "Genius"]
-        
+
         self.assertEqual(gameController.lableList, lableList)
-    
+
     # Tests the functionality of guess. Only case untested is a correct guess that is the last guess
     # WARNING:     Not working fully as intended. Functionality of puzzle is causing unexpected behavior after MANUALLY
-    #              setting the puzzle fields, more specifically wordPuzzle. setWordPuzzle doesn't explixitly randomise the 
-    #              list, so expexcted behavior for puzzle.setWordPuzzle(list(set("volcanos"))) would be ['v', 'o', 'l', 'c', 'a', 'n', 'o'] 
-    #              yet the list returned is randomized, not preserving the expected required letter as "V". Unknown at this time if this 
+    #              setting the puzzle fields, more specifically wordPuzzle. setWordPuzzle doesn't explixitly randomise the
+    #              list, so expexcted behavior for puzzle.setWordPuzzle(list(set("volcanos"))) would be ['v', 'o', 'l', 'c', 'a', 'n', 'o']
+    #              yet the list returned is randomized, not preserving the expected required letter as "V". Unknown at this time if this
     #              unexpected behavior is due to MANUALLY setting the puzzle fields, or if it is another underlying issue
-    # PLEASE_NOTE: The guess function was manually tested to extent with all possible edge cases in mind and is currently working as 
+    # PLEASE_NOTE: The guess function was manually tested to extent with all possible edge cases in mind and is currently working as
     #              intended in the current release build.
     def test_guess(self):
         # Creates the GameController
         gameController = GameController()
-        
+
         # Puzzle Fields
         word = "volcanos"
-        wordPuzzle = list(set(word))
+        wordPuzzle = list('volcans')
         print(wordPuzzle)
         foundWords = ['volcanos']
         status = "Beginner"
@@ -38,7 +38,7 @@ class TestGameController(unittest.TestCase):
         wordsList = ['volcano', 'This', 'is', 'a', 'Test']
         wordListSize = len(wordsList)
         numofLetters = 16
-        
+
         # Set the puzzle obj
         puzzle = Puzzle()
         puzzle.setWord(word)
@@ -47,6 +47,7 @@ class TestGameController(unittest.TestCase):
         puzzle.setStatus(status)
         puzzle.setPoints(points)
         puzzle.setSize(wordListSize)
+        puzzle.wordsList = wordsList
         puzzle.numberOfLetters = numofLetters
 
         # Sets gameController puzzle to the puzzle obj
@@ -63,7 +64,7 @@ class TestGameController(unittest.TestCase):
 
         # Inccorect guess
         incor = "volvanos"
-        
+
         # Tests the case of a correct guess
         self.assertTrue(gameController.guess(correctGuess))
 
@@ -83,10 +84,10 @@ class TestGameController(unittest.TestCase):
     def test_shuffle(self):
         # Creates the GameController
         gameController = GameController()
-        
+
         # Sets the word puzzle
         gameController.puzzle.setWordPuzzle(list(set("volcanos")))
-        
+
         # The invalid, unshuffled list
         unshuffle = list(set("volcanos"))
 
@@ -102,10 +103,8 @@ class TestGameController(unittest.TestCase):
         self.assertTrue(invalidCount < 5)
 
 
-
-
 class TestGettersSetters(unittest.TestCase):
-    
+
     # Tests whether the function setStatus correctly sets the status of the puzzle obj
     def test_setStatus(self):
         status = "Beginner"
@@ -113,17 +112,17 @@ class TestGettersSetters(unittest.TestCase):
         gameController.setStatus(status)
 
         self.assertTrue(gameController.puzzle.status == status)
-    
 
     # Tests whether the function setGameOver correctly sets the gameOver field to true
+
     def test_setGameOver(self):
         gameController = GameController()
         gameController.setGameOver()
 
         self.assertFalse(gameController.setGameOver())
-    
 
     # Tests whether the function getPuzzle returns the correct puzzle
+
     def test_getPuzzle(self):
         # Puzzle Fields
         word = "volcanos"
