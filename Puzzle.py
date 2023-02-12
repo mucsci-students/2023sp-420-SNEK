@@ -95,71 +95,76 @@ class Puzzle:
         cls.foundWords = []
 
     # sets the foundWords variable.
-    # Usage: Puzzle.setFoundWords(Puzzle, [])
+    # Usage: Puzzle.setFoundWords([])
     def setFoundWords(self, found):
         self.foundWords = found
 
     # gets the foundWords variable.
-    # Usage: Puzzle.getFoundWords(Puzzle)
+    # Usage: Puzzle.getFoundWords()
     # returns list
     def getFoundWords(self):
         return self.foundWords
 
     # sets the status variable.
-    # Usage: Puzzle.setStatus(Puzzle, "")
+    # Usage: Puzzle.setStatus("")
     def setStatus(self, stat):
         self.status = stat
 
     # gets the status variable.
-    # Usage: Puzzle.getStatus(Puzzle)
+    # Usage: Puzzle.getStatus()
     # Returns string
     def getStatus(self):
         return self.status
 
     # sets the points variable.
-    # Usage: Puzzle.setPoints(Puzzle, 0)
+    # Usage: Puzzle.setPoints(0)
     def setPoints(self, pts):
         self.points = pts
 
     # gets the points variable.
-    # Usage: Puzzle.getPoints(Puzzle)
+    # Usage: Puzzle.getPoints()
     # Returns int
     def getPoints(self):
         return self.points
 
     # sets the size variable.
-    # Usage: Puzzle.setSize(Puzzle, 0)
+    # Usage: Puzzle.setSize(0)
     def setSize(self, size):
         self.wordListSize = size
 
     # gets the size variable.
-    # Usage: Puzzle.getSize(Puzzle)
+    # Usage: Puzzle.getSize()
     # Returns int
     def getSize(self):
         return self.wordListSize
 
     # sets the wordPuzzle variable.
-    # Usage: Puzzle.setWordPuzzle(Puzzle, [])
+    # Usage: Puzzle.setWordPuzzle([])
     def setWordPuzzle(self, puzzle):
         self.wordPuzzle = puzzle
 
     # gets the wordPuzzle variable.
-    # Usage: Puzzle.getWordPuzzle(Puzzle)
+    # Usage: Puzzle.getWordPuzzle()
     # Returns array of chars
     def getWordPuzzle(self):
         return self.wordPuzzle
 
     # sets the word variable.
-    # Usage: Puzzle.setWord(Puzzle, "")
+    # Usage: Puzzle.setWord("")
     def setWord(self, wrd):
         self.word = wrd
 
     # gets the word variable.
-    # Usage: Puzzle.getWord(Puzzle)
+    # Usage: Puzzle.getWord()
     # Returns string
     def getWord(self):
         return self.word
 
+    # gets state object
+    # Usage: Puzzle.getState()
+    # Returns state obj
+    # remove for mvc?
     def getState(self):
         state = State(self)
         return state
+
