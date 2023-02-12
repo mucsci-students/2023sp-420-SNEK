@@ -4,22 +4,15 @@ import pandas as pd
 import random
 
 
-
-
-#Contains a list of the words that are going to be the possible guesses for the game
-#Contains the total number of letters in the possible words, this will be used to calculate the points
-
-
 class DataSource:
     numberOfLetters = 0
-    wordList = dict()  
+    wordList = dict()  # this is going to be a dicctionary just contianing the words
 
     def __init__(self, mandatoryLetter=None, optionalLetters=None):
         if mandatoryLetter == None or optionalLetters == None:
             return
 
         con = sqlite3.connect("example2.db")
-
         cur = con.cursor()
         if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
             return
@@ -28,9 +21,9 @@ class DataSource:
         output = cur.fetchall()
         con.commit()
 
-
-        #just keep the words that contain only the desired letters
-
+        treatmentMat = np.array(output)
+        wordSet = set(treatmentMat[:, 0])
+        # just keep the words that contain only the desired letters
         treatmentMat = np.array(output)
         wordSet = set(treatmentMat[:, 0])
         boolList = []
@@ -48,11 +41,10 @@ class DataSource:
         numberLettersList = [len(set(list(word)))
                              for word in list(self.wordList[0])]
         self.numberOfLetters = sum(numberLettersList)
-    
-    ##checks if a word is in the db
-    def checkWord(searchedWord):
-        con = sqlite3.connect("example3.db")
 
+    # checks if a word is in the db
+    def checkWord(self, searchedWord):
+        con = sqlite3.connect("example2.db")
         cur = con.cursor()
 
         cur.execute(
@@ -61,8 +53,6 @@ class DataSource:
         con.commit()
         con.close()
         return len(output) > 0
-    
-    #Returns a random word valid as a base word for the game
 
     def getRandomWord(self):
         con = sqlite3.connect("example3.db")
