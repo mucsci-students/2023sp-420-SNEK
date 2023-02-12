@@ -131,7 +131,7 @@ class State:
         self.myPuzzle.wordListSize = retData[5]
         self.myPuzzle.numberOfLetters = retData[6]
 
-        return 0
+        return retData
 
     # Translate from variables into json format, parse from json format into variables
 
