@@ -7,12 +7,17 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import sys
+import os
+#sys.path.insert(0, os.path.abspath(".."))
+
 from Puzzle import Puzzle
 from customExcept import UniqueLetterException
 from customExcept import WordNotFoundException
 import unittest
+import pytest
 
-class TestPuzzleCreation(unittest.TestCase):
+class test_PuzzleCreation(unittest.TestCase):
     def test_createPuzzle(self):
         word = "zombify"
         pzzle = Puzzle()
