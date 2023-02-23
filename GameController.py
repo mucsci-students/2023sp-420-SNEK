@@ -20,9 +20,6 @@ class GameController:
     def setStatus(self, status):
         self.puzzle.status = status
 
-    def newObj(self):
-        self.puzzle = Puzzle()
-
     def __rankDict(self, maxPoints):
         n = len(self.lableList)
         if maxPoints < (n - 1):
@@ -53,6 +50,7 @@ class GameController:
 
                 # If this guess is a valid correct guess
                 if not userGuess in self.puzzle.foundWords:
+
                     if userGuess in self.puzzle.wordsList:
 
                         # If this guess is the last possible guess, increment points, decrement wordListSize and set class variable gameOver to true
