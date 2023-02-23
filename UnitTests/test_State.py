@@ -8,9 +8,11 @@ from Puzzle import Puzzle
 
 
 
-
+#some functions have random letters in front so that they go before other functions during
+#execution of test
 class test_State(unittest.TestCase):
     
+    #test that allSaveNames actually returns accurate list
     def test_allSaveNames(self):
         test = c.allSaveNames()
         actual = os.listdir("saveFiles")
@@ -22,7 +24,7 @@ class test_State(unittest.TestCase):
         return
 
     
-
+    #test Save with different types (current, scratch, overcurrent, overscratch)
     def test_bSave(self):
 
         
@@ -119,6 +121,7 @@ class test_State(unittest.TestCase):
         
         return
 
+    #test the raw save data function
     def test_cSaveData(self):
         
         c.saveData("saveTest3", b.wordPuzzle, b.wordsList, b.foundWords, b.status, b.points, wordListSize=None, numberOfLetters=0, typeSave=0)
@@ -144,6 +147,7 @@ class test_State(unittest.TestCase):
         
         return
 
+    #test loading by asserting that the puzzle class matches with loaded values
     def test_dLoad(self):
         
         actualList = c.load("saveTest3")
@@ -160,6 +164,8 @@ class test_State(unittest.TestCase):
 
         return
 
+
+    #test the parser so that it is outputting correctly parsed json and variables
     def test_eSaveParse(self):
         
         retVal = c.saveParse("saveTest", b.wordPuzzle, b.wordsList, b.foundWords, b.status, b.points, b.wordListSize, b.numberOfLetters)
@@ -195,6 +201,7 @@ class test_State(unittest.TestCase):
 
         return
     
+    #test if the isSaved function returns the correct value
     def test_zIsSaved(self):
         
         testRes = c.isSaved("saveTest")
@@ -202,6 +209,7 @@ class test_State(unittest.TestCase):
         
         return
 
+    #teardown class to remove test save files that are created during the tests
     @classmethod
     def tearDownClass(self):
         if os.path.exists("saveFiles/saveTest.json"):
@@ -214,10 +222,12 @@ class test_State(unittest.TestCase):
             os.remove("tests/pycache")
 
 
+#initialization of various classes
 a = test_State()
 b = Puzzle()
 c = State(b)
 
+#initiazliation of puzzle class
 b.wordPuzzle = ["A", "B"]
 b.wordsList = ["AB", "BA"]
 b.foundWords = ["AB"]
