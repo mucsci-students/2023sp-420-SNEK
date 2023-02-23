@@ -40,17 +40,13 @@ class State:
     def save(self, saveName, typeSave):
         # type "current" = current, "scratch" = scratch, "OverS" = Overwrite Scratch, "OverC" = Overwrite Current
         if (typeSave.lower() == "scratch"):
-            self.saveData(saveName, self.myPuzzle.wordPuzzle,
-                          self.myPuzzle.wordsList)
+            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList)
         elif (typeSave.lower() == "overs"):
-            self.saveData(saveName, self.myPuzzle.wordPuzzle,
-                          self.myPuzzle.wordsList, typeSave = 1)
+            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList, typeSave = 1)
         elif (typeSave.lower() == "current"):
-            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
-                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.myPuzzle.numberOfLetters, 0)
+            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList, self.myPuzzle.foundWords, self.myPuzzle.points, self.myPuzzle.maxPoints,  0)
         elif (typeSave.lower() == "overc"):
-            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList,
-                          self.myPuzzle.foundWords, self.myPuzzle.status, self.myPuzzle.points, self.myPuzzle.wordListSize, self.myPuzzle.numberOfLetters, 1)
+            self.saveData(saveName, self.myPuzzle.wordPuzzle, self.myPuzzle.wordsList, self.myPuzzle.foundWords, self.myPuzzle.points, self.myPuzzle.maxPoints, 1)
         else:
             # if save type does not match any of the above, an exception will be raised
             raise WrongSaveType
@@ -63,18 +59,13 @@ class State:
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
 
-    def saveData(self, saveName, puzzle, wordList, foundWords=[], status="Beginner", points=0, wordListSize=None, numberOfLetters=0, typeSave=0):
-        numberOfLetters = self.myPuzzle.numberOfLetters
+    def saveData(self, saveName, puzzle, wordList, foundWords=[], points=0, maxPoints=0, typeSave=0):
 
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
-        if (wordListSize == None):
-            # set wordListSize to the full len of the wordList
-            wordListSize = len(wordList)
 
         # transform data from variables into json format to dump into file
-        data = self.saveParse(saveName, puzzle, wordList, foundWords,
-                              status, points, wordListSize, numberOfLetters)
-        
+        data = self.saveParse(saveName, ''.join(str(x) for x in puzzle), wordList, foundWords, points, puzzle[0], maxPoints)
+        sanityChecker = 0
         # check if file exists
         if os.path.exists(f"saveFiles/{saveName}.json"):
             # open file for reading
@@ -88,17 +79,20 @@ class State:
                     # if saved pop old save file of same name then add new data
                     if (i == -1):
                         raise SaveNotFound
-                    save.pop(0)
-                    save.append(data)
+                    #save.pop(0)
+                    sanityChecker = 1
                 elif (i == -1):
                     # if not saved, append new save file
                     save.append(data)
         # if master file does not exist create json list
         else:
-            save = [data]
+            save = data
         # dump new save data into master file and create if none is present
         with open(f"saveFiles/{saveName}.json", "w") as f:
-            json.dump(save, f, indent=2)
+            if sanityChecker == 0:
+                json.dump(save, f, indent=2)
+            else:
+                json.dump(data, f, indent = 2)
 
         return
 
@@ -120,50 +114,47 @@ class State:
             raise SaveNotFound
 
         data = self.saveParse(saveName, data=save)
-        retData = list(data.values())
-
+        puzzleArr = data[2]
+        retPuzzleArr = []
+        retPuzzleArr.append(data[3])
+        for i in puzzleArr:
+            if i == data[3]:
+                pass
+            else:
+                retPuzzleArr.append(i)
+                
         # shove them straight into puzzle class
-        self.myPuzzle.wordPuzzle = retData[0]
-        self.myPuzzle.wordsList = retData[1]
-        self.myPuzzle.foundWords = retData[2]
-        self.myPuzzle.status = retData[3]
-        self.myPuzzle.points = retData[4]
-        self.myPuzzle.wordListSize = retData[5]
-        self.myPuzzle.numberOfLetters = retData[6]
+        self.myPuzzle.wordPuzzle = retPuzzleArr
+        self.myPuzzle.wordsList = data[1]
+        self.myPuzzle.foundWords = data[0]
+        self.myPuzzle.points = data[4]
+        self.myPuzzle.wordListSize = len(self.myPuzzle.wordsList) - len(self.myPuzzle.foundWords)
+        self.myPuzzle.maxPoints = data[5]
 
         return retData
 
     # Translate from variables into json format, parse from json format into variables
 
-    def saveParse(self, saveName="tempName", puzzle=[], wordList=[], foundWords=[], status="Beginner", points=0, wordListSize=0, numberOfLetters=0, data=[]):
-        numberOfLetters = self.myPuzzle.numberOfLetters
+    def saveParse(self, saveName="tempName", puzzle="", wordList=[], foundWords=[], points=0, requiredLetter = "", maxPoints = 0, data=[]):
 
         retData = []
         # if data value not given translate to json format
         if (data == []):
 
             retData = {
-
-                saveName:
-                [
-                    {
-                        'wordPuzzle': puzzle,
-                        'wordList': wordList,
-                        'foundWords': foundWords,
-                        'status': status,
-                        'percent': points,
-                        'wordListSize': wordListSize,
-                        'totalWordLength': numberOfLetters
-                    }
-                ]
+                "GuessedWords": foundWords,
+                "WordList": wordList,
+                "PuzzleLetters": puzzle,
+                "RequiredLetter": requiredLetter,
+                "CurrentPoints": points,
+                "MaxPoints": maxPoints
             }
+            return retData
 
         # if data has a json entry or loaded file, parse from json to dictionary
         elif (data != []):
-            for i in data:
-                if (list(i)[0] == saveName):
-                    retData.append(list(i.values()))
+            retData = list(data.values())
 
-            return retData[0][0][0]
 
         return retData
+
