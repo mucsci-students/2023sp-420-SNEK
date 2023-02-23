@@ -2,11 +2,15 @@
 # Written by Stephen Clugston and Aitor Cantero Crespo with test_shuffle
 # Bug fixed by Stephen Clugston and Aitor Cantero Crespo
 
+import sys
+import os
+#sys.path.insert(0, os.path.abspath(".."))
+
 from GameController import *
 import unittest
+import pytest
 
-
-class TestGameController(unittest.TestCase):
+class test_GameController(unittest.TestCase):
 
     # Tests the creation of a GameController... tests of the Puzzle handled by the Puzzle unittests
     def test_GameControllerCreation(self):
