@@ -4,6 +4,9 @@ from GameController import *
 from Commands import Commands
 from TerminalInterface import TerminalInterface
 from State import State
+from customExcept import InvalidArgumentException
+from BeeUI import *
+import sys
 
 
 class Main():
@@ -247,6 +250,16 @@ def main():
             print()
             exit()
 
-
+# BeeUI will launch automatically without any arguments
+# if the --cli flag is passed behind (py main.py --cli),
+# the game will launch in CLI mode.
+# otherwise, an InvalidArgumentException will be raised.
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 1:
+        bee = BeeUI()
+        bee.launch()
+    elif sys.argv[1] == '--cli':
+        main()
+    else:
+        raise InvalidArgumentException
+

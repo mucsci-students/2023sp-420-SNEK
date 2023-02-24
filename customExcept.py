@@ -54,3 +54,8 @@ class WordNotFoundException(Exception):
     "Raised when the given word is not found in dictionary"
     pass
 ######################################################
+
+# MAIN #########################################
+class InvalidArgumentException(Exception):
+    "Raised when an invalid argument is passed to the main call. Possible args: --cli (Launches in CLI mode)."
+    pass
