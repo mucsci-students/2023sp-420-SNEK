@@ -23,14 +23,14 @@ class Puzzle:
     '''
     # Class variables that do not change from game to game:
 
-    MIN_WRD_LEN = 4         # Minimum length of the guessed words
-    __MIN_POINTS = 1        # Minimum points you can get from a guessed word
-    __PANGRAM_BONUS = 7     # Bonus points for pangram
+    MIN_WRD_LEN: int = 4         # Minimum length of the guessed words
+    __MIN_POINTS: int = 1        # Minimum points you can get from a guessed word
+    __PANGRAM_BONUS: int = 7     # Bonus points for pangram
     # The list of names of the rankings, ordered (from small to big)
-    __RANK_NAMES_LIST = ["Beginner", "Good Start", "Moving Up", "Good",
-                         "Solid", "Nice", "Great", "Amazing", "Genius"]
+    __RANK_NAMES_LIST: list[str] = ["Beginner", "Good Start", "Moving Up", "Good",
+                                    "Solid", "Nice", "Great", "Amazing", "Genius"]
 
-    def __init__(self, puzzleLetters: str, WordList: list[str]) -> None:
+    def __init__(self, puzzleLetters: list[str], WordList: list[str]) -> None:
         ''' Inputs:
                 WordList: list of allowed words of the game.
                 puzzleLetters: list of letters of the game (the first one being the required one).
@@ -48,7 +48,7 @@ class Puzzle:
         # Current number of points for the puzzle
         self.currentPoints: int = 0
         # Total number of points of given game
-        self.maxPoints: int = self.__calcMaxPoints(WordList)
+        self.maxPoints: int = self.__calcMaxPoints(WordList, puzzleLetters)
         # A dictionary containing the rank names and their thresholds.
         self.rankingsAndPoints: dict[str,
                                      int] = self.__rankDict(self.maxPoints)
@@ -139,7 +139,7 @@ class Puzzle:
 
         return newRank
 
-    def addFoundWord(self, word: str) -> None:
+    def addGuessWord(self, word: str) -> None:
         ''' Precondition:
                 "word" is a string contained in "wordList".
 
@@ -150,7 +150,7 @@ class Puzzle:
                 the points, rank and guessed words get updated accordingly.
         '''
         self.guessedWords.append(word)
-        self.currentPoints += self.__pointsOf(word)
+        self.currentPoints += self.__pointsOf(word, self.puzzleLetters)
         self.currentRank = self.__calcCurrentRank()
 
     def getGuessedWords(self) -> list[str]:
