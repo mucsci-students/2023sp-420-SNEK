@@ -1,169 +1,187 @@
-# GENERATE PUZZLE FROM BASE WORD
-# Takes commands 'new (word)'
-#   - Generates puzzle off of word
-#   - Check that:
-#     - Word has enough unique letters
-#     - Word is not in the database of words
-#     - Puzzle is already open?
-#
-#
-# Puzzle Class
-# Nick Hoopes
-# Creates a Puzzle object that has the following characteristics:
-#       foundWords        Already guessed words
-#       status            Current score/status (beginner etc..)
-#       points            Current points for players
-#       wordListSize      All possible words for the puzzle
-#       wordPuzzle        The pangram used to build puzzle split into array
-#       wordsList         Related words to the puzzle
-#
-# Class can be used in two ways to create a word:
-#       1. Word is given by the user
-#       2. Word is pulled randomly from DB
-#
-#       The call for both will work the same, you simply pass a
-#       word into the createPuzzle function:
-#       EX:
-#           Puzzle.createPuzzle(Puzzle, "zombify")
-#           print(Puzzle.getWordPuzzle(Puzzle))
-#           print(Puzzle.wordPuzzle)
-#       returns:
-#           ['o', 'm', 'b', 'i', 'z', 'y', 'f']
-#           ['o', 'm', 'b', 'i', 'z', 'y', 'f']
-#
-#       You can also set or get any class variable by either reaching
-#       directly into the class (Puzzle.word = "zombify")/(return Puzzle.word)
-#       or by using the built in functions
-#           (Puzzle.setWord(Puzzle, "zombify"))/(return Puzzle.getWord(Puzzle))
-#
-# Two exceptions may be raised when calling createPuzzle():
-#       UniqueLetterException - If given word does not contain 7 unique letter
-#       WordNotFoundException - If given word is not found in the dictionary
-#
-
 import random
-from customExcept import UniqueLetterException
-from customExcept import WordNotFoundException
-from State import State
-from DataSource import DataSource
-
-
-wordList = []
-wordList = sorted(wordList)
 
 
 class Puzzle:
-    foundWords = []           # Already guessed words
-    status = ""               # Current score/status (beginner etc..)
-    points = 0                # Current number of points for the puzzle
-    wordListSize = 0          # Number of possible words for the puzzle
-    wordPuzzle = []           # The word split into an array of characters
-    word = ""                 # The word itself
-    wordsList = []            # Words relative to the puzzle
-    numberOfLetters = 0       # Total number of letters for score
+    '''
+    Model for the puzzle of the game.
 
-    def __init__(self) -> None:
-        pass
+    Static params:
+        MIN_WRD_LEN:        Minimum length of the guessed words
+        __MIN_POINTS:       Minimum points you can get from a guessed word
+        __PANGRAM_BONUS:    Bonus points for pangram
+        __PANGRAM_BONUS:    Bonus points for pangram
+        __RANK_NAMES_LIST:  The list of names of the rankings, ordered (from small to big)
 
+    Params:
+        puzzleLetters:      The word split into an array of characters
+        wordList:           Words relative to the puzzle
+        guessedWords:       Already guessed words
+        currentRank:        Current rank (beginner etc..)
+        currentPoints:      Current number of points for the puzzle
+        maxPoints:          Total number of points of given game
+        rankingsAndPoints:  A dictionary containing the rank names and their thresholds.
+    '''
+    # Class variables that do not change from game to game:
+
+    MIN_WRD_LEN: int = 4         # Minimum length of the guessed words
+    __MIN_POINTS: int = 1        # Minimum points you can get from a guessed word
+    __PANGRAM_BONUS: int = 7     # Bonus points for pangram
+    # The list of names of the rankings, ordered (from small to big)
+    __RANK_NAMES_LIST: list[str] = ["Beginner", "Good Start", "Moving Up", "Good",
+                                    "Solid", "Nice", "Great", "Amazing", "Genius"]
+
+    def __init__(self, puzzleLetters: list[str], WordList: list[str]) -> None:
+        ''' Inputs:
+                WordList: list of allowed words of the game.
+                puzzleLetters: list of letters of the game (the first one being the required one).
+        '''
+        # Class variables add hoc for this particular game:
+
+        # The word split into an array of characters
+        self.puzzleLetters: list[str] = puzzleLetters
+        # Words relative to the puzzle
+        self.wordList: list[str] = WordList
+        # Already guessed words
+        self.guessedWords: list[str] = []
+        # Current rank (beginner etc..)
+        self.currentRank: str = self.__RANK_NAMES_LIST[0]
+        # Current number of points for the puzzle
+        self.currentPoints: int = 0
+        # Total number of points of given game
+        self.maxPoints: int = self.__calcMaxPoints(WordList, puzzleLetters)
+        # A dictionary containing the rank names and their thresholds.
+        self.rankingsAndPoints: dict[str,
+                                     int] = self.__rankDict(self.maxPoints)
+
+    # Static method to calculate the maximum points of a game.
     @classmethod
-    def createPuzzle(cls, word=""):
-        dataSource = DataSource()
-        if word == "":
-            word = dataSource.getRandomWord()
+    def __calcMaxPoints(cls, WordList: list[str], puzzleLetters: list[str]) -> int:
+        ''' Inputs:
+                WordList: list of allowed words of the game.
+                puzzleLetters: list of letters of the game.
 
-        # Check that word has enough unique letters
-        if len(set(list(word))) != 7:
-            raise UniqueLetterException
+            Output:
+                sum: the total maximum of points
+        '''
+        sum = 0
+        for word in WordList:
+            sum = sum + cls.__pointsOf(word, puzzleLetters)
+        return sum
 
-        # Word is not in the database of words
-        if not dataSource.checkWord(word):
-            raise WordNotFoundException
+    # Static method to calculate the points of a word.
+    @classmethod
+    def __pointsOf(cls, word: str, puzzleLetters: list[str]) -> int:
+        ''' Precondition:
+                    All words are correct and their lengths are more than __MIN_WRD_LEN
 
-        # Split word into a puzzle (array of characters that make up word).
-        cls.wordPuzzle = list(set(word))
+            Inputs:
+                word: the word of which points are being calculated.
+                puzzleLetters: list of letters of the game.
 
-        # Shuffles the character array for the first time
-        random.shuffle(cls.wordPuzzle)
-        cls.word = word                 # The word itself
-        dSource: DataSource = dataSource.grabWordsFor(word, cls.wordPuzzle[0])
-        # List of possible words for the puzzle
-        cls.wordsList = dSource.wordList
-        # Total number of letters for score
-        cls.numberOfLetters = dSource.numberOfLetters
-        # Defining number of possible words for the puzzle
-        cls.wordListSize = len(cls.wordsList)
-        cls.foundWords = []
+            Output:
+                the points a word is worth.
+        '''
+        if len(word) == cls.MIN_WRD_LEN:
+            return cls.__MIN_POINTS
+        elif set(word) == set(puzzleLetters):
+            return len(word) + cls.__PANGRAM_BONUS
+        else:
+            return len(word)
 
-    # sets the foundWords variable.
-    # Usage: Puzzle.setFoundWords([])
-    def setFoundWords(self, found):
-        self.foundWords = found
+    # Static method to calculate the points of a word.
+    @classmethod
+    def __rankDict(cls, maxPoints: int) -> dict[str, int]:
+        ''' Inputs:
+                maxPoints: the maximum points of a given game.
 
-    # gets the foundWords variable.
-    # Usage: Puzzle.getFoundWords()
-    # returns list
-    def getFoundWords(self):
-        return self.foundWords
+            Output:
+                a dictionary containing the rank names and their thresholds.
+        '''
+        n = len(cls.__RANK_NAMES_LIST)
+        if maxPoints < (n - 1):
+            return None
 
-    # sets the status variable.
-    # Usage: Puzzle.setStatus("")
-    def setStatus(self, stat):
-        self.status = stat
+        rankingFunction: function = lambda x: (maxPoints/((n-1)**2)) * x**2
 
-    # gets the status variable.
-    # Usage: Puzzle.getStatus()
-    # Returns string
-    def getStatus(self):
-        return self.status
+        pointList = [round(rankingFunction(i)) for i in range(n)]
 
-    # sets the points variable.
-    # Usage: Puzzle.setPoints(0)
-    def setPoints(self, pts):
-        self.points = pts
+        rankDict = dict(zip(cls.__RANK_NAMES_LIST, pointList))
+        return rankDict
 
-    # gets the points variable.
-    # Usage: Puzzle.getPoints()
-    # Returns int
-    def getPoints(self):
-        return self.points
+    def getMaxPoints(self) -> int:
+        ''' Output:
+                the maximum points of this given game.
+        '''
+        return self.maxPoints
 
-    # sets the size variable.
-    # Usage: Puzzle.setSize(0)
-    def setSize(self, size):
-        self.wordListSize = size
+    def getRanks(self) -> dict[str, int]:
+        ''' Output:
+                the dictionary containing the rank names and their thresholds.
+        '''
+        return self.rankingsAndPoints
 
-    # gets the size variable.
-    # Usage: Puzzle.getSize()
-    # Returns int
-    def getSize(self):
-        return self.wordListSize
+    def getCurrentRank(self) -> str:
+        ''' Output:
+                the name of the current rank of the player.
+        '''
+        return self.currentRank
 
-    # sets the wordPuzzle variable.
-    # Usage: Puzzle.setWordPuzzle([])
-    def setWordPuzzle(self, puzzle):
-        self.wordPuzzle = puzzle
+    # Actually calculates the current rank
+    def __calcCurrentRank(self) -> str:
+        ''' Output:
+                the name of the current rank of the player.
+        '''
+        i: int = 0
+        newRank: str = self.__RANK_NAMES_LIST[i]
+        while self.currentPoints > self.rankingsAndPoints[newRank]:
+            newRank = self.__RANK_NAMES_LIST[i]
+            i += 1
 
-    # gets the wordPuzzle variable.
-    # Usage: Puzzle.getWordPuzzle()
-    # Returns array of chars
-    def getWordPuzzle(self):
-        return self.wordPuzzle
+        return newRank
 
-    # sets the word variable.
-    # Usage: Puzzle.setWord("")
-    def setWord(self, wrd):
-        self.word = wrd
+    def addGuessWord(self, word: str) -> None:
+        ''' Precondition:
+                "word" is a string contained in "wordList".
 
-    # gets the word variable.
-    # Usage: Puzzle.getWord()
-    # Returns string
-    def getWord(self):
-        return self.word
+            Inputs:
+                word: the word that was guessed.
 
-    # gets state object
-    # Usage: Puzzle.getState()
-    # Returns state obj
-    # remove for mvc?
-    def getState(self):
-        state = State(self)
-        return state
+            Postcondition:
+                the points, rank and guessed words get updated accordingly.
+        '''
+        self.guessedWords.append(word)
+        self.currentPoints += self.__pointsOf(word, self.puzzleLetters)
+        self.currentRank = self.__calcCurrentRank()
+
+    def getGuessedWords(self) -> list[str]:
+        ''' Output:
+                a list of the words the player correctly guessed.
+        '''
+        return self.guessedWords
+
+    def getCurrentPoints(self) -> int:
+        ''' Output:
+                the points the player achieved.
+        '''
+        return self.currentPoints
+
+    def getWordList(self) -> list[str]:
+        ''' Output:
+                the list of correct words allowed in the game.
+        '''
+        return self.wordList
+
+    def getPuzzleLetters(self) -> list[str]:
+        ''' Output:
+                the list of letters that make up the game.
+        '''
+        return self.puzzleLetters
+
+    def shuffle(self):
+        ''' Postcondition:
+                the list of letters that make up the game gets shuffled, except for the first one.
+        '''
+        restOfLetters = list(self.puzzleLetters[1:])
+        random.shuffle(restOfLetters)
+        letters = [self.puzzleLetters[0]] + restOfLetters
+        self.puzzleLetters = letters
