@@ -20,83 +20,46 @@
 
 ### Neccessary Libraries
 
-    -Used in Datasource and Database
-        -requests
-        -json
-        -numpy
-        -sqlite3
-        -Pandas
-    -Used in Puzzle Class
-        -random
-    -Used in User Interface
-        -abc
-    -Used in Commands
-        -enum
-    -Used in Terminal Interface
+    Libraries not pre-packaged with Python
+    that need installation.
+
         -colorama
-        -math
-    -Used in State
-        -json
-        -os
-    -Used in Game Controller
-        -random
-        -string
-    -Used in Setup
-        -os
-        -json
-        -time
-    
+        -requests
+        -numpy
+        -pandas
+        -pytest
 
-### Instructions for Building and Playing: Notes
+### Python Version
 
-    Note 1: The program has a few libraries that need installation for proper function.
-            These are colorama, requests, numpy, and pandas
-
-    Note 2: There are two sets of instructions below, one for those who want to use the 
-            setup python script and another for those who don't.
-
-    Note 3: if there is not a saveFiles folder present in the working directory, create one for
-            the game to store saves into (must be named explicitly "saveFiles")
+    Tested on Python 3.10.9 and Python 3.11.1
 
 
 ### Instructions for Building using Setup
 
-    1. Run setup via command line, in the form (python setup.py)
+    1. Run setup via command line, in the form (python setup.py (Mac/Linux)) (py setup.py (Windows))
 
-    2. setup.py will prompt the user whether or not they want to 
-       automatically install all need libraries listed in Note 1 above.
-       If so, the commands for pip installing the libraries will be run.
-       Then, shortly after, the database will be setup to work with random
-       words.
+    2. setup.py will create a viurutal environment, instatiate databases,
+       and intall any required non-base modules/packages into the environment
 
-       Side note: If you do not have the pip installer, well, installed,
-       https://pip.pypa.io/en/stable/installation/, could help
+    3. Entering Virutal Environment
+            Linux/Mac
+                -use the command line command (source spell/bin/activate)
+            Windows
+                -use the command line command (spell/Scripts/activate) (Must use powershell)
+                3.2.
+                    -when using windows, execution policy for scripts must be changed
+                     from default to allow scripts to run like the activate script for the
+                     virtual environment. This is done by using the command 
+                     (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
+
+    4. You should see the virtual environment name (spell) next to the command line 
+       path in windows or username in linux/mac, from here you can start the program
+       with 
+       (python main.py (Mac/Linux) py main.py (Windows) for GUI on start)
+       (python main.py --cli (Mac/Linux) py main.py --cli (Windows) for CLI on start)
     
-    3. At this stage, everything should be in-place to run the program and 
-       play the game, simply run the main file via the command line or code editor terminal,
-       in the form (python main.py)
+    5. To exit the virtual environment simply type (deactivate) into the command line
 
-
-
-### Instructions for Building w/o using Setup
-
-    1. Install the four libraries listed in Note 1, either by using pip install
-       or manually moving the libraries into the working directory.
-
-       Side note: If you do not have the pip installer, well, installed,
-       https://pip.pypa.io/en/stable/installation/, could help
-
-    2. locate and open the launch.ipynb file with your preferred code
-       editor.
-
-    3. Within the code editor, locate the first and last cell in the launch.ipynb file, and
-       run them (in vscode, the play button in the upper right left corner of the cell).
-    
-    4. Make sure an "example3.db" was created in the directory.
-    
-    5. At this stage, everything should be in-place to run the program and 
-       play the game, simply run the main file via the command line or code editor terminal,
-       in the form (python main.py).
 
 ### Instructions for Playing
 
@@ -110,6 +73,8 @@
     Scrabble dictionary.  Every puzzle has a corresponding
     pangram that it is generated from.  The pangram will
     include every letter in the honeycomb.
+
+    CLI Instructions:
 
     Commands:
     Call commands with a preceeding '!'. Commands may be
@@ -130,9 +95,46 @@
             -!help - Prints out the help menu.
             -!exit - Exits the game. Will prompt to save.'''
 
-    Side Note: If you forget any of these instructions or commands, the inital
-               splash screen of the game has them, and using the help command
-               will also bring them up!
+    GUI Instructions:
+
+            Main Menu
+
+                    -New Game
+                        -New Game will generate a random word
+                         for the player to start.
+                    -Load Game
+                        -Load previously saved game
+                    -Exit Game
+                        -End Game
+
+            In-Game
+
+                    -7 Pangram Buttons that can be clicked
+                     to enter letters (keyboard also useable)
+                    
+                    -Submit Guess Button for submitting current
+                     letters in word field (enter key also usable)
+
+                    -Backspace button useful for deleting last
+                     input letter in word field (backspace key also usable)
+
+                    -Shuffle button which will reorganize the displayed 
+                     letters on the pangram buttons
+
+            Menu Options
+
+                    -File
+                        -Save Current Game saves the game
+                         with all progress
+
+                        -Save Scratch Game saves the game
+                         from inital state with no progress
+
+                        -Load Game loads a different saved
+                         game
+
+                        -Quit current game returns to the 
+                         main menu
 
 
 
