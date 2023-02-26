@@ -36,6 +36,11 @@
 
 ### Instructions for Building using Setup
 
+    0. when using windows, execution policy for scripts must be changed
+       from default to allow scripts to run like the activate script for the
+       virtual environment. This is done by using the command 
+       (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
+
     1. Run setup via command line, in the form (python setup.py (Mac/Linux)) (py setup.py (Windows))
 
     2. setup.py will create a viurutal environment, instatiate databases,
@@ -46,11 +51,7 @@
                 -use the command line command (source spell/bin/activate)
             Windows
                 -use the command line command (spell/Scripts/activate) (Must use powershell)
-                3.2.
-                    -when using windows, execution policy for scripts must be changed
-                     from default to allow scripts to run like the activate script for the
-                     virtual environment. This is done by using the command 
-                     (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
+                
 
     4. You should see the virtual environment name (spell) next to the command line 
        path in windows or username in linux/mac, from here you can start the program
