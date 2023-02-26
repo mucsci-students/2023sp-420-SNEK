@@ -10,7 +10,15 @@
 #            testing purposes, assure that it is removed before
 #            utilization in other modules.
 #
+# To launch the GUI, create a BeeUI object and call the 'launch' function.
+# Once the launch function is called, the window will launch and you will
+# be able to play the game.
+# EX:
+#   window = BeeUI()
+#   window.launch()
+#
 # Imports:
+#    random
 #    tkinter as tk
 #    messagebox from tkinter
 #    PhotoImage from tkinter
@@ -19,6 +27,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
+import random
 
 class BeeUI:
     def __init__(self):
@@ -26,15 +35,10 @@ class BeeUI:
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
         self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
-        self.root.geometry("800x500")
+        self.root.geometry("900x600")
         self.root.title("The Spelling Bee! 🐝")
 
-        self.mainFrame = tk.Frame(self.root)
-        self.mainFrame.columnconfigure(0, weight=1)
-        
-        self.__mainMenuPage()
- 
-        # # # # # # # # # # # # # Menus # # # # # # # # # # # # # 
+# # # # # # # # # # # # # Menus # # # # # # # # # # # # # 
         # Create Menu bar
         self.menubar = tk.Menu(self.root)
 
@@ -48,7 +52,12 @@ class BeeUI:
         self.filemenu.add_command(label="Quit Current Game", command=self.__checkQuit)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Close Program", command=self.__onClosing)
+        # For developer usage - assure removed for release
         self.filemenu.add_command(label="DEV Close", command=exit)
+
+# # # # # # # # # # # # # Developer Menus # # # # # # # # # # # # #
+# # # # # Assure that these are removed for release 
+# # # # # Or perhaps edited to be used by user
 
         # Word Menu for inside of action
         self.lettermenu = tk.Menu(tearoff=0)
@@ -61,15 +70,32 @@ class BeeUI:
         self.actionmenu.add_command(label="backspace", command=self.__backspace)
         self.actionmenu.add_cascade(label="Select a word", menu=self.lettermenu)
 
+# # # # # # # # # # # # # END Developer Menus # # # # # # # # # # # # #
+
         # Adding the submenus to the main menubar
         self.menubar.add_cascade(menu=self.filemenu, label='File')
         self.menubar.add_cascade(menu=self.actionmenu, label='Action')
 
         # Assigning menubar to the root window
         self.root.config(menu=self.menubar)
+    
+# # # # # # # # # # # # Display Main Menu # # # # # # # # # # # #
+
+        # Define the mainFrame of the window 
+        self.mainFrame = tk.Frame(self.root)
+        self.mainFrame.columnconfigure(0, weight=1)
+        
+        self.__mainMenuPage()
 
         # Display all
         self.root.mainloop()
+
+# # # # # # # # # # # # Class Methods # # # # # # # # # # # #
+
+    # Public method launch
+    # Launches the GUI.  FOR USAGE IN MAIN.PY
+    def launch(self):
+        BeeUI()
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
@@ -108,19 +134,49 @@ class BeeUI:
     def __backspace(self):
         self.entry.delete(len(self.entry.get()) - 1, tk.END)
 
+    # Private method __clearFrame
+    # Destroys all widgets in the mainFrame
+    # For usage when swapping screens.
     def __clearFrame(self):
         for widgets in self.mainFrame.winfo_children():
             widgets.destroy()
 
+    # Private method __checkQuit
+    # Pops a message box up to ask the user if they really want to return to the menu.
+    # In future will work for asking if the user wants to save before leaving a game.
     def __checkQuit(self):
         if messagebox.askyesno(title="Quit Current Game?", message="Do you really want to return to the menu?"):
             self.__mainMenuPage()
 
+    # Private method __shuffleText
+    # Shuffles the honeycomb on screen during gameplay.
+    # Modifies the word puzzle.
+    def __shuffleText(self):
+        restOfLetters = list(self.wordPuzzle[1:])
+        random.shuffle(restOfLetters)
+        self.wordPuzzle = self.wordPuzzle[0] + ''.join(restOfLetters)
+        self.btn1.configure(text=self.wordPuzzle[3], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
+        self.btn2.configure(text=self.wordPuzzle[1], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
+        self.btn3.configure(text=self.wordPuzzle[2], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
+        self.btn4.configure(text=self.wordPuzzle[0], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
+        self.btn5.configure(text=self.wordPuzzle[4], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
+        self.btn6.configure(text=self.wordPuzzle[5], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
+        self.btn7.configure(text=self.wordPuzzle[6], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
+
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # # 
 
+    # Private method __mainMenuPage
+    # Upon calling will clear the frame of anything currently
+    # on screen (in the mainFrame).  After that it will
+    # add all usefull information for the main menu
+    # to the mainFrame to be seen on screen, and will then display.
     def __mainMenuPage(self):
         self.__clearFrame()
+        
+        self.filemenu.entryconfig("Save Current Game", state="disabled")
+        self.filemenu.entryconfig("Save Scratch Game", state="disabled")
+        self.filemenu.entryconfig("Quit Current Game", state="disabled")
         # Label at the top of the screen
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
         self.welcome.grid(row=0, column=0)
@@ -135,11 +191,23 @@ class BeeUI:
 
         self.mainFrame.pack(fill='x')
 
+    # Private method __gamePage
+    # Upon calling will clear the frame of anything currently
+    # on screen (in the mainFrame).  After that it will
+    # add all usefull information for the current game
+    # to the mainFrame to be seen on screen, and will then display.
     def __gamePage(self):
         self.__clearFrame()
 
-        # Placeholder wordPuzzle
-        wordPuzzle = ['v', 'o', 'l', 'c', 'a', 'n', 's']
+        # Allows usage of some filemenu options
+        self.filemenu.entryconfig("Save Current Game", state="normal")
+        self.filemenu.entryconfig("Save Scratch Game", state="normal")
+        self.filemenu.entryconfig("Quit Current Game", state="normal")
+
+        # Variables that will be required:
+        # Placeholder self.wordPuzzle
+        self.wordPuzzle = "volcans"
+
         # Label at the top of the screen
         self.rankFrame = tk.Frame(self.mainFrame)
         self.rankFrame.columnconfigure(0, weight=1)
@@ -161,8 +229,8 @@ class BeeUI:
         self.pnts.grid(row=1, column=0)
         self.pointVal.grid(row=1, column=1)
 
-        self.rankFrame.grid(row=0, column=0)
-        self.pointFrame.grid(row=2, column=0)
+        self.rankFrame.grid(row=0, column=0, pady=5)
+        self.pointFrame.grid(row=2, column=0, pady=5)
 
 
         # Frame for entry box and backspace button
@@ -180,11 +248,11 @@ class BeeUI:
         self.bckspce.grid(row=0, column=1, sticky=tk.W+tk.E)
 
         # Displaying entryframe on screen.
-        self.entryframe.grid(row=3, column=0)
+        self.entryframe.grid(row=3, column=0, pady=5)
 
         # Submit guess button creation and display
         self.sub = tk.Button(self.mainFrame, text="Submit Guess", font=('Arial', 18), command=lambda:self.__submitGuess())
-        self.sub.grid(row=4, column=0)
+        self.sub.grid(row=4, column=0, pady=5)
 
         # Creation of frame for the honeycomb
         self.buttonframe = tk.Frame(self.mainFrame)
@@ -192,30 +260,35 @@ class BeeUI:
         self.buttonframe.columnconfigure(1, weight=1)
 
         # Defining each of the 7 buttons.  btn4 is the required letter.
-        self.btn1 = tk.Button(self.buttonframe, text=wordPuzzle[1], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[1]))
+        self.btn1 = tk.Button(self.buttonframe, text=self.wordPuzzle[1], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
         self.btn1.grid(row=0, column=0, columnspan=2, sticky=tk.W+tk.E)
 
-        self.btn2 = tk.Button(self.buttonframe, text=wordPuzzle[2], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[2]))
+        self.btn2 = tk.Button(self.buttonframe, text=self.wordPuzzle[2], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
         self.btn2.grid(row=1, column=0, sticky=tk.W+tk.E)
 
-        self.btn3 = tk.Button(self.buttonframe, text=wordPuzzle[3], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[3]))
+        self.btn3 = tk.Button(self.buttonframe, text=self.wordPuzzle[3], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
         self.btn3.grid(row=1, column=1, sticky=tk.W+tk.E)
 
-        self.btn4 = tk.Button(self.buttonframe, text=wordPuzzle[0], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[0]))
+        self.btn4 = tk.Button(self.buttonframe, text=self.wordPuzzle[0], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
         self.btn4.grid(row=2, column=0, columnspan=2, sticky=tk.W+tk.E)
 
-        self.btn5 = tk.Button(self.buttonframe, text=wordPuzzle[4], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[4]))
+        self.btn5 = tk.Button(self.buttonframe, text=self.wordPuzzle[4], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
         self.btn5.grid(row=3, column=0, sticky=tk.W+tk.E)
 
-        self.btn6 = tk.Button(self.buttonframe, text=wordPuzzle[5], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[5]))
+        self.btn6 = tk.Button(self.buttonframe, text=self.wordPuzzle[5], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
         self.btn6.grid(row=3, column=1, sticky=tk.W+tk.E)
 
-        self.btn7 = tk.Button(self.buttonframe, text=wordPuzzle[6], font=('Arial', 18), command=lambda:self.__setText(wordPuzzle[6]))
+        self.btn7 = tk.Button(self.buttonframe, text=self.wordPuzzle[6], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
         self.btn7.grid(row=4, column=0, columnspan=2, sticky=tk.W+tk.E)
 
         # Display the honeycomb frame to window
-        self.buttonframe.grid(row=5, column=0, ipadx=150)
+        self.buttonframe.grid(row=5, column=0, ipadx=150, pady=5)
+
+        self.buttonShuffle = tk.Button(self.mainFrame, text="Shuffle", font=('Arial', 18), bg=('#FAF884'), command=lambda:self.__shuffleText())
+        self.buttonShuffle.grid(row=6, pady=5)
 
         self.mainFrame.pack(fill='x')
 
-BeeUI()
+# End class
+# ASSURE YOU REMOVE THIS OR COMMENT IT OUT AFTER IMPLEMENTATION INTO MAIN:
+#BeeUI()
