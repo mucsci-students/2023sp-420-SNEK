@@ -240,8 +240,9 @@ def main():
     if len(sys.argv) == 1:
         bee = BeeUI()
         myGameController = GUIGameController()
+        bee.setController(myGameController)
 
-        bee.launch(myGameController)
+        bee.launch() # launch window
     # If first arg given is --cli
     elif sys.argv[1] == '--cli':
         myGameController = GameController()
