@@ -52,7 +52,12 @@ class BeeUI:
         self.filemenu.add_command(label="Quit Current Game", command=self.__checkQuit)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Close Program", command=self.__onClosing)
+        # For developer usage - assure removed for release
         self.filemenu.add_command(label="DEV Close", command=exit)
+
+# # # # # # # # # # # # # Developer Menus # # # # # # # # # # # # #
+# # # # # Assure that these are removed for release 
+# # # # # Or perhaps edited to be used by user
 
         # Word Menu for inside of action
         self.lettermenu = tk.Menu(tearoff=0)
@@ -64,6 +69,8 @@ class BeeUI:
         self.actionmenu.add_command(label="submitGuess", command=self.__submitGuess)
         self.actionmenu.add_command(label="backspace", command=self.__backspace)
         self.actionmenu.add_cascade(label="Select a word", menu=self.lettermenu)
+
+# # # # # # # # # # # # # END Developer Menus # # # # # # # # # # # # #
 
         # Adding the submenus to the main menubar
         self.menubar.add_cascade(menu=self.filemenu, label='File')
@@ -192,6 +199,7 @@ class BeeUI:
     def __gamePage(self):
         self.__clearFrame()
 
+        # Allows usage of some filemenu options
         self.filemenu.entryconfig("Save Current Game", state="normal")
         self.filemenu.entryconfig("Save Scratch Game", state="normal")
         self.filemenu.entryconfig("Quit Current Game", state="normal")
