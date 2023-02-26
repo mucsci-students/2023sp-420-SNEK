@@ -57,5 +57,5 @@ class WordNotFoundException(Exception):
 
 # MAIN #########################################
 class InvalidArgumentException(Exception):
-    print("Raised when an invalid argument is passed to the main call. Possible args: --cli (Launches in CLI mode).")
+    "Raised when an invalid argument is passed to the main call. Possible args: --cli (Launches in CLI mode)."
     pass
