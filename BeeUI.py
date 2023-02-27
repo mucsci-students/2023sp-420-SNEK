@@ -191,7 +191,7 @@ class BeeUI:
         # Create buttons for navigating menus
         self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__gamePage)
         self.loadGameBtn = tk.Button(self.mainFrame, border='0', image=self.loadImg, command=self.__gamePage)
-        self.helpBtn = tk.Button(self.mainFrame, border='0', image=self.helpImg)
+        self.helpBtn = tk.Button(self.mainFrame, border='0', image=self.helpImg, command=self.__howToPlayPage)
         self.exitGameBtn = tk.Button(self.mainFrame, border='0', image=self.exitImg, command=self.__onClosing)
 
         # Display buttons on main menu
@@ -202,6 +202,51 @@ class BeeUI:
 
         # Display mainFrame
         self.mainFrame.pack(fill='x')
+
+    # Private method __howToPlayPage
+    # Upon calling will clear the frame of anything currenlty
+    # on screen (in the mainFrame).  After that it will
+    # add all usefull information for the how to play
+    # instructions to the mainFrame to be seen on screen,
+    # and will then display.
+    def __howToPlayPage(self):
+        self.__clearFrame()
+
+        # Instructions #
+
+        #Label at the top of the screen
+        self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
+        self.welcome.pack()
+
+        self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t\t\t ", font=('Arial bold', 24))
+        self.howToLabel.pack()
+
+        # This will probably be changed from text to include an image of the gameplay
+        # with labels on what different options in game do.
+        self.instruct = tk.Label(self.mainFrame, font=('Arial', 18), \
+        text='Welcome! You will be given a word puzzle with a \n\
+        bunch of letter arranged in a honeycomb pattern.  Your\n\
+        goal is to make as many words as possible utilizing the\n\
+        middle letter as a required letter, so every word that you guess\n\
+        will need to include that letter.  You may type into the word\n\
+        field, or press the honeycomb buttons on screen.  You may also\n\
+        press the submit button on screen, or "enter" on your keyboard\n\
+        to submit your current guess.\n\n\
+        Every puzzle generated has a corresponding pangram that is\n\
+        generated, and will contain every letter from the honeycomb.')
+
+        self.instruct.pack(anchor='w')
+
+        # Designs #
+        # Go Back Button #
+        self.goBackImg = Image.open('img/goBack.png')
+        self.goBackImg = self.goBackImg.resize((140, 51))
+        self.goBackSized = ImageTk.PhotoImage(self.goBackImg)
+
+        self.goBack = tk.Button(self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
+        self.goBack.pack()
+
+
 
     # Private method __gamePage
     # Upon calling will clear the frame of anything currently
