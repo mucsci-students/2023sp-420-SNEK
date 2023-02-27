@@ -1,129 +1,189 @@
 # gameController class to handle functionailty of the Puzzle
 # Stephen Clugston
-
 import random
+
 from Puzzle import Puzzle
+from Commands import *
 from customExcept import *
-import string
+import UserInterface
+from DataSource import DataSource
+from SaveAndLoad import SaveAndLoad
 
 
 class GameController:
+    __EXIT_MSG = "Do you want to exit the game? (You'll be able to save it)"
+    __SAVE_MSG = "Do you want to save the game?"
+    __OVERRIDE_MSG = "Do you want to overwrite the game?"
+    __STILL_LOAD_MSG = "Do you want to load another game?"
+    __NO_GAME_TITLE = "Not Currently in game:"
 
-    # Class Attributes
-    gameOver = False
+    def __NO_GAME_DESC(self, description):
+        return f"You can't {description} a game if you are not playing one."
 
-    def __init__(self) -> None:
-        self.puzzle = Puzzle()
-        self.lableList = ["Beginner", "Good Start", "Moving Up", "Good",
-                          "Solid", "Nice", "Great", "Amazing", "Genius"]
+    def __init__(self, dataSource: DataSource) -> None:
+        self.myPuzzle: Puzzle = None
+        self.myUserInterface = None
+        self.isPlaying = False
+        self.myDataSource: DataSource = dataSource
 
-    def setStatus(self, status):
-        self.puzzle.status = status
+    def setUserInterface(self, myUserInterface: UserInterface.UserInterface):
+        self.myUserInterface = myUserInterface
 
-    def __rankDict(self, maxPoints):
-        n = len(self.lableList)
-        if maxPoints < (n - 1):
-            return None
-
-        rankingFunction: function = lambda x: (maxPoints/((n-1)**2)) * x**2
-
-        pointList = [round(rankingFunction(i)) for i in range(n)]
-        for i in range(1, n-1):
-            if pointList[i] <= pointList[i-1]:
-                pointList[i] += (pointList[i-1] - pointList[i] + 1)
-                pointList[i+1] -= (pointList[i-1] - pointList[i] + 1)
-
-        rankDict = dict(zip(self.lableList, pointList))
-        return rankDict
-
-    # Guess function to handle the functionailty of making a guess.
-    # Stephen Clugston
-
-    def setGameOver(self):
-        self.gameOver = False
-
-    def guess(self, userGuess: str):
-        if len(userGuess) >= 4:
-
-            if self.puzzle.wordPuzzle[0] in list(userGuess):
-                rankDict = self.__rankDict(self.puzzle.numberOfLetters)
-
-                # If this guess is a valid correct guess
-                if not userGuess in self.puzzle.foundWords:
-
-                    if userGuess in self.puzzle.wordsList:
-
-                        # If this guess is the last possible guess, increment points, decrement wordListSize and set class variable gameOver to true
-                        if self.puzzle.wordListSize == 1:
-                            self.puzzle.points += len(userGuess)
-                            level = self.lableList[0]
-                            for i, rank in enumerate(self.lableList):
-                                if self.puzzle.points == rankDict[rank]:
-                                    level = rank
-                                    break
-                                elif self.puzzle.points < rankDict[rank]:
-                                    level = self.lableList[i-1]
-                                    break
-                            self.puzzle.status = level
-                            self.puzzle.wordListSize = self.puzzle.wordListSize - 1
-                            self.gameOver = True
-                            return self.gameOver
-
-                        # If there are still possible guesses, increments points, and add the word to found words
-                        self.puzzle.points += len(userGuess)
-                        level = self.lableList[0]
-                        for i, rank in enumerate(self.lableList):
-                            if self.puzzle.points == rankDict[rank]:
-                                level = rank
-                                break
-                            elif self.puzzle.points < rankDict[rank]:
-                                level = self.lableList[i-1]
-                                break
-                            self.puzzle.status = level
-                        self.puzzle.wordListSize = self.puzzle.wordListSize - 1
-                        self.puzzle.foundWords.append(userGuess)
-
-                        return True
-                    else:
-                        print(userGuess, "is incorrect!")
-                        return False
-                else:
-                    print(userGuess, "has already been guessed!")
-                    return False
-
-            else:
-                print(userGuess, "does not have the required letter")
-                return False
-
+    def processInput(self, userInput: str) -> None:
+        if Commands.isCommand(userInput):
+            self.processCommand(userInput)
+        elif not self.isPlaying:
+            self.myUserInterface.showError(
+                "That is not a command, to show commands, type !help")
         else:
-            print(userGuess, "is less than 4 letters long")
-            return False
+            self.processGuess(userInput)
 
-    """
-    shuffle function
-    Bogdan Balagurak
-    this function takes the list of letters of the Puzzle and
-    shuffles the letters around if the user enters the shuffle command
-    in the CLI.
-    """
-    # tests
-    # letters = ['a','b','c','d','e','f','g']
-    # userInput = input()
+    def __askExitAndSave(self) -> bool:
+        exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
+        if exitGame:
+            self.playing = False
+            save = self.myUserInterface.getConfirmation("Do you want to save?")
+            if save:
+                self.__saveFile()
+        return exitGame
 
-    # shuffles letters in list
-    # using random.shuffle.
-    # first slice list where all but 0 is rearranged
-    # 0 is the center letter that is not
-    # supposed to be rearranged.
-    # after slice, use random shuffle on the
-    # new list that was created and then return
-    # element 0 form original list and join the
-    # shuffled list to it.
-    def shuffle(self):
-        restOfLetters = list(self.puzzle.wordPuzzle[1:])
-        random.shuffle(restOfLetters)
-        letters = [self.puzzle.wordPuzzle[0]] + restOfLetters
-        self.puzzle.setWordPuzzle(letters)
+    def __saveFile(self) -> None:
+        overwrite = True
+        scratchMode = self.myUserInterface.getConfirmation(
+            "How do you want to save?", okStr="scratch", nokStr="current")
+        fileName = self.myUserInterface.getSaveFileName()
+        if SaveAndLoad.isSaved(fileName):
+            self.myUserInterface.showMessage(
+                "This file already exists")
+            overwrite = self.myUserInterface.getConfirmation(
+                "Do you want to overwrite it?")
+        if overwrite:
+            if scratchMode:
+                SaveAndLoad.saveScratch(self.myPuzzle, fileName)
+            else:
+                SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
 
-    def getPuzzle(self):
-        return self.puzzle
+    def __createGame(self, newBaseWord):
+        newPuzzleLetters = list(set(list(newBaseWord)))
+        random.shuffle(newPuzzleLetters)
+        self.myPuzzle = Puzzle(
+            newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]))
+        self.playing = True
+
+    def processCommand(self, commandStr: str) -> None:
+        command = Commands.getCommandFromName(commandStr)
+        if command == Commands.EXIT:
+            if self.playing:
+                self.__askExitAndSave()
+            else:
+                self.myUserInterface.quitInterface()
+
+        elif command == Commands.HELP:
+            self.myUserInterface.showHelp()
+
+        elif command == Commands.LOAD:
+            if self.playing:
+                exitGame = self.myUserInterface.getConfirmation(
+                    self.__EXIT_MSG)
+                if exitGame:
+                    self.playing = False
+                    save = self.myUserInterface.getConfirmation(
+                        "Do you want to save the game?")
+                    if save:
+                        self.__saveFile()
+
+            loadingFile = self.myUserInterface.getSaveFileName()
+            if SaveAndLoad.isSaved(loadingFile):
+                self.myPuzzle = SaveAndLoad.load(loadingFile)
+                self.isPlaying = True
+            else:
+                self.myUserInterface.showError("That file does not exist.")
+
+        elif command == Commands.SAVE:
+            if self.playing:
+                self.__saveFile()
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save"))
+
+        elif command == Commands.RANK:
+            if self.playing:
+                self.myUserInterface.showRanking(
+                    self.myPuzzle.getRankingsAndPoints())
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("the rank of"))
+
+        elif command == Commands.GUESSED_WORDS:
+            if self.playing:
+                self.myUserInterface.showGuessedWords(
+                    self.myPuzzle.getGuessedWords())
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show guessed words"))
+
+        elif command == Commands.SHUFFLE:
+            if self.playing:
+                self.myPuzzle.shuffle()
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("shuffle letters of"))
+
+        elif command == Commands.NEW_GAME_RND:
+            if self.playing:
+                exitGame = self.__askExitAndSave()
+                if exitGame:
+                    self.playing = False
+                    return
+
+            newBaseWord = self.myDataSource.getRandomWord()
+            self.__createGame(newBaseWord)
+
+        elif command == Commands.NEW_GAME_WRD:
+            if self.playing:
+                exitGame = self.__askExitAndSave()
+                if (exitGame):
+                    self.playing = False
+                    return
+
+            newBaseWord = self.myUserInterface.getBaseWord()
+            self.__createGame(newBaseWord)
+
+        elif command == Commands.SHOW_STATUS:
+            if self.playing:
+                self.myUserInterface.showStatus(
+                    self.myPuzzle.getCurrentRank(), self.myPuzzle.getCurrentPoints())
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+        else:
+            self.myUserInterface.showError(
+                "Not a valid command:", 'Type "!help" to show all possibilities')
+
+    def processGuess(self, userGuess: str):
+        if len(userGuess) < Puzzle.MIN_WRD_LEN:
+            self.myUserInterface.showWrongGuess(
+                f"The word doesn't have {Puzzle.MIN_WRD_LEN} letters.")
+            return
+        requiredLetter = self.myPuzzle.getPuzzleLetters()[0]
+        if requiredLetter not in list(userGuess):
+            self.myUserInterface.showWrongGuess(
+                f"The word doesn't have the required letter ({requiredLetter}).")
+            return
+
+        if userGuess in self.myPuzzle.getGuessedWords():
+            self.myUserInterface.showWrongGuess(
+                f"The word has already been guessed.")
+            return
+
+        if userGuess not in self.myPuzzle.getWordList():
+            self.myUserInterface.showWrongGuess(f"The word is not recognized.")
+            return
+
+        self.myPuzzle.addGuessWord(userGuess)
+        currentPoints = self.myPuzzle.getCurrentPoints()
+        maxPoints = self.myPuzzle.getMaxPoints()
+        self.myUserInterface.showCorrectGuess()
+        if currentPoints == maxPoints:
+            self.myUserInterface.showEnd()
+            self.isPlaying = False
