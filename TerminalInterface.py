@@ -1,6 +1,5 @@
 from UserInterface import UserInterface
 from colorama import Fore, Style
-from Commands import Commands
 
 
 class TerminalInterface(UserInterface):
@@ -48,6 +47,9 @@ Commands:
             userInput = self.__getUserInput()
             self.myController.processInput(userInput)
 
+    def quitInterface(self):
+        self.quit = True
+
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PREFIX + message + " ").strip()
         return userInput
@@ -61,33 +63,35 @@ Commands:
             print("\t" + description)
 
     def getBaseWord(self) -> str:
-        baseWord = self.__getUserInput(" Base word:")
+        self.__boldPrint("Base word: ")
+        baseWord = self.__getUserInput()
         return baseWord
 
-    def showStatus(self, rank: str, points: int) -> None:
-        self.__boldPrint(rank + ": " + str(points))
+    def showStatus(self, rank: str, currentPoints: int) -> None:
+        self.__boldPrint(rank + ": " + str(currentPoints))
 
-    def showProgress(self, rank: str, thresholds: list[int], points: int, maxPoints: int) -> None:
+    def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
         print(" 🍯  ", end="")
-        if points > thresholds[1]:
+        if currentPoints > thresholds[0]:
             print(self.__DONE_PROGRESS + "╶──", end="")
         else:
             print(self.__LEFT_PROGRESS + "╶──", end="")
 
-        for rank, rankPoints in thresholds[1:-1]:
-            if points >= rankPoints:
+        maxPoints = thresholds[-1]
+        for rankPoints in thresholds[0:-1]:
+            if currentPoints >= rankPoints:
                 print(self.__DONE_PROGRESS + "╶──", end="")
             else:
                 print(self.__LEFT_PROGRESS + "╶──", end="")
 
-        if points >= thresholds[1]:
+        if currentPoints >= maxPoints:
             print(self.__DONE_PROGRESS + "  🐝")
         else:
             print(self.__LEFT_PROGRESS + "  🐝")
 
-    def showPuzzle(self, letters: str) -> None:
-        myLetters = letters.upper()
+    def showPuzzle(self, lettersStr: str) -> None:
+        myLetters = lettersStr.upper()
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
@@ -118,7 +122,7 @@ Commands:
     def showRanking(self, rankingsAndPoints: dict[str, int]) -> None:
         print("The ranking points change based on the specific game you are playing:")
         self.__boldPrint("Ranking for this game:")
-        for label, points in rankingsAndPoints:
+        for label, points in rankingsAndPoints.items():
             print("\t" + f"{label:10}" + ": " + str(points))
 
     def showEnd(self) -> None:
@@ -132,7 +136,7 @@ Commands:
         self.__boldPrint("Exiting...")
 
     def showWrongGuess(self, message="") -> None:
-        self.__boldPrint("Wrong guess", end="")
+        self.__boldPrint("Wrong guess")
         if message == "":
             print("...")
         else:
@@ -155,10 +159,10 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.getUserInput()).lower()
+        choice = str(self.__getUserInput()).lower()
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
-            choice = self.getUserInput().lower()
+            choice = self.__getUserInput().lower()
 
         confirmation = choice == okStr
         return confirmation

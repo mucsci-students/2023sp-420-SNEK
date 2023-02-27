@@ -19,15 +19,7 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def getUserInput(self):
-        pass
-
-    @abstractmethod
     def getBaseWord(self):
-        pass
-
-    @abstractmethod
-    def getCommand(self):
         pass
 
     @abstractmethod
@@ -48,10 +40,6 @@ class UserInterface(ABC):
 
     @abstractmethod
     def showHelp(self):
-        pass
-
-    @abstractmethod
-    def showFoundWords(self):
         pass
 
     @abstractmethod
