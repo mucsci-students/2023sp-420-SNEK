@@ -189,7 +189,7 @@ class BeeUI:
         self.exitImg = PhotoImage(file='img/exit.png')
 
         # Create buttons for navigating menus
-        self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__gamePage)
+        self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__preGamePage)
         self.loadGameBtn = tk.Button(self.mainFrame, border='0', image=self.loadImg, command=self.__gamePage)
         self.helpBtn = tk.Button(self.mainFrame, border='0', image=self.helpImg, command=self.__howToPlayPage)
         self.exitGameBtn = tk.Button(self.mainFrame, border='0', image=self.exitImg, command=self.__onClosing)
@@ -246,14 +246,39 @@ class BeeUI:
         self.goBack = tk.Button(self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
         self.goBack.pack()
 
+    def __preGamePage(self):
+        self.__clearFrame()
 
+        #Label at the top of the screen
+        self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
+        self.welcome.pack()
+
+        # New Game Random
+        self.randBtnImg = PhotoImage(file='img/newRand.png')
+        self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=self.__gamePage)
+        self.randBtn.pack(pady=50)
+
+        # New Game Custom
+        self.newWordGrid = tk.Frame(self.mainFrame)
+        self.newWordGrid.columnconfigure(0, weight=1)
+        self.newWordGrid.columnconfigure(0, weight=1)
+
+        self.newWordLabel = tk.Label(self.newWordGrid, font=('Arial', 14), text='Type custom word here: ')
+        self.newWordLabel.grid(row=0, column=0)
+        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 12))
+        self.newWord.grid(row=0, column=1)
+
+        self.customBtnImg = PhotoImage(file='img/newCustom.png')
+        self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.__gamePage(self.newWord.get()))
+        self.customBtn.grid(row=1, columnspan=2)
+        self.newWordGrid.pack(pady=50)
 
     # Private method __gamePage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
     # add all usefull information for the current game
     # to the mainFrame to be seen on screen, and will then display.
-    def __gamePage(self):
+    def __gamePage(self, word='rnd'):
         self.__clearFrame()
 
         # Allows usage of some filemenu options
@@ -263,7 +288,12 @@ class BeeUI:
 
         # Variables that will be required:
         # Placeholder self.wordPuzzle
-        self.wordPuzzle = "volcans"
+        if word == 'rnd':
+            #self.wordPuzzle = myGameController.getRndWord()
+            self.wordPuzzle = "volcans"
+        else:
+            #self.wordPuzzle = myGameController.getWord(word)
+            self.wordPuzzle = word
 
         # Label at the top of the screen
         self.rankFrame = tk.Frame(self.mainFrame)
