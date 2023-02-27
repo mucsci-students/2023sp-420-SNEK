@@ -14,6 +14,14 @@ class DataSource:
     numberOfLetters = 0
     wordList = dict()  
 
+    class Singleton(object):
+        _instance = None
+        def __new__(cls, mandatoryLetter=None, optionalLetters=None):
+            if not hasattr(cls, 'instance'):
+                cls.instance = super(DataSource, cls).__new__(cls,mandatoryLetter, optionalLetters)
+            return cls.instance
+
+
     def __init__(self, mandatoryLetter=None, optionalLetters=None):
         if mandatoryLetter == None or optionalLetters == None:
             return
