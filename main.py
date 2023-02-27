@@ -4,6 +4,9 @@ from GameController import *
 from Commands import Commands
 from TerminalInterface import TerminalInterface
 from State import State
+from customExcept import InvalidArgumentException
+from BeeUI import *
+import sys
 
 
 class Main():
@@ -233,20 +236,37 @@ class Main():
 
 
 def main():
-    myGameController = GameController()
-    myUserInterface = TerminalInterface()
+    # If no arguments are given
+    if len(sys.argv) == 1:
+        bee = BeeUI()
+        myGameController = GUIGameController()
+        bee.setController(myGameController)
 
-    myMain = Main(myGameController, myUserInterface)
+        bee.launch() # launch window
+    # If first arg given is --cli
+    elif sys.argv[1] == '--cli':
+        myGameController = GameController()
+        myUserInterface = TerminalInterface()
 
-    myUserInterface.showHelp()
-    while not myMain.exitProgram:
-        try:
-            command = myUserInterface.getCommand()
-            myMain.processCommand(command)
-        except KeyboardInterrupt:
-            print()
-            exit()
+        myMain = Main(myGameController, myUserInterface)
 
+        myUserInterface.showHelp()
+        while not myMain.exitProgram:
+            try:
+                command = myUserInterface.getCommand()
+                myMain.processCommand(command)
+            except KeyboardInterrupt:
+                print()
+                exit()
+    # Any other case
+    else:
+        print("Raised when an invalid argument is passed to the main call.\n      Possible args: --cli (Launches in CLI mode).")
+        raise InvalidArgumentException
 
+# BeeUI will launch automatically without any arguments
+# if the --cli flag is passed behind (py main.py --cli),
+# the game will launch in CLI mode.
+# otherwise, an InvalidArgumentException will be raised.
 if __name__ == "__main__":
     main()
+
