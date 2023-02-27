@@ -3,6 +3,21 @@ from abc import ABC, abstractmethod
 
 class UserInterface(ABC):
 
+    def __init__(self) -> None:
+        self.myController = None
+        self.quit = False
+
+    def setController(self, myController):
+        self.myController = myController
+
+    @abstractmethod
+    def launch(self):
+        pass
+
+    @abstractmethod
+    def quitInterface(self):
+        pass
+
     @abstractmethod
     def getUserInput(self):
         pass
@@ -69,4 +84,8 @@ class UserInterface(ABC):
 
     @abstractmethod
     def showMessage(self):
+        pass
+
+    @abstractmethod
+    def showCorrectGuess(self):
         pass
