@@ -256,7 +256,7 @@ class BeeUI:
         # New Game Random
         self.randBtnImg = PhotoImage(file='img/newRand.png')
         self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=self.__gamePage)
-        self.randBtn.pack(pady=50)
+        self.randBtn.pack(pady=25)
 
         # New Game Custom
         self.newWordGrid = tk.Frame(self.mainFrame)
@@ -271,7 +271,11 @@ class BeeUI:
         self.customBtnImg = PhotoImage(file='img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.__gamePage(self.newWord.get()))
         self.customBtn.grid(row=1, columnspan=2)
-        self.newWordGrid.pack(pady=50)
+        self.newWordGrid.pack(pady=25)
+
+        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
+        self.goBackBtn.pack(pady=25)
 
     # Private method __gamePage
     # Upon calling will clear the frame of anything currently
