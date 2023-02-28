@@ -27,6 +27,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
+from PIL import Image,ImageTk
 import random
 
 class BeeUI:
@@ -83,7 +84,6 @@ class BeeUI:
 
         # Define the mainFrame of the window 
         self.mainFrame = tk.Frame(self.root)
-        self.mainFrame.columnconfigure(0, weight=1)
         
         self.__mainMenuPage()
 
@@ -155,13 +155,13 @@ class BeeUI:
         restOfLetters = list(self.wordPuzzle[1:])
         random.shuffle(restOfLetters)
         self.wordPuzzle = self.wordPuzzle[0] + ''.join(restOfLetters)
-        self.btn1.configure(text=self.wordPuzzle[3], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
-        self.btn2.configure(text=self.wordPuzzle[1], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn3.configure(text=self.wordPuzzle[2], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
-        self.btn4.configure(text=self.wordPuzzle[0], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn5.configure(text=self.wordPuzzle[4], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
-        self.btn6.configure(text=self.wordPuzzle[5], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
-        self.btn7.configure(text=self.wordPuzzle[6], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
+        self.btn1Letter.configure(text=self.wordPuzzle[3].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
+        self.btn2Letter.configure(text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
+        self.btn3Letter.configure(text=self.wordPuzzle[2].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
+        self.btn4Letter.configure(text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
+        self.btn5Letter.configure(text=self.wordPuzzle[4].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
+        self.btn6Letter.configure(text=self.wordPuzzle[5].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
+        self.btn7Letter.configure(text=self.wordPuzzle[6].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
 
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # # 
@@ -177,26 +177,112 @@ class BeeUI:
         self.filemenu.entryconfig("Save Current Game", state="disabled")
         self.filemenu.entryconfig("Save Scratch Game", state="disabled")
         self.filemenu.entryconfig("Quit Current Game", state="disabled")
+
         # Label at the top of the screen
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
-        self.welcome.grid(row=0, column=0)
+        self.welcome.pack()
 
-        self.newGameBtn = tk.Button(self.mainFrame, text="New Game", font=('Arial', 25), command=self.__gamePage)
-        self.loadGameBtn = tk.Button(self.mainFrame, text="Load Game", font=('Arial', 25), command=self.__gamePage)
-        self.exitGameBtn = tk.Button(self.mainFrame, text="Exit Game", font=('Arial', 25), command=self.__onClosing)
+        # Load images necessary for buttons
+        self.newImg = PhotoImage(file='img/new.png')
+        self.loadImg = PhotoImage(file='img/load.png')
+        self.helpImg = PhotoImage(file='img/how.png')
+        self.exitImg = PhotoImage(file='img/exit.png')
 
-        self.newGameBtn.grid(row=1, pady=25)
-        self.loadGameBtn.grid(row=2, pady=25)
-        self.exitGameBtn.grid(row=3, pady=25)
+        # Create buttons for navigating menus
+        self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__preGamePage)
+        self.loadGameBtn = tk.Button(self.mainFrame, border='0', image=self.loadImg, command=self.__gamePage)
+        self.helpBtn = tk.Button(self.mainFrame, border='0', image=self.helpImg, command=self.__howToPlayPage)
+        self.exitGameBtn = tk.Button(self.mainFrame, border='0', image=self.exitImg, command=self.__onClosing)
 
+        # Display buttons on main menu
+        self.newGameBtn.pack(pady=7)
+        self.loadGameBtn.pack(pady=7)
+        self.helpBtn.pack(pady=7)
+        self.exitGameBtn.pack(pady=7)
+
+        # Display mainFrame
         self.mainFrame.pack(fill='x')
+
+    # Private method __howToPlayPage
+    # Upon calling will clear the frame of anything currenlty
+    # on screen (in the mainFrame).  After that it will
+    # add all usefull information for the how to play
+    # instructions to the mainFrame to be seen on screen,
+    # and will then display.
+    def __howToPlayPage(self):
+        self.__clearFrame()
+
+        # Instructions #
+
+        #Label at the top of the screen
+        self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
+        self.welcome.pack()
+
+        self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t\t\t ", font=('Arial bold', 24))
+        self.howToLabel.pack()
+
+        # This will probably be changed from text to include an image of the gameplay
+        # with labels on what different options in game do.
+        self.instruct = tk.Label(self.mainFrame, font=('Arial', 18), \
+        text='Welcome! You will be given a word puzzle with a \n\
+        bunch of letter arranged in a honeycomb pattern.  Your\n\
+        goal is to make as many words as possible utilizing the\n\
+        middle letter as a required letter, so every word that you guess\n\
+        will need to include that letter.  You may type into the word\n\
+        field, or press the honeycomb buttons on screen.  You may also\n\
+        press the submit button on screen, or "enter" on your keyboard\n\
+        to submit your current guess.\n\n\
+        Every puzzle generated has a corresponding pangram that is\n\
+        generated, and will contain every letter from the honeycomb.')
+
+        self.instruct.pack(anchor='w')
+
+        # Designs #
+        # Go Back Button #
+        self.goBackImg = Image.open('img/goBack.png')
+        self.goBackImg = self.goBackImg.resize((140, 51))
+        self.goBackSized = ImageTk.PhotoImage(self.goBackImg)
+
+        self.goBack = tk.Button(self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
+        self.goBack.pack()
+
+    def __preGamePage(self):
+        self.__clearFrame()
+
+        #Label at the top of the screen
+        self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
+        self.welcome.pack()
+
+        # New Game Random
+        self.randBtnImg = PhotoImage(file='img/newRand.png')
+        self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=self.__gamePage)
+        self.randBtn.pack(pady=25)
+
+        # New Game Custom
+        self.newWordGrid = tk.Frame(self.mainFrame)
+        self.newWordGrid.columnconfigure(0, weight=1)
+        self.newWordGrid.columnconfigure(0, weight=1)
+
+        self.newWordLabel = tk.Label(self.newWordGrid, font=('Arial', 14), text='Type custom word here: ')
+        self.newWordLabel.grid(row=0, column=0)
+        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 12))
+        self.newWord.grid(row=0, column=1)
+
+        self.customBtnImg = PhotoImage(file='img/newCustom.png')
+        self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.__gamePage(self.newWord.get()))
+        self.customBtn.grid(row=1, columnspan=2)
+        self.newWordGrid.pack(pady=25)
+
+        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
+        self.goBackBtn.pack(pady=25)
 
     # Private method __gamePage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
     # add all usefull information for the current game
     # to the mainFrame to be seen on screen, and will then display.
-    def __gamePage(self):
+    def __gamePage(self, word='rnd'):
         self.__clearFrame()
 
         # Allows usage of some filemenu options
@@ -206,31 +292,40 @@ class BeeUI:
 
         # Variables that will be required:
         # Placeholder self.wordPuzzle
-        self.wordPuzzle = "volcans"
+        if word == 'rnd':
+            #self.wordPuzzle = myGameController.getRndWord()
+            self.wordPuzzle = "volcans"
+        else:
+            #self.wordPuzzle = myGameController.getWord(word)
+            self.wordPuzzle = word
 
         # Label at the top of the screen
         self.rankFrame = tk.Frame(self.mainFrame)
         self.rankFrame.columnconfigure(0, weight=1)
         self.rankFrame.columnconfigure(1, weight=1)
 
+        # Point value header
         self.pointFrame = tk.Frame(self.mainFrame)
         self.pointFrame.columnconfigure(0, weight=1)
         self.pointFrame.columnconfigure(1, weight=1)
 
+        # Defining header text labels
         self.rnklbl = tk.Label(self.rankFrame, text="You're a: ", font=('Arial', 18))
         self.rank = tk.Label(self.rankFrame, text="Beginner", font=('Arial', 18))
         self.progBar = tk.Label(self.mainFrame, font=('Arial', 18), text="🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯")
         self.pnts = tk.Label(self.pointFrame, text="Points: ", font=('Arial', 18))
         self.pointVal = tk.Label(self.pointFrame, text="0", font=('Arial', 18))
         
+        # Placing labels into rank and point frames
         self.rnklbl.grid(row=0, column=0)
         self.rank.grid(row=0, column=1)
-        self.progBar.grid(row=1, column=0)
         self.pnts.grid(row=1, column=0)
         self.pointVal.grid(row=1, column=1)
 
-        self.rankFrame.grid(row=0, column=0, pady=5)
-        self.pointFrame.grid(row=2, column=0, pady=5)
+        # Displaying game information to the screen
+        self.progBar.pack()
+        self.rankFrame.pack()
+        self.pointFrame.pack()
 
 
         # Frame for entry box and backspace button
@@ -243,52 +338,77 @@ class BeeUI:
         self.entry.bind('<KeyPress>', self.__shortcut)
         self.entry.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.entry.focus()
-        self.bck = PhotoImage(file='backspace.png')
-        self.bckspce = tk.Button(self.entryframe, image=self.bck, command=self.__backspace)
+        self.bck = PhotoImage(file='img/backspace.png')
+        self.bckspce = tk.Button(self.entryframe, border='0', image=self.bck, command=self.__backspace)
         self.bckspce.grid(row=0, column=1, sticky=tk.W+tk.E)
 
         # Displaying entryframe on screen.
-        self.entryframe.grid(row=3, column=0, pady=5)
+        self.entryframe.pack()
+
+        self.submitButtonImg = Image.open('img/submit.png')
+        self.submitButtonImg = self.submitButtonImg.resize((140, 51))
+        self.submitButtonSized = ImageTk.PhotoImage(self.submitButtonImg)
 
         # Submit guess button creation and display
-        self.sub = tk.Button(self.mainFrame, text="Submit Guess", font=('Arial', 18), command=lambda:self.__submitGuess())
-        self.sub.grid(row=4, column=0, pady=5)
+        self.sub = tk.Button(self.mainFrame, border='0', image=self.submitButtonSized, command=lambda:self.__submitGuess())
+        self.sub.pack()
 
         # Creation of frame for the honeycomb
         self.buttonframe = tk.Frame(self.mainFrame)
-        self.buttonframe.columnconfigure(0, weight=1)
-        self.buttonframe.columnconfigure(1, weight=1)
+
+        # Opening base image for the honeycombs
+        self.combImg = Image.open('img/comb.png')
+        self.combImg = self.combImg.resize((100, 100))
+        self.comb = ImageTk.PhotoImage(self.combImg)
 
         # Defining each of the 7 buttons.  btn4 is the required letter.
-        self.btn1 = tk.Button(self.buttonframe, text=self.wordPuzzle[1], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1.grid(row=0, column=0, columnspan=2, sticky=tk.W+tk.E)
+        self.btn1 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[1]))
+        self.btn1.place(y=0, x=150)
+        self.btn1Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
+        self.btn1Letter.place(y=29, x=184)
 
-        self.btn2 = tk.Button(self.buttonframe, text=self.wordPuzzle[2], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
-        self.btn2.grid(row=1, column=0, sticky=tk.W+tk.E)
+        self.btn2 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[2]))
+        self.btn2.place(x=50, y=60)
+        self.btn2Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[2].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
+        self.btn2Letter.place(x=86, y=90)
 
-        self.btn3 = tk.Button(self.buttonframe, text=self.wordPuzzle[3], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
-        self.btn3.grid(row=1, column=1, sticky=tk.W+tk.E)
+        self.btn3 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[3]))
+        self.btn3.place(x=250, y=60)
+        self.btn3Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[3].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
+        self.btn3Letter.place(x=286, y=90)
 
-        self.btn4 = tk.Button(self.buttonframe, text=self.wordPuzzle[0], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn4.grid(row=2, column=0, columnspan=2, sticky=tk.W+tk.E)
+        self.btn4 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[0]))
+        self.btn4.place(x=150, y=110)
+        self.btn4Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
+        self.btn4Letter.place(x=185, y=140)
 
-        self.btn5 = tk.Button(self.buttonframe, text=self.wordPuzzle[4], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
-        self.btn5.grid(row=3, column=0, sticky=tk.W+tk.E)
+        self.btn5 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[4]))
+        self.btn5.place(x=50, y=160)
+        self.btn5Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[4].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
+        self.btn5Letter.place(x=86, y=190)
 
-        self.btn6 = tk.Button(self.buttonframe, text=self.wordPuzzle[5], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
-        self.btn6.grid(row=3, column=1, sticky=tk.W+tk.E)
+        self.btn6 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[5]))
+        self.btn6.place(x=250, y=160)
+        self.btn6Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[5].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
+        self.btn6Letter.place(x=286, y=190)
 
-        self.btn7 = tk.Button(self.buttonframe, text=self.wordPuzzle[6], font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
-        self.btn7.grid(row=4, column=0, columnspan=2, sticky=tk.W+tk.E)
+        self.btn7 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[6]))
+        self.btn7.place(x=150, y=210)
+        self.btn7Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[6].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
+        self.btn7Letter.place(x=186, y=240)
 
         # Display the honeycomb frame to window
-        self.buttonframe.grid(row=5, column=0, ipadx=150, pady=5)
+        self.buttonframe.pack(ipadx=200, ipady=155)
 
-        self.buttonShuffle = tk.Button(self.mainFrame, text="Shuffle", font=('Arial', 18), bg=('#FAF884'), command=lambda:self.__shuffleText())
-        self.buttonShuffle.grid(row=6, pady=5)
+        self.shuffleButtonImg = Image.open('img/shuffle.png')
+        self.shuffleButtonImg = self.shuffleButtonImg.resize((140, 51))
+        self.shuffleButtonSized = ImageTk.PhotoImage(self.shuffleButtonImg)
+
+        self.buttonShuffle = tk.Button(self.mainFrame, border='0', image=self.shuffleButtonSized, command=lambda:self.__shuffleText())
+        self.buttonShuffle.pack()
 
         self.mainFrame.pack(fill='x')
 
 # End class
 # ASSURE YOU REMOVE THIS OR COMMENT IT OUT AFTER IMPLEMENTATION INTO MAIN:
-#BeeUI()
+BeeUI()
