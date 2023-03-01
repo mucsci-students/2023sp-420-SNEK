@@ -1,5 +1,6 @@
 from UserInterface import UserInterface
 from colorama import Fore, Style
+from Puzzle import Puzzle
 
 
 class TerminalInterface(UserInterface):
@@ -90,8 +91,8 @@ Commands:
         else:
             print(self.__LEFT_PROGRESS + "  🐝")
 
-    def showPuzzle(self, lettersStr: str) -> None:
-        myLetters = lettersStr.upper()
+    def showPuzzle(self, myPuzzle: Puzzle) -> None:
+        myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
