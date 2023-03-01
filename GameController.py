@@ -69,6 +69,7 @@ class GameController:
         self.myPuzzle = Puzzle(
             newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]))
         self.playing = True
+        self.myUserInterface.showPuzzle(self.myPuzzle)
 
     def processCommand(self, commandStr: str) -> None:
         command = Commands.getCommandFromName(commandStr)
@@ -96,6 +97,7 @@ class GameController:
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.isPlaying = True
+                self.myUserInterface.showPuzzle(self.myPuzzle)
             else:
                 self.myUserInterface.showError("That file does not exist.")
 
@@ -125,6 +127,7 @@ class GameController:
         elif command == Commands.SHUFFLE:
             if self.playing:
                 self.myPuzzle.shuffle()
+                self.myUserInterface.showPuzzle(self.myPuzzle)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("shuffle letters of"))
@@ -184,6 +187,7 @@ class GameController:
         currentPoints = self.myPuzzle.getCurrentPoints()
         maxPoints = self.myPuzzle.getMaxPoints()
         self.myUserInterface.showCorrectGuess()
+        self.myUserInterface.showPuzzle(self.myPuzzle)
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
             self.isPlaying = False
