@@ -126,8 +126,14 @@ class Puzzle:
         '''
         return self.currentRank
 
+    def getRankingsAndPoints(self) -> dict[str, int]:
+        ''' Output:
+                a dictionary containing the rank names and their thresholds.
+        '''
+        return self.rankingsAndPoints
+
     # Actually calculates the current rank
-    def __calcCurrentRank(self) -> str:
+    def calcCurrentRank(self) -> str:
         ''' Output:
                 the name of the current rank of the player.
         '''
@@ -151,7 +157,7 @@ class Puzzle:
         '''
         self.guessedWords.append(word)
         self.currentPoints += self.__pointsOf(word, self.puzzleLetters)
-        self.currentRank = self.__calcCurrentRank()
+        self.currentRank = self.calcCurrentRank()
 
     def getGuessedWords(self) -> list[str]:
         ''' Output:

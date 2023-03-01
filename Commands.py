@@ -16,6 +16,8 @@ class Commands(Enum):
     GUESSED_WORDS = auto()
     RANK = auto()
     SHOW_STATUS = auto()
+    UNDEFINED = auto()
+
 
     class Constant:  # use Constant(object) if in Python 2
         def __init__(self, value):
@@ -50,7 +52,7 @@ class Commands(Enum):
         else:
             commandWithoutMarker = name
 
-        commandConstant = Commands(cls.__CMD_DIC[commandWithoutMarker])
+        commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.UNDEFINED))
 
         return commandConstant
 
