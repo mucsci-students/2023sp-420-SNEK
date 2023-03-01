@@ -1,18 +1,15 @@
 from UserInterface import UserInterface
-from colorama import Fore, Back, Style
-from Commands import Commands
-from math import sqrt
+from colorama import Fore, Style
+from Puzzle import Puzzle
 
 
 class TerminalInterface(UserInterface):
 
     def __init__(self) -> None:
         super().__init__()
-        self.__CMD_PRFX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
+        self.__CMD_PREFIX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
         self.__DONE_PROGRESS = Fore.YELLOW + "⬢" + Style.RESET_ALL
         self.__LEFT_PROGRESS = "⬡" + Style.RESET_ALL
-        self.__RANK_LABELS = ["Beginner", "Good Start", "Moving Up", "Good",
-                              "Solid", "Nice", "Great", "Amazing", "Genius"]
         self.__HELP_TITLE = "\n\tSpelling Bee Game!              🍯 🐝"
         self.__HELP_STRING = '''
 
@@ -28,11 +25,11 @@ How to play:
    include every letter in the honeycomb.
 
 Commands:
-   Call commands with a preceeding '!'. Commands may be
+   Call commands with a preceding '!'. Commands may be
    called at anytime.
 
    -!new rnd - Generate a new random puzzle
-   -!new wrd - Genereate a new puzzle with a user given
+   -!new wrd - Generate a new puzzle with a user given
                word.  Console will prompt for the word after
                command is given.
    -!status - Display you status for the current puzzle.
@@ -46,8 +43,16 @@ Commands:
    -!help - Prints out the help menu.
    -!exit - Exits the game. Will prompt to save.'''
 
+    def launch(self):
+        while not self.quit:
+            userInput = self.__getUserInput()
+            self.myController.processInput(userInput)
+
+    def quitInterface(self):
+        self.quit = True
+
     def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PRFX + message + " ").strip()
+        userInput = input(self.__CMD_PREFIX + message + " ").strip()
         return userInput
 
     def __boldPrint(self, message: str, endStr: str = "\n") -> None:
@@ -58,92 +63,36 @@ Commands:
         if description != "":
             print("\t" + description)
 
-    def __rankLablePoints(self, lableList: list, maxPoints: int) -> dict:
-        n = len(lableList)
-        if maxPoints < (n - 1):
-            return None
-
-        rankingFunction: function = lambda x: (maxPoints/((n-1)**2)) * x**2
-
-        pointList = [round(rankingFunction(i)) for i in range(n)]
-        for i in range(1, n-1):
-            if pointList[i] <= pointList[i-1]:
-                pointList[i] += (pointList[i-1] - pointList[i] + 1)
-                pointList[i+1] -= (pointList[i-1] - pointList[i] + 1)
-
-        rankDict = dict(zip(lableList, pointList))
-        return rankDict
-
-    def getUserInput(self):
-        userInput = self.__getUserInput()
-
-        if Commands.isCommand(userInput):
-            return Commands.getCommandFromName(userInput)
-        else:
-            return userInput
-
     def getBaseWord(self) -> str:
-        baseWord = self.__getUserInput(" Base word:")
+        self.__boldPrint("Base word: ")
+        baseWord = self.__getUserInput()
         return baseWord
 
-    def getCommand(self) -> Commands:
-        command = self.__getUserInput()
+    def showStatus(self, rank: str, currentPoints: int) -> None:
+        self.__boldPrint(rank + ": " + str(currentPoints))
 
-        while not Commands.isCommand(command):
-            command = self.__getUserInput()
-
-        return Commands.getCommandFromName(command)
-
-    def showStatus(self, points, maxPoints) -> None:
-        rankLabels = self.__RANK_LABELS
-        ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
-        level = rankLabels[-1]
-
-        for i, rank in enumerate(rankLabels):
-            if points == ranks[rank]:
-                level = rank
-                break
-            elif points < ranks[rank]:
-                level = rankLabels[i-1]
-                break
-
-
-        self.__boldPrint(level + ": " + str(points))
-
-    def showProgress(self, points, maxPoints) -> None:
-        rankLabels = self.__RANK_LABELS
-        ranks: dict = self.__rankLablePoints(rankLabels, maxPoints)
-        level = rankLabels[-1]
-        for i, rank in enumerate(rankLabels):
-            if points == ranks[rank]:
-                level = rank
-                break
-            elif points < ranks[rank]:
-                level = rankLabels[i-1]
-                break
-        rankItems = list(ranks.items())
-
-        print(Style.BRIGHT + f"\n  {level:12s} ", end=Style.RESET_ALL)
+    def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
+        print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
         print(" 🍯  ", end="")
-        if points > rankItems[0][1]:
+        if currentPoints > thresholds[0]:
             print(self.__DONE_PROGRESS + "╶──", end="")
         else:
             print(self.__LEFT_PROGRESS + "╶──", end="")
 
-        for rank, rankPoints in rankItems[1:-1]:
-            if points >= rankPoints:
+        maxPoints = thresholds[-1]
+        for rankPoints in thresholds[0:-1]:
+            if currentPoints >= rankPoints:
                 print(self.__DONE_PROGRESS + "╶──", end="")
             else:
                 print(self.__LEFT_PROGRESS + "╶──", end="")
 
-        if points >= rankItems[-1][1]:
+        if currentPoints >= maxPoints:
             print(self.__DONE_PROGRESS + "  🐝")
         else:
             print(self.__LEFT_PROGRESS + "  🐝")
-        return level
 
-    def showPuzzle(self, letters: list, progress: float) -> None:
-        myLetters = list(''.join(letters).upper())
+    def showPuzzle(self, myPuzzle: Puzzle) -> None:
+        myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
         Y = Fore.YELLOW
@@ -171,24 +120,14 @@ Commands:
         self.__boldPrint(self.__HELP_TITLE)
         print(self.__HELP_STRING)
 
-    def showRanking(self, maxPoints: int) -> None:
+    def showRanking(self, rankingsAndPoints: dict[str, int]) -> None:
         print("The ranking points change based on the specific game you are playing:")
         self.__boldPrint("Ranking for this game:")
-        rankingPoints: dict = self.__rankLablePoints(
-            self.__RANK_LABELS, maxPoints)
-        for lable in self.__RANK_LABELS:
-            points = rankingPoints[lable]
-
-            print("\t" + f"{lable:10}" + ": " + str(points))
-
-    def showFoundWords(self, foundWords: list) -> None:
-        self.__boldPrint("Found Words:")
-        for word in foundWords:
-            print("\t" + word)
+        for label, points in rankingsAndPoints.items():
+            print("\t" + f"{label:10}" + ": " + str(points))
 
     def showEnd(self) -> None:
         print("                🐝")
-
         self.__boldPrint("Congratulations!", endStr=" ")
         print("You found all the words!")
         print("\tYou are the " + Fore.LIGHTYELLOW_EX +
@@ -197,10 +136,17 @@ Commands:
     def showExit(self) -> None:
         self.__boldPrint("Exiting...")
 
-    def showWrongGuess(self) -> None:
-        self.__boldPrint("Wrong guess...")
+    def showWrongGuess(self, message="") -> None:
+        self.__boldPrint("Wrong guess")
+        if message == "":
+            print("...")
+        else:
+            print(": " + message)
 
-    def getSaveFileName(self) -> str:  # What if the path/dir dosen't exist?
+    def showCorrectGuess(self) -> None:
+        self.__boldPrint("Good guess!")
+
+    def getSaveFileName(self) -> str:
         self.__boldPrint("Desired save file: ")
         path = self.__getUserInput()
         return path
@@ -213,11 +159,11 @@ Commands:
     def getConfirmation(self, message, okStr="Y", nokStr="N"):
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        self.__boldPrint(message + f"[{okStr}/{nokStr}]: ")
-        choice = str(self.getUserInput()).lower()
+        self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
+        choice = str(self.__getUserInput()).lower()
         while choice != okStr and choice != nokStr:
-            print(f"(Unrecogniced choice) [{okStr}/{nokStr}]: ")
-            choice = self.getUserInput().lower()
+            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
+            choice = self.__getUserInput().lower()
 
         confirmation = choice == okStr
         return confirmation
