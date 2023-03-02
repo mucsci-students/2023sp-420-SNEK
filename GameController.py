@@ -174,7 +174,7 @@ class GameController:
         requiredLetter = self.myPuzzle.getPuzzleLetters()[0]
         if requiredLetter not in list(userGuess):
             self.myUserInterface.showWrongGuess(
-                f"The word doesn't have the required letter ({requiredLetter}).")
+                f"The word doesn't have the required letter ({requiredLetter.upper()}).")
             return
 
         if userGuess in self.myPuzzle.getGuessedWords():
