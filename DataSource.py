@@ -12,7 +12,7 @@ class DataSource:
         if mandatoryLetter == None or optionalLetters == None:
             return
 
-        con = sqlite3.connect("example2.db")
+        con = sqlite3.connect("spellingBee.db")
         cur = con.cursor()
         if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
             return
@@ -44,7 +44,7 @@ class DataSource:
 
     # checks if a word is in the db
     def checkWord(self, searchedWord):
-        con = sqlite3.connect("example2.db")
+        con = sqlite3.connect("spellingBee.db")
         cur = con.cursor()
 
         cur.execute(
@@ -55,7 +55,7 @@ class DataSource:
         return len(output) > 0
 
     def getRandomWord(self):
-        con = sqlite3.connect("example3.db")
+        con = sqlite3.connect("spellingBee.db")
         cur = con.cursor()
 
         cur.execute(

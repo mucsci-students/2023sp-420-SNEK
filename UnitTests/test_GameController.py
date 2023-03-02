@@ -4,7 +4,7 @@
 
 from GameController import GameController
 import unittest
-from SpyUserInterface import SpyUserInterface
+from Mocks.SpyUserInterface import SpyUserInterface
 from Puzzle import Puzzle
 
 

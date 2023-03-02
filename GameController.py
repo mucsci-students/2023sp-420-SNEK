@@ -23,7 +23,7 @@ class GameController:
     def __init__(self, dataSource: DataSource) -> None:
         self.myPuzzle: Puzzle = None
         self.myUserInterface = None
-        self.isPlaying = False
+        self.playing = False
         self.myDataSource: DataSource = dataSource
 
     def setUserInterface(self, myUserInterface: UserInterface.UserInterface):
@@ -32,7 +32,7 @@ class GameController:
     def processInput(self, userInput: str) -> None:
         if Commands.isCommand(userInput):
             self.processCommand(userInput)
-        elif not self.isPlaying:
+        elif not self.playing:
             self.myUserInterface.showError(
                 "That is not a command, to show commands, type !help")
         else:
@@ -67,7 +67,7 @@ class GameController:
         newPuzzleLetters = list(set(list(newBaseWord)))
         random.shuffle(newPuzzleLetters)
         self.myPuzzle = Puzzle(
-            newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]))
+            newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]).wordList)
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
 
@@ -96,7 +96,7 @@ class GameController:
             loadingFile = self.myUserInterface.getSaveFileName()
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
-                self.isPlaying = True
+                self.playing = True
                 self.myUserInterface.showPuzzle(self.myPuzzle)
             else:
                 self.myUserInterface.showError("That file does not exist.")
@@ -190,4 +190,4 @@ class GameController:
         self.myUserInterface.showPuzzle(self.myPuzzle)
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
-            self.isPlaying = False
+            self.playing = False

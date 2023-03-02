@@ -74,13 +74,13 @@ Commands:
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
         print(" 🍯  ", end="")
-        if currentPoints > thresholds[0]:
-            print(self.__DONE_PROGRESS + "╶──", end="")
-        else:
+        if currentPoints == 0:
             print(self.__LEFT_PROGRESS + "╶──", end="")
+        else:
+            print(self.__DONE_PROGRESS + "╶──", end="")
 
         maxPoints = thresholds[-1]
-        for rankPoints in thresholds[0:-1]:
+        for rankPoints in thresholds[1:-1]:
             if currentPoints >= rankPoints:
                 print(self.__DONE_PROGRESS + "╶──", end="")
             else:
@@ -92,6 +92,7 @@ Commands:
             print(self.__LEFT_PROGRESS + "  🐝")
 
     def showPuzzle(self, myPuzzle: Puzzle) -> None:
+        self.showProgress(myPuzzle.getCurrentRank(), list(myPuzzle.getRankingsAndPoints().values()),myPuzzle.getCurrentPoints())
         myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
