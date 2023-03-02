@@ -160,7 +160,7 @@ class BeeUI(UserInterface):
     def showMessage(self, msgString):
         messagebox.showinfo("", msgString)
 
-    def showError(self, errorTitle, errorString):
+    def showError(self, errorString="Error!", errorTitle="Error!"):
         messagebox.showinfo(errorTitle, errorString)
 
     def getBaseWord(self):
