@@ -280,6 +280,10 @@ class BeeUI(UserInterface):
     def __shortcut(self, event):
         if event.keysym == "Return":
             self.__submitGuess()
+        elif event.keysym == "BackSpace":
+            self.__backspace()
+        elif event.keysym == "space":
+            self.__shuffleText()
         elif event.keysym == self.wordPuzzle[0]:
             self.__setText(self.wordPuzzle[0])
         elif event.keysym == self.wordPuzzle[1]:
