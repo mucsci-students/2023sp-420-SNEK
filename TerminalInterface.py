@@ -52,7 +52,7 @@ Commands:
         self.quit = True
 
     def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip()
+        userInput = input(self.__CMD_PREFIX + message + " ").strip().lower()
         return userInput
 
     def __boldPrint(self, message: str, endStr: str = "\n") -> None:

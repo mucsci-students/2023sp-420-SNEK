@@ -130,10 +130,13 @@ class BeeUI(UserInterface):
 
     def getConfirmation(self, inputString, okStr="yes", nokStr="no"):
         if(inputString == "How do you want to save?"):
-            self.retSave = simpledialog.askstring("Type", "How do you want to save?")
-            if self.retSave.lower() == okStr:
+            #self.retSave = simpledialog.askstring("Type", "How do you want to save?")
+            self.textStringForCon = ""
+            self.__messageWindow("Save", "How do you want to save?")
+            print(self.textStringForCon)
+            if self.textStringForCon.lower() == okStr:
                 return True
-            elif self.retSave.lower() == nokStr:
+            elif self.textStringForCon.lower() == nokStr:
                 return False
         
         elif(inputString == "Do you want to overwrite it?"):
@@ -153,6 +156,30 @@ class BeeUI(UserInterface):
                 return True
             else:
                 return False
+            
+    def messageWindow(self, title="title", message="Message! Close the window!"):
+        self.win = Toplevel()
+        self.win.title(title)
+        tk.Label(self.win, text=message).pack()
+        self.windowFrameBtns = tk.Frame(self.win)
+        self.windowFrameBtns.columnconfigure(0, weight=1)
+        self.windowFrameBtns.columnconfigure(1, weight=1)
+
+        self.scratchBtn = tk.Button(self.windowFrameBtns, text='Scratch', command=lambda:[self.textHelper("scratch")])
+        self.currentBtn = tk.Button(self.windowFrameBtns, text='Current', command=lambda:[self.textHelper("current")])
+
+        self.scratchBtn.grid(row=0, column=0)
+        self.currentBtn.grid(row=0, column=1)
+
+        self.windowFrameBtns.pack()
+        self.win.wait_window()
+
+
+
+    def textHelper(self, text):
+        self.textStringForCon = text
+        print(text)
+        self.win.destroy()
         
     def getSaveFileName(self):
         return simpledialog.askstring("Save", "What is the save name?")
@@ -280,6 +307,10 @@ class BeeUI(UserInterface):
     def __shortcut(self, event):
         if event.keysym == "Return":
             self.__submitGuess()
+        elif event.keysym == "BackSpace":
+            self.__backspace()
+        elif event.keysym == "space":
+            self.__shuffleText()
         elif event.keysym == self.wordPuzzle[0]:
             self.__setText(self.wordPuzzle[0])
         elif event.keysym == self.wordPuzzle[1]:
