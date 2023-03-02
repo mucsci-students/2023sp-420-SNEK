@@ -47,10 +47,6 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def showExit(self):
-        pass
-
-    @abstractmethod
     def showWrongGuess(self):
         pass
 
