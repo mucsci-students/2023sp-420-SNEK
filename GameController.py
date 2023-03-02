@@ -137,7 +137,6 @@ class GameController:
                 exitGame = self.__askExitAndSave()
                 if exitGame:
                     self.playing = False
-                    return
 
             newBaseWord = self.myDataSource.getRandomWord()
             self.__createGame(newBaseWord)
@@ -147,10 +146,14 @@ class GameController:
                 exitGame = self.__askExitAndSave()
                 if (exitGame):
                     self.playing = False
-                    return
 
             newBaseWord = self.myUserInterface.getBaseWord()
-            self.__createGame(newBaseWord)
+            if(not len(list(set(list(newBaseWord)))) > 7):
+                self.myUserInterface.showError("That word does not have 7 different letters")
+            elif(not self.myDataSource.checkWord(newBaseWord) ):
+                self.myUserInterface.showError("That word is not in the DB")
+            else:                    
+                self.__createGame(newBaseWord)
 
         elif command == Commands.SHOW_STATUS:
             if self.playing:
