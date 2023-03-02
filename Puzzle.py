@@ -137,13 +137,23 @@ class Puzzle:
         ''' Output:
                 the name of the current rank of the player.
         '''
+        if (self.currentPoints == 0):
+            return self.__RANK_NAMES_LIST[0]
+        
         i: int = 0
         newRank: str = self.__RANK_NAMES_LIST[i]
-        while self.currentPoints > self.rankingsAndPoints[newRank]:
-            newRank = self.__RANK_NAMES_LIST[i]
-            i += 1
+        # while self.currentPoints > self.rankingsAndPoints[newRank]:
+        #     print(self.currentPoints, self.rankingsAndPoints[newRank])
+        #     newRank = self.__RANK_NAMES_LIST[i]
+        #     print(newRank, i)
+        #     i += 1
+        for i in range(9):
+            if(self.currentPoints < self.rankingsAndPoints[self.__RANK_NAMES_LIST[i]]):
+                break
+            
 
-        return newRank
+      
+        return self.__RANK_NAMES_LIST[i-1]
 
     def addGuessWord(self, word: str) -> None:
         ''' Precondition:
