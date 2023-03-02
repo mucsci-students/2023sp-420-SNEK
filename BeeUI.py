@@ -157,7 +157,7 @@ class BeeUI(UserInterface):
             else:
                 return False
             
-    def messageWindow(self, title="title", message="Message! Close the window!"):
+    def __messageWindow(self, title="title", message="Message! Close the window!"):
         self.win = Toplevel()
         self.win.title(title)
         tk.Label(self.win, text=message).pack()
