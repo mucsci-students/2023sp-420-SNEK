@@ -9,15 +9,17 @@ import sys
 
 DB_FILE_NAME = "spellingBee.db"
 
+
 def main():
     # If no arguments are given
     dataSource = DataSource()
     if len(sys.argv) == 1:
-        bee = BeeUI()
-        myGameController = GUIGameController()
-        bee.setController(myGameController)
+        myGameController = GameController(dataSource)
+        myUserInterface = BeeUI()
 
-        bee.launch() # launch window
+        myGameController.setUserInterface(myUserInterface)
+        myUserInterface.setController(myGameController)
+        myUserInterface.launch() # launch window
     # If first arg given is --cli
     elif sys.argv[1] == '--cli':
         myGameController = GameController(dataSource)

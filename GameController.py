@@ -186,8 +186,8 @@ class GameController:
         self.myPuzzle.addGuessWord(userGuess)
         currentPoints = self.myPuzzle.getCurrentPoints()
         maxPoints = self.myPuzzle.getMaxPoints()
-        self.myUserInterface.showCorrectGuess()
         self.myUserInterface.showPuzzle(self.myPuzzle)
+        self.myUserInterface.showCorrectGuess()
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
             self.playing = False
