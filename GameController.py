@@ -51,7 +51,7 @@ class GameController:
         overwrite = True
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
-        fileName = self.myUserInterface.getSaveFileName()
+        fileName = self.myUserInterface.getSaveFileName(saveType="save")
         if SaveAndLoad.isSaved(fileName):
             self.myUserInterface.showMessage(
                 "This file already exists")
@@ -93,7 +93,7 @@ class GameController:
                     if save:
                         self.__saveFile()
 
-            loadingFile = self.myUserInterface.getSaveFileName()
+            loadingFile = self.myUserInterface.getSaveFileName(saveType="load")
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.playing = True

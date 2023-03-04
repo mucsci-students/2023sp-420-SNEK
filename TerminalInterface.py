@@ -147,7 +147,7 @@ Commands:
     def showCorrectGuess(self) -> None:
         self.__boldPrint("Good guess!")
 
-    def getSaveFileName(self) -> str:
+    def getSaveFileName(self, saveType = "") -> str:
         self.__boldPrint("Desired save file: ")
         path = self.__getUserInput()
         return path

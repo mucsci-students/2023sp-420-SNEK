@@ -59,7 +59,7 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def getSaveFileName(self):
+    def getSaveFileName(self, saveType=""):
         pass
 
     @abstractmethod
