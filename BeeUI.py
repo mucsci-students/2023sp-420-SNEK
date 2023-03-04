@@ -22,6 +22,9 @@
 #    tkinter as tk
 #    messagebox from tkinter
 #    PhotoImage from tkinter
+#    Image, ImageTk from pillow (PIL)
+#    GameController
+#    UserInterface (superclass)
 #
 
 import tkinter as tk
@@ -58,6 +61,8 @@ class BeeUI(UserInterface):
 
         # File menu options
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New", command=lambda:[self.myController.processInput("!exit")])
+        self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
@@ -110,9 +115,6 @@ class BeeUI(UserInterface):
 
 # # # # # # # # # # # # Class Methods # # # # # # # # # # # #
 
-
-    # Public method launch
-    # Launches the GUI.  FOR USAGE IN MAIN.PY
     def __onSave(self):
         self.myController.processInput("!save")
 
@@ -155,6 +157,14 @@ class BeeUI(UserInterface):
             if messagebox.askyesno("Save", "Do you want to save the game?"):
                 return True
             else:
+                return False
+
+        elif(inputString == "Do you want to save?"):
+            if messagebox.askyesno("Save", "Do you want to save the game?"):
+                self.__preGamePage()
+                return True
+            else:
+                self.__preGamePage()
                 return False
             
     def __messageWindow(self, title="title", message="Message! Close the window!"):
