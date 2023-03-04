@@ -71,7 +71,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Close Program", command=self.__onClosing)
         # For developer usage - assure removed for release
-        self.filemenu.add_command(label="DEV Close", command=exit)
+        # self.filemenu.add_command(label="DEV Close", command=exit)
 
         self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Show Rankings", command=lambda:self.myController.processInput("!rank"))
@@ -98,7 +98,7 @@ class BeeUI(UserInterface):
         # Adding the submenus to the main menubar
         self.menubar.add_cascade(menu=self.filemenu, label='File')
         self.menubar.add_cascade(menu=self.viewmenu, label='Views')
-        self.menubar.add_cascade(menu=self.actionmenu, label='Action')
+        # self.menubar.add_cascade(menu=self.actionmenu, label='Action')
 
         # Assigning menubar to the root window
         self.root.config(menu=self.menubar)
