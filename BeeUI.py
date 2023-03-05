@@ -28,7 +28,9 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import simpledialog
+from tkinter import filedialog
 from tkinter import *
+import os
 from UserInterface import UserInterface
 from PIL import Image,ImageTk
 import random
@@ -140,10 +142,7 @@ class BeeUI(UserInterface):
                 return False
         
         elif(inputString == "Do you want to overwrite it?"):
-            if messagebox.askyesno(title="Overwrite?", message="Do you want to overwrite it?"):
-                return True
-            else:
-                return False
+            return True
         
         elif(inputString == self.__EXIT_MSG):
             if messagebox.askyesno("", self.__EXIT_MSG):
@@ -181,10 +180,20 @@ class BeeUI(UserInterface):
         print(text)
         self.win.destroy()
         
-    def getSaveFileName(self):
-        return simpledialog.askstring("Save", "What is the save name?")
+    def getSaveFileName(self, saveType = ""):
+        
+        if(saveType == "save"):
+            return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")])
+        elif(saveType == "load"):
+            return filedialog.askopenfilename(title="Select the file", filetype=(("josn files", "json"), ("all files", "*")))
+
+
+
+        #return simpledialog.askstring("Save", "What is the save name?")
     
     def showMessage(self, msgString):
+        if(msgString == "This file already exists"):
+            return
         messagebox.showinfo("", msgString)
 
     def showError(self, errorString="Error!", errorTitle="Error!"):

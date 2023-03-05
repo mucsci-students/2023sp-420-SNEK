@@ -26,8 +26,12 @@ class SaveAndLoad:
     # isSaved checks the filename in the master save file to see if it is already an in use save name
     @classmethod
     def isSaved(cls, saveName: str) -> bool:
+        if "/" in saveName:
+            return os.path.exists(saveName)
+        else:
+            return os.path.exists(f"{cls.__SAVE_DIR}/{saveName}.json")
         # Check if master save file exists
-        return os.path.exists(cls.__SAVE_DIR + f"/{saveName}.json")
+        
 
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
@@ -62,15 +66,24 @@ class SaveAndLoad:
                              foundWords, currentPoints, requiredLetter, maxPoints)
 
         # dump new save data into master file and create if none is present
-        with open(f"{cls.__SAVE_DIR}/{saveName}.json", "w") as f:
-            json.dump(data, f, indent=2)
+        if "/" in saveName:
+            with open(saveName, "w") as f:
+                json.dump(data, f, indent=2)
+        else:
+            with open(f"{cls.__SAVE_DIR}/{saveName}.json", "w") as f:
+                json.dump(data, f, indent=2)
+        
 
     # load the save data into the class variables into the puzzle class
     @ classmethod
     def load(cls, saveName: str) -> Puzzle:
 
-        with open(f"{cls.__SAVE_DIR}/{saveName}.json", "r") as loadFile:
-            data = json.load(loadFile)
+        if "/" in saveName:
+            with open(saveName, "r") as loadFile:
+                data = json.load(loadFile)
+        else:
+            with open(f"{cls.__SAVE_DIR}/{saveName}.json", "r") as loadFile:
+                data = json.load(loadFile)
 
         puzzleLettersStr: str = data["PuzzleLetters"]
         requiredLetter = data["RequiredLetter"]
