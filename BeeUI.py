@@ -22,6 +22,9 @@
 #    tkinter as tk
 #    messagebox from tkinter
 #    PhotoImage from tkinter
+#    Image, ImageTk from pillow (PIL)
+#    GameController
+#    UserInterface (superclass)
 #
 
 import tkinter as tk
@@ -60,6 +63,8 @@ class BeeUI(UserInterface):
 
         # File menu options
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
+        self.filemenu.add_command(label="New", command=lambda:[self.myController.processInput("!exit")])
+        self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
@@ -68,7 +73,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Close Program", command=self.__onClosing)
         # For developer usage - assure removed for release
-        self.filemenu.add_command(label="DEV Close", command=exit)
+        # self.filemenu.add_command(label="DEV Close", command=exit)
 
         self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Show Rankings", command=lambda:self.myController.processInput("!rank"))
@@ -95,7 +100,7 @@ class BeeUI(UserInterface):
         # Adding the submenus to the main menubar
         self.menubar.add_cascade(menu=self.filemenu, label='File')
         self.menubar.add_cascade(menu=self.viewmenu, label='Views')
-        self.menubar.add_cascade(menu=self.actionmenu, label='Action')
+        # self.menubar.add_cascade(menu=self.actionmenu, label='Action')
 
         # Assigning menubar to the root window
         self.root.config(menu=self.menubar)
@@ -112,9 +117,6 @@ class BeeUI(UserInterface):
 
 # # # # # # # # # # # # Class Methods # # # # # # # # # # # #
 
-
-    # Public method launch
-    # Launches the GUI.  FOR USAGE IN MAIN.PY
     def __onSave(self):
         self.myController.processInput("!save")
 
@@ -154,6 +156,14 @@ class BeeUI(UserInterface):
             if messagebox.askyesno("Save", "Do you want to save the game?"):
                 return True
             else:
+                return False
+
+        elif(inputString == "Do you want to save?"):
+            if messagebox.askyesno("Save", "Do you want to save the game?"):
+                self.__preGamePage()
+                return True
+            else:
+                self.__preGamePage()
                 return False
             
     def __messageWindow(self, title="title", message="Message! Close the window!"):
@@ -360,17 +370,7 @@ class BeeUI(UserInterface):
     # Shuffles the honeycomb on screen during gameplay.
     # Modifies the word puzzle.
     def __shuffleText(self):
-        restOfLetters = list(self.wordPuzzle[1:])
-        random.shuffle(restOfLetters)
-        self.wordPuzzle = self.wordPuzzle[0] + ''.join(restOfLetters)
-        self.btn1Letter.configure(text=self.wordPuzzle[3].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
-        self.btn2Letter.configure(text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn3Letter.configure(text=self.wordPuzzle[2].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
-        self.btn4Letter.configure(text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn5Letter.configure(text=self.wordPuzzle[4].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
-        self.btn6Letter.configure(text=self.wordPuzzle[5].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
-        self.btn7Letter.configure(text=self.wordPuzzle[6].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
-
+        self.myController.processInput("!shuffle")
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # # 
 
