@@ -40,8 +40,6 @@ import random
 from GameController import GameController
 from colorama import Fore, Style
 
-
-
 class BeeUI(UserInterface):
 
     __EXIT_MSG = "Do you want to exit the game? (You'll be able to save it)"
@@ -53,7 +51,6 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
         self.root.geometry("900x600")
         self.root.title("The Spelling Bee! 🐝")
 
@@ -63,7 +60,7 @@ class BeeUI(UserInterface):
 
         # File menu options
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="New", command=lambda:[self.myController.processInput("!exit")])
+        self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
         self.filemenu.add_separator()
@@ -107,57 +104,68 @@ class BeeUI(UserInterface):
     
 # # # # # # # # # # # # Display Main Menu # # # # # # # # # # # #
 
-        # Define the mainFrame of the window 
+        # Define the mainFrame of the window
         self.mainFrame = tk.Frame(self.root)
+        # MainFrame will be the frame for any and all widgets to be
+        # added and displayed.
         
+        # Display the mainMenuPage
         self.__mainMenuPage()
-
-        # Display all
         
 
 # # # # # # # # # # # # Class Methods # # # # # # # # # # # #
 
+    # Private method __onSave
+    # Notifies myController that the user intends to save
     def __onSave(self):
         self.myController.processInput("!save")
 
+    # Private method __onLoad
+    # Notifies myController that the user intends to load
     def __onLoad(self, help=""):
+        # Trying to load from the main menu
         if(help == ""):
             self.myController.processInput("!load")
-        if(help =="help"):
+        # Trying to load from inside of another game
+        elif(help =="help"):
             self.myController.processInput("!load")
+            # showStatus() needed to update status of new game
             self.showStatus()
 
-    def __submitGuess(self):
-        text = self.entry.get()
-        self.myController.processInput(text)
-        self.entry.delete(0, tk.END)
-
+    # Public method getConfirmation
+    # Returns a True or False confirmation between two options
+    # given to the user.  This information is used by GameController
+    # to know what to run and when.
     def getConfirmation(self, inputString, okStr="yes", nokStr="no"):
+        # Checking how the user wants to save (Scratch / Current)
         if(inputString == "How do you want to save?"):
-            #self.retSave = simpledialog.askstring("Type", "How do you want to save?")
             self.textStringForCon = ""
             self.__messageWindow("Save", "How do you want to save?")
             print(self.textStringForCon)
-            if self.textStringForCon.lower() == okStr:
+            if self.textStringForCon.lower() == okStr: # Scratch
                 return True
-            elif self.textStringForCon.lower() == nokStr:
+            elif self.textStringForCon.lower() == nokStr: # Current
                 return False
         
+        # Asking user about overwritting already saved game name
         elif(inputString == "Do you want to overwrite it?"):
             return True
         
+        # Asking user if they wish to exit the current game
         elif(inputString == self.__EXIT_MSG):
             if messagebox.askyesno("", self.__EXIT_MSG):
                 return True
             else:
                 return False
         
+        # Asking the user if they wish to save the game upon exit
         elif(inputString == "Do you want to save the game?"):
             if messagebox.askyesno("Save", "Do you want to save the game?"):
                 return True
             else:
                 return False
 
+        # Asking the user if they wish to save upon New game
         elif(inputString == "Do you want to save?"):
             if messagebox.askyesno("Save", "Do you want to save the game?"):
                 self.__preGamePage()
@@ -165,85 +173,120 @@ class BeeUI(UserInterface):
             else:
                 self.__preGamePage()
                 return False
-            
+    
+    # Private method __messageWindow
+    # Accepts a title for the window, and a message for the window.
     def __messageWindow(self, title="title", message="Message! Close the window!"):
-        self.win = Toplevel()
+        self.win = Toplevel() # Popout screen
         self.win.title(title)
         tk.Label(self.win, text=message).pack()
         self.windowFrameBtns = tk.Frame(self.win)
         self.windowFrameBtns.columnconfigure(0, weight=1)
         self.windowFrameBtns.columnconfigure(1, weight=1)
 
-        self.scratchBtn = tk.Button(self.windowFrameBtns, text='Scratch', command=lambda:[self.textHelper("scratch")])
-        self.currentBtn = tk.Button(self.windowFrameBtns, text='Current', command=lambda:[self.textHelper("current")])
+        # Displays two buttons to the popout window, one for a Scratch save and one for 
+        # a Current save.
+        self.scratchBtn = tk.Button(self.windowFrameBtns, text='Scratch', command=lambda:[self.__textHelper("scratch")])
+        self.currentBtn = tk.Button(self.windowFrameBtns, text='Current', command=lambda:[self.__textHelper("current")])
 
         self.scratchBtn.grid(row=0, column=0)
         self.currentBtn.grid(row=0, column=1)
 
         self.windowFrameBtns.pack()
-        self.win.wait_window()
+        self.win.wait_window() # Program will wait for the selection of the user.
 
-
-
-    def textHelper(self, text):
+    # Private method textHelper
+    # Accepts a string text that will be one of two option ("scratch"/"current")
+    # and then assigns it to be used in getConfirmation
+    def __textHelper(self, text):
         self.textStringForCon = text
-        print(text)
-        self.win.destroy()
+        self.win.destroy() # Destroys the popout window
         
+    # Public method getSaveFileName
+    # Accepts a saveType that will be a string of ("save"/"load")
+    # Proceeds to open a filedialog that will allow user to save or load
+    # a game as needed.
     def getSaveFileName(self, saveType = ""):
-        
         if(saveType == "save"):
-            return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")])
+            return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
         elif(saveType == "load"):
-            return filedialog.askopenfilename(title="Select the file", filetype=(("josn files", "json"), ("all files", "*")))
-
-
-
-        #return simpledialog.askstring("Save", "What is the save name?")
+            return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())    
     
+    # Public method showMessage
+    # Accepts a message msgString
+    # Displays a messagebox with msgString
     def showMessage(self, msgString):
         if(msgString == "This file already exists"):
             return
         messagebox.showinfo("", msgString)
 
+    # Public method showError
+    # Params:
+    #   errorString - description of the error
+    #   errorTitle - title of the error messagebox
+    # Displays a messagebox with the given error
     def showError(self, errorString="Error!", errorTitle="Error!"):
         messagebox.showinfo(errorTitle, errorString)
 
+    # Public method getBaseWord
+    # Pulls the typed word from the newWord entry box on the
+    # pre-game page to be sent to controller.
     def getBaseWord(self):
         return self.newWord.get()
 
+    # Public method launch
+    # Launches the BeeUI.  Call on a BeeUI object.
     def launch(self):
         self.root.mainloop()
 
+    # Public method quitInterface
     def quitInterface(self):
         pass
 
+    # Public method showCorrectGuess
+    # If the controller signals that the given guess was correct,
+    # then the label at the top of the game page will be changed.
     def showCorrectGuess(self):
         self.correctLabel.configure(text=f"Your guess was correct!", font=('Arial', 25))
 
+    # Public method showEnd
+    # If the controller signals that the game is over, then a victory
+    # title will be displayed at the top of the screen and usable buttons will
+    # be grayed out.
     def showEnd(self):
         self.correctLabel.configure(text=f"You Won!", font=("Arial", 25))
         self.sub.configure(state='disabled')
         self.buttonShuffle.configure(state='disabled')
         
-
+    # Public method showGuessedWords
+    # Params:
+    #   guessList - a list of words already guessed by the user.
+    # Shows list of guessed words to the player
     def showGuessedWords(self, guessList):
         str = '\n'.join(guessList)
         self.showMessage(str)
 
+    # Public method showHelp
+    # Creates a small popup window to display the helpscreen image to
+    # the user.
     def showHelp(self):
-        self.win = Toplevel()
+        self.win = Toplevel() # popout window
         self.win.title("Help!")
 
         self.helpscreenImg = Image.open('img/helpscreen.PNG')
         self.helpscreenImg = self.helpscreenImg.resize((750, 500))
         self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
-        self.helpscreenImg = tk.Button(self.win, image=self.helpscreenImgSized)
+        self.helpscreenImg = tk.Button(self.win, image=self.helpscreenImgSized) # Unusable button
         self.helpscreenImg.pack()
 
-
-
+    # Public method showProgress
+    # Params:
+    #   rank - current rank of the user
+    #   thresholds - list of point thresholds for ranks
+    #   currentPoints - current points the user has earned
+    # Displays a progress bar at the top of the screen that is updated as
+    # the game is played.
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         str = ""
         str +=" 🍯  "
@@ -265,13 +308,21 @@ class BeeUI(UserInterface):
             str += self.__LEFT_PROGRESS + "  🐝"
         
         self.progBar.configure(text=str)
-        
+    
+    # Public method showPuzzle
+    # Params:
+    #   puzzle - the puzzle key the user is playing with
+    # Updates the gamePage to have all current and up-to-date info
+    # about their currently played game.
     def showPuzzle(self, puzzle):
         self.wordPuzzle = puzzle.getPuzzleLetters()
         self.__gamePage()
         self.showProgress(puzzle.getCurrentRank(), list(puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
         self.myController.processInput("!status")
 
+    # Public method showRanking
+    # Params:
+    #   rankDict - Dictionary of rank to points required
     def showRanking(self, rankDict):
         stri = "The ranking points change based on the specific game you are playing:\n"
         stri += "Ranking for this game:\n"
@@ -280,25 +331,28 @@ class BeeUI(UserInterface):
         
         self.showMessage(stri)
         
-        
-
+    # Public method showStatus
+    # Params:
+    #   rank - current rank of the user
+    #   points - current points the user has earned
+    # Updates the gamePage to show current points and rank
     def showStatus(self, rank, points):
         self.rank.configure(text = rank)
         self.pointVal.configure(text = points)
 
+    # Public method showWrongGuess
+    # Params:
+    #   str - the description of the wrong guess made.
+    # Shows the user why their guess is incorrect
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
-        
-
-        
-
-        
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
         if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
+            self.myController.processInput("!exit")
             self.root.destroy()
 
     # Private method __setText
@@ -314,6 +368,8 @@ class BeeUI(UserInterface):
     
     # Private method __submitGuess
     # Handles submitting what is in the entry field
+    # and passes it to the controller to be evaluted.
+    # Clears the wordfield upon completion.
     def __submitGuess(self):
         text = self.entry.get()
         self.myController.processInput(text)
@@ -322,7 +378,8 @@ class BeeUI(UserInterface):
         self.entry.configure(state='disabled')
 
     # Private method __shortcut
-    # shortcut functionality for pressing enter to submit guess
+    # Params:
+    #   event - a <KeyPress> event
     def __shortcut(self, event):
         if event.keysym == "Return":
             self.__submitGuess()
@@ -363,14 +420,25 @@ class BeeUI(UserInterface):
     # Pops a message box up to ask the user if they really want to return to the menu.
     # In future will work for asking if the user wants to save before leaving a game.
     def __checkQuit(self):
-        if messagebox.askyesno(title="Quit Current Game?", message="Do you really want to return to the menu?"):
-            self.__mainMenuPage()
+        self.myController.processInput("!exit")
+        self.__mainMenuPage()
+
+    # Private method __checkTerminate
+    def __checkTerminate(self):
+        self.myController.processInput("!exit")
+        self.root.destroy()
 
     # Private method __shuffleText
     # Shuffles the honeycomb on screen during gameplay.
     # Modifies the word puzzle.
     def __shuffleText(self):
         self.myController.processInput("!shuffle")
+
+    # Private method __startGame
+    # Notifies the controller that the user wants a new
+    # random game.
+    def __startGame(self):
+        self.myController.processCommand("!new rnd")
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # # 
 
@@ -379,17 +447,17 @@ class BeeUI(UserInterface):
     # on screen (in the mainFrame).  After that it will
     # add all usefull information for the main menu
     # to the mainFrame to be seen on screen, and will then display.
-
-    def __startGame(self):
-        self.myController.processCommand("!new rnd")
-
     def __mainMenuPage(self):
         self.__clearFrame()
+
+        # Assigns exit protocol for the window.
+        self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
         
         self.filemenu.entryconfig("Save", state="disabled")
         self.filemenu.entryconfig("Quit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
         # Label at the top of the screen
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
@@ -452,6 +520,11 @@ class BeeUI(UserInterface):
         self.goBack = tk.Button(self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
         self.goBack.pack()
 
+    # Private method __preGamePage
+    # Upon calling will clear the frame of anything currently
+    # on screen (in the mainFrame).  After that it will
+    # add all usefull information for the pre-game page,
+    # adding buttons and an entry field for starting new games.
     def __preGamePage(self):
         self.__clearFrame()
 
@@ -488,23 +561,19 @@ class BeeUI(UserInterface):
     # on screen (in the mainFrame).  After that it will
     # add all usefull information for the current game
     # to the mainFrame to be seen on screen, and will then display.
-    def __gamePage(self, word='rnd'):
+    def __gamePage(self):
         self.__clearFrame()
 
+        self.root.protocol("WM_DELETE_WINDOW", self.__checkTerminate)
+
         # Allows usage of some filemenu options
+        self.filemenu.entryconfig("New", command=lambda:[self.myController.processInput("!exit")])
         self.filemenu.entryconfig("Save", state="normal")
         self.filemenu.entryconfig("Quit Current Game", state="normal")
+        self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
+
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
-
-        # Variables that will be required:
-        # Placeholder self.wordPuzzle
-        #if word == 'rnd':
-        #    #self.wordPuzzle = myController.getRndWord()
-        #    self.wordPuzzle = "volcans"
-        #else:
-        #    #self.wordPuzzle = myController.getWord(word)
-        #    self.wordPuzzle = word
 
         self.correctLabel = tk.Label(self.mainFrame, text="", font=('Arial', 25))
 
@@ -572,9 +641,9 @@ class BeeUI(UserInterface):
 
         # Defining each of the 7 buttons.  btn4 is the required letter.
         self.btn1 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1.place(y=0, x=150)
+        self.btn1.place(y=8, x=150)
         self.btn1Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1Letter.place(y=29, x=184)
+        self.btn1Letter.place(y=37, x=184)
 
         self.btn2 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[2]))
         self.btn2.place(x=50, y=60)
@@ -589,7 +658,7 @@ class BeeUI(UserInterface):
         self.btn4 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[0]))
         self.btn4.place(x=150, y=110)
         self.btn4Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn4Letter.place(x=185, y=140)
+        self.btn4Letter.place(x=184, y=136)
 
         self.btn5 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[4]))
         self.btn5.place(x=50, y=160)
