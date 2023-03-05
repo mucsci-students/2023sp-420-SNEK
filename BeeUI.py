@@ -61,7 +61,7 @@ class BeeUI(UserInterface):
 
         # File menu options
         self.filemenu = tk.Menu(self.menubar, tearoff=0)
-        self.filemenu.add_command(label="New", command=lambda:[self.myController.processInput("!exit")])
+        self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
         self.filemenu.add_separator()
@@ -492,6 +492,7 @@ class BeeUI(UserInterface):
         self.__clearFrame()
 
         # Allows usage of some filemenu options
+        self.filemenu.entryconfig("New", command=lambda:[self.myController.processInput("!exit")])
         self.filemenu.entryconfig("Save", state="normal")
         self.filemenu.entryconfig("Quit Current Game", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
