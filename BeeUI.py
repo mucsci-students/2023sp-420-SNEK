@@ -232,17 +232,17 @@ class BeeUI(UserInterface):
         self.showMessage(str)
 
     def showHelp(self):
-        text='Welcome! You will be given a word puzzle with a \n\
-        bunch of letter arranged in a honeycomb pattern.  Your\n\
-        goal is to make as many words as possible utilizing the\n\
-        middle letter as a required letter, so every word that you guess\n\
-        will need to include that letter.  You may type into the word\n\
-        field, or press the honeycomb buttons on screen.  You may also\n\
-        press the submit button on screen, or "enter" on your keyboard\n\
-        to submit your current guess.\n\n\
-        Every puzzle generated has a corresponding pangram that is\n\
-        generated, and will contain every letter from the honeycomb.'
-        self.showMessage(text)
+        self.win = Toplevel()
+        self.win.title("Help!")
+
+        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = self.helpscreenImg.resize((750, 500))
+        self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
+
+        self.helpscreenImg = tk.Button(self.win, image=self.helpscreenImgSized)
+        self.helpscreenImg.pack()
+
+
 
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         str = ""
@@ -436,21 +436,12 @@ class BeeUI(UserInterface):
         self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t\t\t ", font=('Arial bold', 24))
         self.howToLabel.pack()
 
-        # This will probably be changed from text to include an image of the gameplay
-        # with labels on what different options in game do.
-        self.instruct = tk.Label(self.mainFrame, font=('Arial', 18), \
-        text='Welcome! You will be given a word puzzle with a \n\
-        bunch of letter arranged in a honeycomb pattern.  Your\n\
-        goal is to make as many words as possible utilizing the\n\
-        middle letter as a required letter, so every word that you guess\n\
-        will need to include that letter.  You may type into the word\n\
-        field, or press the honeycomb buttons on screen.  You may also\n\
-        press the submit button on screen, or "enter" on your keyboard\n\
-        to submit your current guess.\n\n\
-        Every puzzle generated has a corresponding pangram that is\n\
-        generated, and will contain every letter from the honeycomb.')
+        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = self.helpscreenImg.resize((750, 425))
+        self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
-        self.instruct.pack(anchor='w')
+        self.helpscreenImg = tk.Button(self.mainFrame, image=self.helpscreenImgSized)
+        self.helpscreenImg.pack()
 
         # Designs #
         # Go Back Button #
