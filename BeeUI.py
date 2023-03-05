@@ -51,7 +51,6 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
         self.root.geometry("900x600")
         self.root.title("The Spelling Bee! 🐝")
 
@@ -353,6 +352,7 @@ class BeeUI(UserInterface):
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
         if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
+            self.myController.processInput("!exit")
             self.root.destroy()
 
     # Private method __setText
@@ -420,8 +420,13 @@ class BeeUI(UserInterface):
     # Pops a message box up to ask the user if they really want to return to the menu.
     # In future will work for asking if the user wants to save before leaving a game.
     def __checkQuit(self):
-        if messagebox.askyesno(title="Quit Current Game?", message="Do you really want to return to the menu?"):
-            self.__mainMenuPage()
+        self.myController.processInput("!exit")
+        self.__mainMenuPage()
+
+    # Private method __checkTerminate
+    def __checkTerminate(self):
+        self.myController.processInput("!exit")
+        self.root.destroy()
 
     # Private method __shuffleText
     # Shuffles the honeycomb on screen during gameplay.
@@ -444,11 +449,15 @@ class BeeUI(UserInterface):
     # to the mainFrame to be seen on screen, and will then display.
     def __mainMenuPage(self):
         self.__clearFrame()
+
+        # Assigns exit protocol for the window.
+        self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
         
         self.filemenu.entryconfig("Save", state="disabled")
         self.filemenu.entryconfig("Quit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
         # Label at the top of the screen
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
@@ -552,13 +561,17 @@ class BeeUI(UserInterface):
     # on screen (in the mainFrame).  After that it will
     # add all usefull information for the current game
     # to the mainFrame to be seen on screen, and will then display.
-    def __gamePage(self, word='rnd'):
+    def __gamePage(self):
         self.__clearFrame()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.__checkTerminate)
 
         # Allows usage of some filemenu options
         self.filemenu.entryconfig("New", command=lambda:[self.myController.processInput("!exit")])
         self.filemenu.entryconfig("Save", state="normal")
         self.filemenu.entryconfig("Quit Current Game", state="normal")
+        self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
+
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
 
