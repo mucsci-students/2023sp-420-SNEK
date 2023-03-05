@@ -1,7 +1,7 @@
 from UserInterface import UserInterface
 from colorama import Fore, Style
 from Puzzle import Puzzle
-
+import os
 
 class TerminalInterface(UserInterface):
 
@@ -53,6 +53,10 @@ Commands:
 
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PREFIX + message + " ").strip().lower()
+        return userInput
+    
+    def __getUserInputPath(self, message: str = "") -> str:
+        userInput = input(self.__CMD_PREFIX + message + " ").strip()
         return userInput
 
     def __boldPrint(self, message: str, endStr: str = "\n") -> None:
@@ -148,9 +152,18 @@ Commands:
         self.__boldPrint("Good guess!")
 
     def getSaveFileName(self, saveType = "") -> str:
-        self.__boldPrint("Desired save file: ")
-        path = self.__getUserInput()
-        return path
+        self.__boldPrint("Default save dir: " + os.getcwd())
+        diffPath = self.getConfirmation("Would you like to use a different path?")
+        if(diffPath == True):
+            self.__boldPrint("Desired save path: ")
+            path = self.__getUserInputPath()
+            self.__boldPrint("Desired save name: ")
+            name = self.__getUserInput()
+            return path + "/" + name + ".json"
+        else:
+            self.__boldPrint("Desired save name: ")
+            name = self.__getUserInput()
+            return name
 
     def showGuessedWords(self, guessedWords: list) -> None:
         self.__boldPrint("Guessed Words:")

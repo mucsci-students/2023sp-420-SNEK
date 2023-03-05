@@ -29,7 +29,7 @@ class SaveAndLoad:
         if "/" in saveName:
             return os.path.exists(saveName)
         else:
-            return os.path.exists(f"{cls.__SAVE_DIR}/{saveName}.json")
+            return os.path.exists(f"{os.getcwd()}/{saveName}.json")
         # Check if master save file exists
         
 
@@ -70,7 +70,7 @@ class SaveAndLoad:
             with open(saveName, "w") as f:
                 json.dump(data, f, indent=2)
         else:
-            with open(f"{cls.__SAVE_DIR}/{saveName}.json", "w") as f:
+            with open(f"{os.getcwd()}/{saveName}.json", "w") as f:
                 json.dump(data, f, indent=2)
         
 
@@ -82,7 +82,7 @@ class SaveAndLoad:
             with open(saveName, "r") as loadFile:
                 data = json.load(loadFile)
         else:
-            with open(f"{cls.__SAVE_DIR}/{saveName}.json", "r") as loadFile:
+            with open(f"{os.getcwd()}/{saveName}.json", "r") as loadFile:
                 data = json.load(loadFile)
 
         puzzleLettersStr: str = data["PuzzleLetters"]
