@@ -628,9 +628,9 @@ class BeeUI(UserInterface):
 
         # Defining each of the 7 buttons.  btn4 is the required letter.
         self.btn1 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1.place(y=0, x=150)
+        self.btn1.place(y=8, x=150)
         self.btn1Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1Letter.place(y=29, x=184)
+        self.btn1Letter.place(y=37, x=184)
 
         self.btn2 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[2]))
         self.btn2.place(x=50, y=60)
@@ -645,7 +645,7 @@ class BeeUI(UserInterface):
         self.btn4 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[0]))
         self.btn4.place(x=150, y=110)
         self.btn4Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn4Letter.place(x=185, y=140)
+        self.btn4Letter.place(x=184, y=136)
 
         self.btn5 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[4]))
         self.btn5.place(x=50, y=160)
