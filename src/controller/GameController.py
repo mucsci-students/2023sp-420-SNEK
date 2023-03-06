@@ -13,6 +13,7 @@ from customExcept import *
 import UserInterface
 from DataSource import DataSource
 from SaveAndLoad import SaveAndLoad
+# from BeeUI import BeeUI
 
 
 class GameController:
@@ -71,7 +72,13 @@ class GameController:
                 "This file already exists")
             overwrite = self.myUserInterface.getConfirmation(
                 "Do you want to overwrite it?")
-        if overwrite:
+        
+        #------------------------------------------------------------------
+        if SaveAndLoad.isSaved(fileName) == 3:
+                return
+        #------------------------------------------------------------------
+
+        if overwrite: # and not isinstance(self.myUserInterface, BeeUI)
             if scratchMode:
                 SaveAndLoad.saveScratch(self.myPuzzle, fileName)
             else:
@@ -117,6 +124,12 @@ class GameController:
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.playing = True
                 self.myUserInterface.showPuzzle(self.myPuzzle)
+            
+            #------------------------------------------------------------------
+            elif SaveAndLoad.isSaved(fileName) == 3:
+                return
+            #------------------------------------------------------------------
+
             else:
                 self.myUserInterface.showError("That file does not exist.")
 

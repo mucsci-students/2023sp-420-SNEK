@@ -31,6 +31,8 @@ class SaveAndLoad:
     def isSaved(cls, saveName: str) -> bool:
         if "/" in saveName:
             return os.path.exists(saveName)
+        elif saveName == "":
+            return 3
         else:
             return os.path.exists(f"{os.getcwd()}/{saveName}.json")
         # Check if master save file exists
@@ -84,6 +86,12 @@ class SaveAndLoad:
         if "/" in saveName:
             with open(saveName, "r") as loadFile:
                 data = json.load(loadFile)
+
+        #------------------------------------------------------------------
+        elif saveName == "":
+            return 3
+        #------------------------------------------------------------------
+        
         else:
             with open(f"{os.getcwd()}/{saveName}.json", "r") as loadFile:
                 data = json.load(loadFile)
