@@ -98,7 +98,7 @@
             -!exit - Exits the game. Will prompt to save.'''
     GUI Instructions:
         
-![Screenshot](img/SNEKTransperent.png)
+![Screenshot](img/spellBeeInstruct.png)
 
 ### Running Tests
 
