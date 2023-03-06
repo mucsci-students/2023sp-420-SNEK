@@ -11,7 +11,7 @@ import os
 
 class TerminalInterface(UserInterface):
 
-    # Initialization of of styles for game title
+    # Initialization of styles for game title
     def __init__(self) -> None:
         super().__init__()
         self.__CMD_PREFIX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
@@ -61,7 +61,7 @@ Commands:
     def quitInterface(self):
         self.quit = True
 
-    # Gets user input from cli and checks if there is a comand that
+    # Gets user input from cli and checks if there is a command that
     # a user wants to use
     def __getUserInput(self, message: str = "") -> str:
         userInput = input(self.__CMD_PREFIX + message + " ").strip().lower()
