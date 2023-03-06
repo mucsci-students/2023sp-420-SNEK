@@ -98,7 +98,7 @@
             -!exit - Exits the game. Will prompt to save.'''
     GUI Instructions:
         
-![Screenshot](img/spellBeeInstruct.png)
+![Screenshot](img/spellBeeInstruct.PNG)
 
 ### Running Tests
 
