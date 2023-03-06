@@ -3,8 +3,9 @@
 # CSCI 420 - Software Engineering
 # Millersville University
 #
-# BeeUI will immediately display a window upon a constructor call,
-# and functionality of the game with begin from there.
+# BeeUI will create a BeeUI object upon a constructor call,
+# and functionality of the game will begin when the .launch()
+# function is called on that object.
 #
 # IMPORTANT: BeeUI() is called at the bottom of this file for
 #            testing purposes, assure that it is removed before
@@ -258,9 +259,7 @@ class BeeUI(UserInterface):
     # title will be displayed at the top of the screen and usable buttons will
     # be grayed out.
     def showEnd(self):
-        self.correctLabel.configure(text=f"You Won!", font=("Arial", 25))
-        self.sub.configure(state='disabled')
-        self.buttonShuffle.configure(state='disabled')
+        self.__winPage()
         
     # Public method showGuessedWords
     # Params:
@@ -376,10 +375,10 @@ class BeeUI(UserInterface):
     # Clears the wordfield upon completion.
     def __submitGuess(self):
         text = self.entry.get()
-        self.myController.processInput(text)
         self.entry.configure(state='normal')
         self.entry.delete(0, tk.END)
         self.entry.configure(state='disabled')
+        self.myController.processInput(text)
 
     # Private method __shortcut
     # Params:
@@ -421,16 +420,19 @@ class BeeUI(UserInterface):
             widgets.destroy()
 
     # Private method __checkQuit
-    # Pops a message box up to ask the user if they really want to return to the menu.
-    # In future will work for asking if the user wants to save before leaving a game.
+    # Tells the controller we are ready to exit the game.
     def __checkQuit(self):
         self.myController.processInput("!exit")
-        self.__mainMenuPage()
+        if not self.myController.playing:
+            self.__mainMenuPage()
 
     # Private method __checkTerminate
+    # Tells the controller we wish to quit and
+    # terminates the program.
     def __checkTerminate(self):
         self.myController.processInput("!exit")
-        self.root.destroy()
+        if not self.myController.playing:
+            self.root.destroy()
 
     # Private method __shuffleText
     # Shuffles the honeycomb on screen during gameplay.
@@ -690,6 +692,23 @@ class BeeUI(UserInterface):
         self.buttonShuffle.pack()
 
         self.mainFrame.pack(fill='x')
+
+    # Private method __winPage
+    # Displays a win condition page and a go back arrow
+    # that brings you to the main menu.
+    def __winPage(self):
+        self.__clearFrame()
+
+        self.beestImg = Image.open('img/beest.PNG')
+        self.beestImg = self.beestImg.resize((650, 400))
+        self.beestImgSized = ImageTk.PhotoImage(self.beestImg)
+
+        self.beestBtn = tk.Button(self.mainFrame, border='0', image=self.beestImgSized)
+        self.beestBtn.pack()
+
+        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
+        self.goBackBtn.pack(pady=25)
 
 # End class
 # ASSURE YOU REMOVE THIS OR COMMENT IT OUT AFTER IMPLEMENTATION INTO MAIN:
