@@ -125,7 +125,7 @@ class GameController:
             loadingFile = self.myUserInterface.getSaveFileName(saveType="load")
 
             #------------------------------------------------------------------
-            if SaveAndLoad.isSaved(fileName) == 3:
+            if SaveAndLoad.isSaved(loadingFile) == 3:
                 return
             #------------------------------------------------------------------
 
