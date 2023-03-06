@@ -185,7 +185,7 @@ class GameController:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')
 
-    # Function to process the guess from the user. Called by proccesInput.
+    # Function to proccess the guess from the user. Called by proccesInput.
     # Correctly handles the situations in which the guess is correct, but also when the guess is simply incorrect 
     # (not a word, or not in the database), and more specifically when the guesss isn't longer than 3 letters, 
     # if the guess doesn't have the required letter, and the word was already guessed.
