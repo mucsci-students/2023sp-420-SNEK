@@ -50,7 +50,8 @@
             Linux/Mac
                 -use the command line command (source spell/bin/activate)
             Windows
-                -use the command line command (spell/Scripts/activate) (Must use powershell)
+                -use the command line command (spell/Scripts/activate) (powershell)
+                -use the command line command (spell\Scripts\activate) (CMD)
                 
 
     4. You should see the virtual environment name (spell) next to the command line 
@@ -62,7 +63,7 @@
     5. To exit the virtual environment simply type (deactivate) into the command line
 
 
-### Instructions for Playing
+### CLI Instructions
 
     How to play:
     You are given a word puzzle with a bunch of letters
@@ -74,8 +75,6 @@
     Scrabble dictionary.  Every puzzle has a corresponding
     pangram that it is generated from.  The pangram will
     include every letter in the honeycomb.
-
-    CLI Instructions:
 
     Commands:
     Call commands with a preceeding '!'. Commands may be
@@ -95,47 +94,19 @@
             -!guessed - Shows all the already correctly guessed words.
             -!help - Prints out the help menu.
             -!exit - Exits the game. Will prompt to save.'''
+   
+### GUI Instructions
 
-    GUI Instructions:
+![Screenshot](img/spellBeeInstruct.PNG)
 
-            Main Menu
+### Running Tests
 
-                    -New Game
-                        -New Game will generate a random word
-                         for the player to start.
-                    -Load Game
-                        -Load previously saved game
-                    -Exit Game
-                        -End Game
+    Command to run pytest (Be sure to be in environment before using)
+        Run All:
+            -pytest UnitTests/
+        Run Specific:
+            -pytest UnitTests/TestFileName
 
-            In-Game
-
-                    -7 Pangram Buttons that can be clicked
-                     to enter letters (keyboard also useable)
-                    
-                    -Submit Guess Button for submitting current
-                     letters in word field (enter key also usable)
-
-                    -Backspace button useful for deleting last
-                     input letter in word field (backspace key also usable)
-
-                    -Shuffle button which will reorganize the displayed 
-                     letters on the pangram buttons
-
-            Menu Options
-
-                    -File
-                        -Save Current Game saves the game
-                         with all progress
-
-                        -Save Scratch Game saves the game
-                         from inital state with no progress
-
-                        -Load Game loads a different saved
-                         game
-
-                        -Quit current game returns to the 
-                         main menu
 
 
 
