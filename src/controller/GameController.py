@@ -121,16 +121,16 @@ class GameController:
                         self.__saveFile()
 
             loadingFile = self.myUserInterface.getSaveFileName(saveType="load")
+
+            #------------------------------------------------------------------
+            if SaveAndLoad.isSaved(fileName) == 3:
+                return
+            #------------------------------------------------------------------
+
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.playing = True
                 self.myUserInterface.showPuzzle(self.myPuzzle)
-            
-            #------------------------------------------------------------------
-            elif SaveAndLoad.isSaved(fileName) == 3:
-                return
-            #------------------------------------------------------------------
-
             else:
                 self.myUserInterface.showError("That file does not exist.")
 
