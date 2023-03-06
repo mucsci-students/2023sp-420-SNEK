@@ -202,7 +202,7 @@ Commands:
             name = self.__getUserInput()
             return path + "/" + name + ".json"
         else:
-            self.__boldPrint("Desired save name: ")
+            self.__boldPrint("Desired save name (No empty names): ")
             name = self.__getUserInput()
             return name
 
