@@ -103,9 +103,9 @@
 
     Command to run pytest (Be sure to be in environment before using)
         Run All:
-            -pytest UnitTests/
+            - (pytest UnitTests/)
         Run Specific:
-            -pytest UnitTests/TestFileName
+            - (pytest UnitTests/TestFileName)
 
 
 
