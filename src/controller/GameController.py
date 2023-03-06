@@ -11,6 +11,7 @@ from Puzzle import Puzzle
 from Commands import *
 from customExcept import *
 import UserInterface
+from BeeUI import BeeUI
 from DataSource import DataSource
 from SaveAndLoad import SaveAndLoad
 # from BeeUI import BeeUI
