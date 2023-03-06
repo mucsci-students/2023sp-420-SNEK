@@ -1,3 +1,9 @@
+
+import sys
+sys.path.append('src/controller')
+sys.path.append('src/model')
+sys.path.append('src/view')
+
 from DataSource import *
 from UserInterface import *
 from GameController import *
@@ -6,6 +12,9 @@ from TerminalInterface import TerminalInterface
 from customExcept import InvalidArgumentException
 from BeeUI import *
 import sys
+
+
+
 
 DB_FILE_NAME = "spellingBee.db"
 

@@ -1,5 +1,10 @@
 # gameController class to handle functionailty of the Puzzle
 # Stephen Clugston
+
+import sys
+sys.path.append('../model')
+
+
 import random
 
 from Puzzle import Puzzle

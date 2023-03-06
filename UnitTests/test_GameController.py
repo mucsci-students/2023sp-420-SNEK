@@ -1,4 +1,8 @@
 # Unit tests for the GameController Module
+import sys
+sys.path.append('src/controller')
+sys.path.append('src/model')
+sys.path.append('src/view')
 
 
 

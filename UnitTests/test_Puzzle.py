@@ -7,6 +7,9 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import sys
+sys.path.append('src/model')
+
 import random
 
 from Puzzle import Puzzle

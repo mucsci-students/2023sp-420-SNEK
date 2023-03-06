@@ -7,7 +7,7 @@
     -A Spelling Bee game, implemented in Python with an SQLite database
 
 
-![Screenshot](SNEKTransperent.png)
+![Screenshot](img/SNEKTransperent.png)
 
 ### Contributers
 

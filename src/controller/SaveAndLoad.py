@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../model')
+
 import json
 import os
 from customExcept import SaveNotFound

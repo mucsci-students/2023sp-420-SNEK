@@ -1,7 +1,13 @@
+import sys
+sys.path.append('../controller')
+sys.path.append('../view')
+
 from UserInterface import UserInterface
 from colorama import Fore, Style
 from Puzzle import Puzzle
 import os
+
+
 
 class TerminalInterface(UserInterface):
 

@@ -1,4 +1,8 @@
 import sys
+
+sys.path.append('src/controller')
+sys.path.append('src/model')
+
 import os
 import json
 
