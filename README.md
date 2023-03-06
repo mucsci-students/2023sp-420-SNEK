@@ -63,7 +63,7 @@
     5. To exit the virtual environment simply type (deactivate) into the command line
 
 
-### Instructions for Playing
+### CLI Instructions
 
     How to play:
     You are given a word puzzle with a bunch of letters
@@ -75,8 +75,6 @@
     Scrabble dictionary.  Every puzzle has a corresponding
     pangram that it is generated from.  The pangram will
     include every letter in the honeycomb.
-
-    CLI Instructions:
 
     Commands:
     Call commands with a preceeding '!'. Commands may be
@@ -96,8 +94,9 @@
             -!guessed - Shows all the already correctly guessed words.
             -!help - Prints out the help menu.
             -!exit - Exits the game. Will prompt to save.'''
-    GUI Instructions:
-        
+   
+### GUI Instructions
+
 ![Screenshot](img/spellBeeInstruct.PNG)
 
 ### Running Tests
