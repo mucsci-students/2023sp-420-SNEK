@@ -11,6 +11,7 @@ from Puzzle import Puzzle
 from Commands import *
 from customExcept import *
 import UserInterface
+from BeeUI import BeeUI
 from DataSource import DataSource
 from SaveAndLoad import SaveAndLoad
 
@@ -66,16 +67,19 @@ class GameController:
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
         fileName = self.myUserInterface.getSaveFileName(saveType="save")
-        if SaveAndLoad.isSaved(fileName):
-            self.myUserInterface.showMessage(
-                "This file already exists")
-            overwrite = self.myUserInterface.getConfirmation(
-                "Do you want to overwrite it?")
-        if overwrite:
-            if scratchMode:
-                SaveAndLoad.saveScratch(self.myPuzzle, fileName)
-            else:
-                SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
+        if isinstance(self.myUserInterface, BeeUI):
+            return
+        else:
+            if SaveAndLoad.isSaved(fileName):
+                self.myUserInterface.showMessage(
+                    "This file already exists")
+                overwrite = self.myUserInterface.getConfirmation(
+                    "Do you want to overwrite it?")
+            if overwrite:
+                if scratchMode:
+                    SaveAndLoad.saveScratch(self.myPuzzle, fileName)
+                else:
+                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
 
     # Private function to create a new game from a newBaseWord 
     # Sets the puzzle attributes accordingly, sets the GameController to playing,

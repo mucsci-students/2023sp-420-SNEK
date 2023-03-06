@@ -42,7 +42,7 @@ import os
 from UserInterface import UserInterface
 from PIL import Image,ImageTk
 import random
-from GameController import GameController
+#from GameController import GameController
 from colorama import Fore, Style
 
 class BeeUI(UserInterface):
@@ -216,7 +216,7 @@ class BeeUI(UserInterface):
             return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
         elif(saveType == "load"):
             return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())    
-    
+
     # Public method showMessage
     # Accepts a message msgString
     # Displays a messagebox with msgString
