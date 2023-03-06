@@ -196,9 +196,9 @@ Commands:
         self.__boldPrint("Default save dir: " + os.getcwd())
         diffPath = self.getConfirmation("Would you like to use a different path?")
         if(diffPath == True):
-            self.__boldPrint("Desired save path: ")
+            self.__boldPrint("Desired save path (No empty save names): ")
             path = self.__getUserInputPath()
-            self.__boldPrint("Desired save name: ")
+            self.__boldPrint("Desired save name (No empty save names): ")
             name = self.__getUserInput()
             return path + "/" + name + ".json"
         else:
