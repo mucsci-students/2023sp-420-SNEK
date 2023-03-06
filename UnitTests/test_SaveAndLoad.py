@@ -17,11 +17,10 @@ class test_SaveAndLoad(unittest.TestCase):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        os.makedirs("saveFiles", exist_ok=True)
+        
         SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        with open("saveFiles/testFileName.json", "r") as loadFile:
+        with open("testFileName.json", "r") as loadFile:
             testSavedData = json.load(loadFile)
-
         self.assertEquals(
             testSavedData['WordList'], wordList, "word list not saved")
         self.assertEquals(
@@ -34,7 +33,7 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], 0, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("saveFiles/testFileName.json")
+        os.remove("testFileName.json")
 
     def test_saveCurrent(self):
         puzzleLetters = list("volcanos")
@@ -47,9 +46,9 @@ class test_SaveAndLoad(unittest.TestCase):
         for guess in wordsToBeGuessed:
             puzzleTest.addGuessWord(guess)
 
-        os.makedirs("saveFiles", exist_ok=True)
+        
         SaveAndLoad.saveCurrent(puzzleTest, "testFileName")
-        with open("saveFiles/testFileName.json", "r") as loadFile:
+        with open("testFileName.json", "r") as loadFile:
             testSavedData = json.load(loadFile)
 
         self.assertEquals(
@@ -64,23 +63,23 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], expectedCurrentPoints, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("saveFiles/testFileName.json")
+        os.remove("testFileName.json")
 
     def test_isSaved(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        os.makedirs("saveFiles", exist_ok=True)
+        
         SaveAndLoad.saveScratch(puzzleTest, "testFileName")
         self.assertTrue(SaveAndLoad.isSaved("testFileName"))
-        os.remove("saveFiles/testFileName.json")
+        os.remove("testFileName.json")
 
     def test_load(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao", "bacalao", "bacalao", "bacalao",
                     "bacalao", "bacalao", "bacalao", "bacalao", "bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        os.makedirs("saveFiles", exist_ok=True)
+        
         SaveAndLoad.saveScratch(puzzleTest, "testFileName")
         puzzleActual: Puzzle = SaveAndLoad.load("testFileName")
 
