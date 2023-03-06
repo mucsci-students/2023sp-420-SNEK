@@ -67,6 +67,8 @@ class GameController:
         overwrite = True
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
+        if scratchMode == 3:
+            return
         fileName = self.myUserInterface.getSaveFileName(saveType="save")
         if SaveAndLoad.isSaved(fileName):
             self.myUserInterface.showMessage(
