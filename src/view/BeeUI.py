@@ -146,6 +146,8 @@ class BeeUI(UserInterface):
         if(inputString == "How do you want to save?"):
             self.textStringForCon = ""
             self.__messageWindow("Save", "How do you want to save?")
+            if self.textStringForCon == "":
+                return 3
             print(self.textStringForCon)
             if self.textStringForCon.lower() == okStr: # Scratch
                 return True
