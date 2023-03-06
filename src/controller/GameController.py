@@ -22,11 +22,11 @@ class GameController:
     __STILL_LOAD_MSG = "Do you want to load another game?"
     __NO_GAME_TITLE = "Not Currently in game:"
 
-    # Private function that is an error message tempalte for actions that aren't allowed when a game is not being played.
+    # Private function that is an error message template for actions that aren't allowed when a game is not being played.
     def __NO_GAME_DESC(self, description):
         return f"You can't {description} a game if you are not playing one."
 
-    # Constructor that instanciates a new GameController object.
+    # Constructor that instantiates a new GameController object.
     def __init__(self, dataSource: DataSource) -> None:
         self.myPuzzle: Puzzle = None
         self.myUserInterface = None
@@ -89,7 +89,7 @@ class GameController:
         self.myUserInterface.showPuzzle(self.myPuzzle)
 
     # Function to processs the command from a user. processCommand is called from processUserInput.
-    # Handles all commands, such as exit, help, laod, save, rank, guessed words, shuffle, new rnd, new wrd, and show status
+    # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new rnd, new wrd, and show status
     def processCommand(self, commandStr: str) -> None:
         command = Commands.getCommandFromName(commandStr)
         if command == Commands.EXIT:
@@ -185,7 +185,7 @@ class GameController:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')
 
-    # Function to processs the guess from the user. Called by proccesInput.
+    # Function to process the guess from the user. Called by proccesInput.
     # Correctly handles the situations in which the guess is correct, but also when the guess is simply incorrect 
     # (not a word, or not in the database), and more specifically when the guesss isn't longer than 3 letters, 
     # if the guess doesn't have the required letter, and the word was already guessed.
