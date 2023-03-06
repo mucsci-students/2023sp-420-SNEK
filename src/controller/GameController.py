@@ -14,6 +14,7 @@ import UserInterface
 from BeeUI import BeeUI
 from DataSource import DataSource
 from SaveAndLoad import SaveAndLoad
+# from BeeUI import BeeUI
 
 
 class GameController:
@@ -67,19 +68,22 @@ class GameController:
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
         fileName = self.myUserInterface.getSaveFileName(saveType="save")
-        if isinstance(self.myUserInterface, BeeUI):
-            return
-        else:
-            if SaveAndLoad.isSaved(fileName):
-                self.myUserInterface.showMessage(
-                    "This file already exists")
-                overwrite = self.myUserInterface.getConfirmation(
-                    "Do you want to overwrite it?")
-            if overwrite:
-                if scratchMode:
-                    SaveAndLoad.saveScratch(self.myPuzzle, fileName)
-                else:
-                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
+        if SaveAndLoad.isSaved(fileName):
+            self.myUserInterface.showMessage(
+                "This file already exists")
+            overwrite = self.myUserInterface.getConfirmation(
+                "Do you want to overwrite it?")
+        
+        #------------------------------------------------------------------
+        if SaveAndLoad.isSaved(fileName) == 3:
+                return
+        #------------------------------------------------------------------
+
+        if overwrite: # and not isinstance(self.myUserInterface, BeeUI)
+            if scratchMode:
+                SaveAndLoad.saveScratch(self.myPuzzle, fileName)
+            else:
+                SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
 
     # Private function to create a new game from a newBaseWord 
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
@@ -121,6 +125,12 @@ class GameController:
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.playing = True
                 self.myUserInterface.showPuzzle(self.myPuzzle)
+            
+            #------------------------------------------------------------------
+            elif SaveAndLoad.isSaved(fileName) == 3:
+                return
+            #------------------------------------------------------------------
+
             else:
                 self.myUserInterface.showError("That file does not exist.")
 
