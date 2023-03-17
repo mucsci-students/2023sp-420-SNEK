@@ -7,12 +7,9 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
-import sys
-sys.path.append('src/model')
-
 import random
 
-from Puzzle import Puzzle
+from src.Model.Puzzle import Puzzle
 import unittest
 
 
@@ -53,6 +50,8 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getMaxPoints()
         self.assertEqual(actual, expected,
                          f"actual: {actual}\nexpected: {expected}")
+        
+        del tst_puzzle
 
     def test_shuffle(self):
         tst_puzzle = Puzzle(self.puzzleLetters, self.wordsList)
@@ -63,11 +62,13 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getCurrentRank()
         self.assertFalse(actual == original,
                          f"actual: {actual}\noriginal: {original}")
+        
+        del tst_puzzle
 
     def test_addGuessWord(self):
-        wordsList = ["onee", "twoo", "three", "four",
+        aWordsList = ["onee", "twoo", "three", "four",
                      "five", "sixx", "seven", "eight", "nine", "volcanos"]
-        tst_puzzle = Puzzle(self.puzzleLetters, wordsList)
+        tst_puzzle = Puzzle(self.puzzleLetters, aWordsList)
         guessWord = "four"
         expectedPoints = 1
         expectedGuessedWords = [guessWord]
@@ -82,7 +83,7 @@ class test_Puzzle(unittest.TestCase):
         self.assertEqual(actualPoints, expectedPoints,
                          f"actual: {actualGuessedWords}\noriginal: {expectedGuessedWords}")
 
-        _wordsList = wordsList.copy()
+        _wordsList = aWordsList.copy()
         _wordsList.remove(guessWord)
         for guess in _wordsList:
             tst_puzzle.addGuessWord(guess)
@@ -96,6 +97,8 @@ class test_Puzzle(unittest.TestCase):
         expectedGuessedWords = tst_puzzle.getWordList()
         self.assertEqual(actualPoints, expectedPoints,
                          f"actual: {actualGuessedWords}\noriginal: {expectedGuessedWords}")
+        
+        del tst_puzzle
 
 
 if __name__ == '__main__':

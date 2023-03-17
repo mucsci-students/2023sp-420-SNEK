@@ -16,10 +16,11 @@ class Commands(Enum):
     GUESSED_WORDS = auto()
     RANK = auto()
     SHOW_STATUS = auto()
+    CMD_LIKE = auto()
     UNDEFINED = auto()
 
 
-    class Constant:  # use Constant(object) if in Python 2
+    class Constant:
         def __init__(self, value):
             self.value = value
 
@@ -34,8 +35,8 @@ class Commands(Enum):
         {
             "exit": EXIT,
             "help": HELP,
-            "new wrd": NEW_GAME_WRD,
-            "new rnd": NEW_GAME_RND,
+            "new word": NEW_GAME_WRD,
+            "new random": NEW_GAME_RND,
             "save": SAVE,
             "load": LOAD,
             "shuffle": SHUFFLE,
@@ -44,24 +45,24 @@ class Commands(Enum):
             "status": SHOW_STATUS
         })
 
-    @ classmethod
+    @classmethod
     def getCommandFromName(cls, name: str):
         name = name.strip().lower()
         if name.startswith(cls.__CMD_MARK):
             commandWithoutMarker = name[len(cls.__CMD_MARK):]
+            commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.CMD_LIKE))
         else:
             commandWithoutMarker = name
-
-        commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.UNDEFINED))
+            commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.UNDEFINED))
 
         return commandConstant
 
-    @ classmethod
-    def isCommand(cls, name) -> bool:
-        if type(name) == str:
-            name = name.strip().lower()
-
-            return (name.startswith(cls.__CMD_MARK) and
-                    name[len(cls.__CMD_MARK):] in cls.__CMD_DIC.keys())
+    @classmethod
+    def isCommand(cls, cmd: str) -> bool:
+        if type(cmd) == str:
+            cmdName = cmd.strip().lower()
+            cmd = cls.getCommandFromName(cmdName)
+            return cmd != Commands.UNDEFINED
+        
         else:
-            return True
+            return type(cmd) == Commands

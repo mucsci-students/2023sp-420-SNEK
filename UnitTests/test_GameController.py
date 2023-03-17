@@ -1,15 +1,12 @@
 # Unit tests for the GameController Module
-import sys
-sys.path.append('src/controller')
-sys.path.append('src/model')
-sys.path.append('src/view')
 
 
 
-from GameController import GameController
 import unittest
+
+from src.Controller.GameController import GameController
 from Mocks.SpyUserInterface import SpyUserInterface
-from Puzzle import Puzzle
+from src.Model.Puzzle import Puzzle
 
 
 class test_GameController(unittest.TestCase):

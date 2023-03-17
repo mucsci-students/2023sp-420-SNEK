@@ -6,7 +6,7 @@ import random
 
 class DataSource:
     numberOfLetters = 0
-    wordList = dict()  # this is going to be a dicctionary just contianing the words
+    wordList = dict()  # this is going to be a dictionary just containing the words
 
     def __init__(self, mandatoryLetter=None, optionalLetters=None):
         if mandatoryLetter == None or optionalLetters == None:

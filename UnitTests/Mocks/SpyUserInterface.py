@@ -1,7 +1,7 @@
-import UserInterface
+import src.View.UserInterface
 
 
-class SpyUserInterface(UserInterface.UserInterface):
+class SpyUserInterface(src.View.UserInterface.UserInterface):
     def __init__(self) -> None:
         super().__init__()
 

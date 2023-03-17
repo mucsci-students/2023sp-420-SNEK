@@ -1,10 +1,7 @@
-import sys
-sys.path.append('../controller')
-sys.path.append('../view')
-
-from UserInterface import UserInterface
+from src.View.UserInterface import UserInterface
 from colorama import Fore, Style
-from Puzzle import Puzzle
+from src.Model.Puzzle import Puzzle
+from src.Model.Commands import *
 import os
 
 
@@ -55,6 +52,9 @@ Commands:
     def launch(self):
         while not self.quit:
             userInput = self.__getUserInput()
+            if Commands.isCommand(userInput):
+                userInput = Commands.getCommandFromName(userInput)
+
             self.myController.processInput(userInput)
 
     # Flag if the game is quit
@@ -64,7 +64,7 @@ Commands:
     # Gets user input from cli and checks if there is a command that
     # a user wants to use
     def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip().lower()
+        userInput = input(self.__CMD_PREFIX + message + " ").strip()
         return userInput
     
     # Path in directory that the user wants to save their games
@@ -179,32 +179,56 @@ Commands:
     # If a user does not make a right guess, then it will 
     # print that they did not make a right guess
     def showWrongGuess(self, message="") -> None:
-        self.__boldPrint("Wrong guess")
+        self.__boldPrint("Wrong guess", endStr = "")
         if message == "":
             print("...")
         else:
-            print(": " + message)
+            print(": \n\t" + message)
 
     # When a user makes the right guess, then it will
     # tell the user that they made the right guess
     def showCorrectGuess(self) -> None:
         self.__boldPrint("Good guess!")
 
-    # When a user wants to oepn their saved game, then it will 
-    # ask what save file theu want to open
+    # When a user wants to open their saved game, then it will 
+    # ask what save file they want to open
     def getSaveFileName(self, saveType = "") -> str:
-        self.__boldPrint("Default save dir: " + os.getcwd())
-        diffPath = self.getConfirmation("Would you like to use a different path?")
-        if(diffPath == True):
-            self.__boldPrint("Desired save path (No empty save names): ")
-            path = self.__getUserInputPath()
-            self.__boldPrint("Desired save name (No empty save names): ")
-            name = self.__getUserInput()
-            return path + "/" + name + ".json"
-        else:
-            self.__boldPrint("Desired save name (No empty names): ")
-            name = self.__getUserInput()
-            return name
+        
+        self.__boldPrint("Desired save path: ")
+        name = self.__getUserInputPath()
+        while name == "" or name == ".json":
+            self.showError("The file has to have a name.", "Please try again:")
+            name = self.__getUserInputPath()
+            
+        name = name if name.endswith(".json") else name + ".json "
+            
+        if not os.path.isabs(name):
+            baseDir = os.getcwd()
+            name = os.path.join(baseDir, name)
+            
+        fileName = os.path.normpath(name)
+
+        if os.path.exists(fileName):
+            self.showMessage("This file already exists")
+            overwrite = self.getConfirmation("Do you want to overwrite it?")
+            if not overwrite:
+                name = os.path.join(baseDir, ".json")
+                fileName = os.path.normpath(name)
+            
+        return fileName
+    
+        # self.__boldPrint("Default save dir: " + os.getcwd())
+        # diffPath = self.getConfirmation("Would you like to use a different path?")
+        # if(diffPath == True):
+        #     self.__boldPrint("Desired save path (No empty save names): ")
+        #     path = self.__getUserInputPath()
+        #     self.__boldPrint("Desired save name (No empty save names): ")
+        #     name = self.__getUserInput()
+        #     return path + "/" + name + ".json"
+        # else:
+        #     self.__boldPrint("Desired save name (No empty names): ")
+        #     name = self.__getUserInput()
+        #     return name
 
     # When !guessed is types, then it will print a list of all 
     # the words that the user has found in the game
@@ -220,10 +244,10 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.__getUserInput()).lower()
+        choice = str(self.__getUserInput())
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
-            choice = self.__getUserInput().lower()
+            choice = self.__getUserInput()
 
         confirmation = choice == okStr
         return confirmation
