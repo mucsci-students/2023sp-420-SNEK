@@ -12,6 +12,7 @@ from TerminalInterface import TerminalInterface
 from customExcept import InvalidArgumentException
 from BeeUI import *
 import sys
+import os
 
 
 
@@ -20,6 +21,12 @@ DB_FILE_NAME = "spellingBee.db"
 
 
 def main():
+    if(os.path.exists("spellingBee.db")):
+        pass
+    else:
+        with open("src/model/CreateDB.py") as f:
+            exec(f.read())
+
     # If no arguments are given
     dataSource = DataSource()
     if len(sys.argv) == 1:
