@@ -2,6 +2,10 @@
 # MUCSCI 420
 # Stephen Clugston and Josue Perez
 
+
+# Change on push to on commit!
+
+
 name: Python application
 
 on:
