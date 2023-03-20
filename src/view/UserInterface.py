@@ -73,3 +73,7 @@ class UserInterface(ABC):
     @abstractmethod
     def showCorrectGuess(self):
         pass
+    
+    @abstractmethod
+    def showHints(self):
+        pass
