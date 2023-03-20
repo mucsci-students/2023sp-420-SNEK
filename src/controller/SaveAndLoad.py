@@ -44,6 +44,7 @@ class SaveAndLoad:
         
     @classmethod
     def __checkJsonExt(cls, fileName:str):
+        fileName = fileName.strip()
         if not fileName.endswith(".json"):
             fileName += ".json"
             
@@ -80,16 +81,6 @@ class SaveAndLoad:
     @ classmethod
     def load(cls, loadName: str) -> Puzzle:
         loadName = cls.__checkJsonExt(loadName)
-        # if "/" in saveName:
-        #     with open(saveName, "r") as loadFile:
-        #         data = json.load(loadFile)
-
-        # #------------------------------------------------------------------
-        # elif saveName == "":
-        #     return 3
-        # #------------------------------------------------------------------
-        
-        # else:
         
         with open(loadName, "r") as loadFile:
             data = json.load(loadFile)

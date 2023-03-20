@@ -68,7 +68,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
         self.filemenu.add_separator()
-        self.filemenu.add_command(label="Quit Current Game", command=self.__checkQuit)
+        self.filemenu.add_command(label="Exit Current Game", command=self.__checkQuit)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Close Program", command=self.__onClosing)
         # For developer usage - assure removed for release
@@ -127,50 +127,23 @@ class BeeUI(UserInterface):
     def __onLoad(self):
         self.myController.processInput(Commands.LOAD)
             
+            
+    def showExit(self):
+        self.__preGamePage()
+
 # TODO:
     # Public method getConfirmation
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
     def getConfirmation(self, inputString, okStr="yes", nokStr="no"):
-        # Checking how the user wants to save (Scratch / Current)
-        if(inputString == "How do you want to save?"):
-            self.textStringForCon = ""
-            self.__messageWindow("Save", "How do you want to save?")
-            if self.textStringForCon == "":
-                return True
-            if self.textStringForCon.lower() == okStr: # Scratch
-                return True
-            elif self.textStringForCon.lower() == nokStr: # Current
-                return False
+        return self.__messageWindow("title", inputString, okStr, nokStr)
         
-        # Asking user about overwriting already saved game name
-        elif(inputString == "Do you want to overwrite it?"):
-            return True
-        
-        # Asking user if they wish to exit the current game
-        elif(inputString == self.__EXIT_MSG):
-            return messagebox.askyesno("", self.__EXIT_MSG)
-        
-        # Asking the user if they wish to save the game upon exit
-        elif(inputString == "Do you want to save the game?"):
-            if messagebox.askyesno("Save", "Do you want to save the game?"):
-                return True
-            else:
-                return False
-
-        # Asking the user if they wish to save upon New game
-        elif(inputString == "Do you want to save?"):
-            if messagebox.askyesno("Save", "Do you want to save the game?"):
-                self.__preGamePage()
-                return True
-            else:
-                self.__preGamePage()
-                return False
     
     # Private method __messageWindow
     # Accepts a title for the window, and a message for the window.
-    def __messageWindow(self, title="title", message="Message! Close the window!"):
+    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch',nokStr='current'):
+        self.textStringForCon = ""
         self.win = Toplevel() # Popout screen
         self.win.title(title)
         tk.Label(self.win, text=message).pack()
@@ -180,14 +153,16 @@ class BeeUI(UserInterface):
 
         # Displays two buttons to the popout window, one for a Scratch save and one for 
         # a Current save.
-        self.scratchBtn = tk.Button(self.windowFrameBtns, text='Scratch', command=lambda:[self.__textHelper("scratch")])
-        self.currentBtn = tk.Button(self.windowFrameBtns, text='Current', command=lambda:[self.__textHelper("current")])
+        self.scratchBtn = tk.Button(self.windowFrameBtns, text=okStr, command=lambda:[self.__textHelper(okStr)])
+        self.currentBtn = tk.Button(self.windowFrameBtns, text=nokStr, command=lambda:[self.__textHelper(nokStr)])
 
         self.scratchBtn.grid(row=0, column=0)
         self.currentBtn.grid(row=0, column=1)
 
         self.windowFrameBtns.pack()
         self.win.wait_window() # Program will wait for the selection of the user.
+        
+        return self.textStringForCon.lower() == okStr
 
     # Private method textHelper
     # Accepts a string text that will be one of two option ("scratch"/"current")
@@ -196,16 +171,17 @@ class BeeUI(UserInterface):
         self.textStringForCon = text
         self.win.destroy() # Destroys the popout window
         
-# TODO:
     # Public method getSaveFileName
-    # Accepts a saveType that will be a string of ("save"/"load")
-    # Proceeds to open a filedialog that will allow user to save or load
+    # Proceeds to open a filedialog that will allow user to save
     # a game as needed.
-    def getSaveFileName(self, saveType: str = ""):
-        if(saveType == "save"):
-            return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
-        elif(saveType == "load"):
-            return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())    
+    def getSaveFileName(self):
+        return filedialog.asksaveasfilename(filetypes=[("Json File","*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
+    
+    # Public method getLoadFileName
+    # Proceeds to open a filedialog that will allow user to load
+    # a game as needed.
+    def getLoadFileName(self):
+        return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
     # Accepts a message msgString
@@ -234,7 +210,7 @@ class BeeUI(UserInterface):
 
     # Public method quitInterface
     def quitInterface(self):
-        pass
+        self.root.destroy()
 
     # Public method showCorrectGuess
     # If the controller signals that the given guess was correct,
@@ -343,8 +319,8 @@ class BeeUI(UserInterface):
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
         if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
-            self.myController.processInput(Commands.EXIT)
-            self.root.destroy()
+            self.myController.processInput(Commands.QUIT)
+            # self.root.destroy()
 
     # Private method __setText
     # Handles placing the letters from the buttons into the entry field
@@ -409,7 +385,7 @@ class BeeUI(UserInterface):
     # Private method __checkQuit
     # Tells the controller we are ready to exit the game.
     def __checkQuit(self):
-        self.myController.processInput(Commands.EXIT)
+        self.myController.processInput(Commands.QUIT)
         if not self.myController.playing:
             self.__mainMenuPage()
 
@@ -447,7 +423,7 @@ class BeeUI(UserInterface):
         self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
         
         self.filemenu.entryconfig("Save", state="disabled")
-        self.filemenu.entryconfig("Quit Current Game", state="disabled")
+        self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -562,7 +538,7 @@ class BeeUI(UserInterface):
         # Allows usage of some filemenu options
         self.filemenu.entryconfig("New", command=lambda:[self.myController.processInput(Commands.EXIT)])
         self.filemenu.entryconfig("Save", state="normal")
-        self.filemenu.entryconfig("Quit Current Game", state="normal")
+        self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
 
         self.viewmenu.entryconfig("Show Rankings", state="normal")

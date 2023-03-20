@@ -59,9 +59,13 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def getSaveFileName(self, saveType=""):
+    def getSaveFileName(self):
         pass
-
+    
+    @abstractmethod
+    def getLoadFileName(self):
+        pass
+    
     @abstractmethod
     def getConfirmation(self):
         pass
@@ -73,3 +77,8 @@ class UserInterface(ABC):
     @abstractmethod
     def showCorrectGuess(self):
         pass
+    
+    @abstractmethod
+    def showExit(self):
+        pass
+

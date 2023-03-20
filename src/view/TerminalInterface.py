@@ -174,7 +174,7 @@ Commands:
 
     # Prints Exiting when a user wants to exit a puzzle
     def showExit(self) -> None:
-        self.__boldPrint("Exiting...")
+        self.__boldPrint("Exiting game...")
 
     # If a user does not make a right guess, then it will 
     # print that they did not make a right guess
@@ -189,11 +189,9 @@ Commands:
     # tell the user that they made the right guess
     def showCorrectGuess(self) -> None:
         self.__boldPrint("Good guess!")
-
-    # When a user wants to open their saved game, then it will 
-    # ask what save file they want to open
-    def getSaveFileName(self, saveType = "") -> str:
         
+        
+    def __getPath(self) -> str:
         self.__boldPrint("Desired save path: ")
         name = self.__getUserInputPath()
         while name == "" or name == ".json":
@@ -207,28 +205,27 @@ Commands:
             name = os.path.join(baseDir, name)
             
         fileName = os.path.normpath(name)
+        
+        return fileName
 
+    # When a user wants to open their saved game, then it will 
+    # ask what save file they want to open
+    def getSaveFileName(self) -> str:
+        fileName =  self.__getPath()
+        
         if os.path.exists(fileName):
             self.showMessage("This file already exists")
             overwrite = self.getConfirmation("Do you want to overwrite it?")
             if not overwrite:
-                name = os.path.join(baseDir, ".json")
+                name = os.path.join(os.getcwd(), ".json")
                 fileName = os.path.normpath(name)
-            
+
         return fileName
-    
-        # self.__boldPrint("Default save dir: " + os.getcwd())
-        # diffPath = self.getConfirmation("Would you like to use a different path?")
-        # if(diffPath == True):
-        #     self.__boldPrint("Desired save path (No empty save names): ")
-        #     path = self.__getUserInputPath()
-        #     self.__boldPrint("Desired save name (No empty save names): ")
-        #     name = self.__getUserInput()
-        #     return path + "/" + name + ".json"
-        # else:
-        #     self.__boldPrint("Desired save name (No empty names): ")
-        #     name = self.__getUserInput()
-        #     return name
+
+    # When a user wants to open their saved game, then it will 
+    # ask what save file they want to open
+    def getLoadFileName(self) -> str:
+        return self.__getPath()
 
     # When !guessed is types, then it will print a list of all 
     # the words that the user has found in the game

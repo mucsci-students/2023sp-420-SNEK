@@ -7,6 +7,7 @@ class Commands(Enum):
         return count + 1
 
     EXIT = auto()
+    QUIT = auto()
     HELP = auto()
     NEW_GAME_WRD = auto()
     NEW_GAME_RND = auto()
@@ -34,6 +35,7 @@ class Commands(Enum):
     __CMD_DIC = Constant(
         {
             "exit": EXIT,
+            "quit": QUIT,
             "help": HELP,
             "new word": NEW_GAME_WRD,
             "new random": NEW_GAME_RND,

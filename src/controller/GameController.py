@@ -54,7 +54,11 @@ class GameController:
             save = self.myUserInterface.getConfirmation("Do you want to save?")
             if save:
                 self.__saveFile()
+                
+            self.myUserInterface.showExit()
+            
         return exitGame
+            
 
     # A private function that handles the functionality of saving a file and all of its cases.
     # Uses the SaveAndLoad module to handle saving a game into the json format.
@@ -62,7 +66,7 @@ class GameController:
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
         
-        fileName = self.myUserInterface.getSaveFileName(saveType="save")
+        fileName = self.myUserInterface.getSaveFileName()
         
         if not os.path.basename(fileName) == ".json":
             if scratchMode:
@@ -86,11 +90,20 @@ class GameController:
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
-        if command == Commands.EXIT:
+        if command == Commands.QUIT:
+            if self.playing:
+                exit = self.__askExitAndSave()
+                if exit:
+                    self.myUserInterface.quitInterface()
+            else:
+                self.myUserInterface.quitInterface()
+
+        elif command == Commands.EXIT:
             if self.playing:
                 self.__askExitAndSave()
             else:
-                self.myUserInterface.quitInterface()
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("exit"))
 
         elif command == Commands.HELP:
             self.myUserInterface.showHelp()
@@ -106,7 +119,7 @@ class GameController:
                     if save:
                         self.__saveFile()
 
-            loadingFile = self.myUserInterface.getSaveFileName(saveType="load")
+            loadingFile = self.myUserInterface.getLoadFileName()
             if loadingFile == ".json":
                 self.myUserInterface.showError("The file has to have a name.")
                 return
@@ -153,24 +166,20 @@ class GameController:
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                exitGame = self.__askExitAndSave()
-                if exitGame:
-                    self.playing = False
+                self.__askExitAndSave()
 
             newBaseWord = self.myDataSource.getRandomWord()
             self.__createGame(newBaseWord)
 
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
-                exitGame = self.__askExitAndSave()
-                if (exitGame):
-                    self.playing = False
+                self.__askExitAndSave()
 
             newBaseWord = self.myUserInterface.getBaseWord()
             if(len(set(newBaseWord)) != 7):
-                self.myUserInterface.showError("That word does not have 7 different letters")
+                self.myUserInterface.showError("That word does not have 7 different letters.")
             elif(not self.myDataSource.checkWord(newBaseWord) ):
-                self.myUserInterface.showError("That word is not in the DB")
+                self.myUserInterface.showError("That word is not in the DB.")
             else:                    
                 self.__createGame(newBaseWord)
 
