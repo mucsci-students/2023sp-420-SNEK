@@ -41,26 +41,38 @@
        virtual environment. This is done by using the command 
        (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
 
-    1. Run setup via command line, in the form (python setup.py (Mac/Linux)) (py setup.py (Windows))
+    1. Creating and entering a virtual environment
 
-    2. setup.py will create a viurutal environment, instatiate databases,
-       and intall any required non-base modules/packages into the environment
-
-    3. Entering Virutal Environment
+        Activating
             Linux/Mac
-                -use the command line command (source spell/bin/activate)
+                -use the command line command (python3 -m venv spell)
             Windows
-                -use the command line command (spell/Scripts/activate) (powershell)
-                -use the command line command (spell\Scripts\activate) (CMD)
-                
+                -Use the command line command (py -m venv spell)
 
-    4. You should see the virtual environment name (spell) next to the command line 
-       path in windows or username in linux/mac, from here you can start the program
-       with 
-       (python main.py (Mac/Linux) py main.py (Windows) for GUI on start)
-       (python main.py --cli (Mac/Linux) py main.py --cli (Windows) for CLI on start)
+        Entering
+            Linux/Mac
+                -Use the command line command (source spell/bin/activate)
+            Windows
+                CMD
+                    -Use the command line command (spell\Scripts\activate)
+                PowerShell
+                    -Use the command line command (spell/Scripts/activate)
+
+        Exiting
+            Linux/Mac/PowerShell
+                -Use the command line command (deactivate)
+
+    2. Building
+        
+        Within the spell environment use the command (pip install -e .)
     
-    5. To exit the virtual environment simply type (deactivate) into the command line
+    3. Running program
+
+        Within the spell environment
+            GUI:
+                -Use the command line command (Bee)
+            CLI:
+                -Use the command line command (Bee --cli)
 
 
 ### CLI Instructions
@@ -99,13 +111,26 @@
 
 ![Screenshot](img/spellBeeInstruct.PNG)
 
-### Running Tests
+### Testing Suite
 
-    Command to run pytest (Be sure to be in environment before using)
-        Run All:
-            - (pytest UnitTests/)
-        Run Specific:
-            - (pytest UnitTests/TestFileName)
+    Using the Testing Suite
+
+    Running a complete Test
+        - Use the command line command ( (Test) or (Test all))
+            -To add coverage use ( (Test cov) or (Test all cov))
+    
+    Testing coverage of a specific directory (IE. model, controller, view)
+        -Use the command line command ( (Test model) or (Test controller) or (Test view))
+
+    Testing a single unit test/file
+        -Use the command line command ( (Test single) ) for normal testing and ( (Test single cov)) for testing with coverage
+            -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
+            -If you do not want to choose a file, use (quit) in the command line
+    
+    -Test commands (IE. Test) must be uppercase
+        
+        
+            
 
 
 
