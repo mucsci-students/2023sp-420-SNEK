@@ -123,7 +123,8 @@
         -Use the command line command ( (Test model) or (Test controller) or (Test view))
 
     Testing a single unit test/file
-        -Use the command line command ( (Test single) ) for normal testing and ( (Test single cov)) for testing with coverage
+        -Use the command line command ( (Test single) ) for normal testing and ( (Test single cov)) 
+        for testing with coverage
             -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
             -If you do not want to choose a file, use (quit) in the command line
     
