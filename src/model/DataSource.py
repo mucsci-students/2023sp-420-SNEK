@@ -3,6 +3,8 @@ import sqlite3
 import pandas as pd
 import random
 
+from model.Hint import Hint
+
 
 class DataSource:
     numberOfLetters = 0
@@ -89,3 +91,57 @@ class DataSource:
         dt.wordList = list(dt.wordList[0])
 
         return dt
+    def getHints(self, wordList:list,optionalLetters:list)->Hint:
+        letterMat = dict()
+        maximum = 0
+        beginDict = dict()
+        wordList.sort()
+        for word in wordList:
+            if(maximum < len(word)):
+                maximum = len(word)
+            
+        for letter in optionalLetters:
+            letterMat[letter]= dict()
+            for number in range(4, maximum+1):
+                letterMat[letter][str(number)]= 0
+            letterMat[letter]['Σ']= 0
+
+        pangram = 0
+        perfectPangram = 0
+
+
+        print(wordList)
+
+        for word in wordList:
+            auxLetterList = list(set((word)))
+            auxLetterList.sort()
+            if auxLetterList == optionalLetters:
+                pangram += 1
+                if(len(word) == 7):
+                    perfectPangram += 1
+            if (letterMat.get(word[0]) == None):
+                letterMat[word[0]][str(len(word))] = 1
+            else:
+                if (letterMat[word[0]].get(str(len(word))) == None):
+                    letterMat[word[0]][str(len(word))] = 1
+                else:
+                    letterMat[word[0]][str(len(word))] += 1
+
+            if (beginDict.get(word[:2]) == None):
+                beginDict[word[:2]] = 1
+            else:
+                beginDict[word[:2]] += 1
+
+
+        for letter in optionalLetters:
+            sumatory = 0
+            bingo = False
+            for number in range(4, maximum+1):
+                if(letterMat[letter][str(number)] != 0):
+                    bingo = True
+                sumatory += letterMat[letter][str(number)]
+            if not bingo:
+                    break
+            letterMat[letter]['Σ'] = sumatory
+        return Hint(letterMat, beginDict, pangram, perfectPangram , bingo, len(wordList))
+    
