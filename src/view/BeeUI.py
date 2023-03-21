@@ -596,7 +596,7 @@ class BeeUI(UserInterface):
         self.pointFrame.columnconfigure(1, weight=1)
 
         # Defining header text labels
-        self.rnklbl = tk.Label(self.rankFrame, text="You're a: ", font=('Arial', 18))
+        self.rnklbl = tk.Label(self.rankFrame, text="Rank: ", font=('Arial', 18))
         self.rank = tk.Label(self.rankFrame, text="Beginner", font=('Arial', 18))
         self.progBar = tk.Label(self.mainFrame, font=('Arial', 18), text="🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯-🍯")
         self.pnts = tk.Label(self.pointFrame, text="Points: ", font=('Arial', 18))
@@ -648,40 +648,40 @@ class BeeUI(UserInterface):
         self.comb = ImageTk.PhotoImage(self.combImg)
 
         # Defining each of the 7 buttons.  btn4 is the required letter.
-        self.btn1 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[1]))
+        self.btn1 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[1].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[1]))
         self.btn1.place(y=8, x=150)
-        self.btn1Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
-        self.btn1Letter.place(y=37, x=184)
+        #self.btn1Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[1].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[1]))
+        #self.btn1Letter.place(y=37, x=184)
 
-        self.btn2 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[2]))
+        self.btn2 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[2].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[2]))
         self.btn2.place(x=50, y=60)
-        self.btn2Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[2].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
-        self.btn2Letter.place(x=86, y=90)
+        #self.btn2Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[2].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[2]))
+        #self.btn2Letter.place(x=86, y=90)
 
-        self.btn3 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[3]))
+        self.btn3 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[3].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[3]))
         self.btn3.place(x=250, y=60)
-        self.btn3Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[3].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
-        self.btn3Letter.place(x=286, y=90)
+        #self.btn3Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[3].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[3]))
+        #self.btn3Letter.place(x=286, y=90)
 
-        self.btn4 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[0]))
+        self.btn4 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[0].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[0]))
         self.btn4.place(x=150, y=110)
-        self.btn4Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
-        self.btn4Letter.place(x=184, y=136)
+        #self.btn4Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[0].upper(), font=('Arial bold', 18), command=lambda:self.__setText(self.wordPuzzle[0]))
+        #self.btn4Letter.place(x=184, y=136)
 
-        self.btn5 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[4]))
+        self.btn5 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[4].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[4]))
         self.btn5.place(x=50, y=160)
-        self.btn5Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[4].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
-        self.btn5Letter.place(x=86, y=190)
+        #self.btn5Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[4].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[4]))
+        #self.btn5Letter.place(x=86, y=190)
 
-        self.btn6 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[5]))
+        self.btn6 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[5].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[5]))
         self.btn6.place(x=250, y=160)
-        self.btn6Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[5].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
-        self.btn6Letter.place(x=286, y=190)
+        #self.btn6Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[5].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[5]))
+        #self.btn6Letter.place(x=286, y=190)
 
-        self.btn7 = tk.Button(self.buttonframe, border='0', image=self.comb, command=lambda:self.__setText(self.wordPuzzle[6]))
+        self.btn7 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[6].upper(), font=('Arial', 18), image=self.comb, command=lambda:self.__setText(self.wordPuzzle[6]))
         self.btn7.place(x=150, y=210)
-        self.btn7Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[6].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
-        self.btn7Letter.place(x=186, y=240)
+        #self.btn7Letter = tk.Button(self.buttonframe, activebackground= '#c7b12b', border='0', bg='#c7b12b', text=self.wordPuzzle[6].upper(), font=('Arial', 18), command=lambda:self.__setText(self.wordPuzzle[6]))
+        #self.btn7Letter.place(x=186, y=240)
 
         # Display the honeycomb frame to window
         self.buttonframe.pack(ipadx=200, ipady=155)
