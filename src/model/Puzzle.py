@@ -112,7 +112,7 @@ class Puzzle:
         ''' Output:
                 the maximum points of this given game.
         '''
-        return self.maxPoints
+        #return self.maxPoints
 
     def getRanks(self) -> dict[str, int]:
         ''' Output:
