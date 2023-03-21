@@ -2,7 +2,7 @@
 # MUCSCI 420
 # Stephen Clugston and Josue Perez
 
-name: Python application
+name: SNEK Continuous Integration
 
 on:
   push:
