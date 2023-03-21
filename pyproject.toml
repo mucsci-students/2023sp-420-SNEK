@@ -24,3 +24,4 @@ testpaths = [
 
 [project.scripts]
 Bee = "main:main"
+Test = "test:main"
