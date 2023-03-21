@@ -9,8 +9,8 @@
 name: Python application
 
 on:
-  push:
-    branches: [ "develop" ]
+  commmit:
+    branches: [ "ContinuousIntegration" ]
   pull_request:
     branches: [ "develop" ]
 
