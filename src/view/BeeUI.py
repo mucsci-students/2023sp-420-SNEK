@@ -38,8 +38,8 @@ import os
 from PIL import Image,ImageTk
 
 
-from src.View.UserInterface import UserInterface
-from src.Model.Commands import *
+from view.UserInterface import UserInterface
+from model.Commands import *
 
 
 class BeeUI(UserInterface):
@@ -131,7 +131,6 @@ class BeeUI(UserInterface):
     def showExit(self):
         self.__preGamePage()
 
-# TODO:
     # Public method getConfirmation
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController

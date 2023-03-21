@@ -1,9 +1,13 @@
+
+import sys
+sys.path.append('./src')
+
 import os
 import json
 
 
-from src.Model.Puzzle import Puzzle
-from src.Controller.SaveAndLoad import SaveAndLoad
+from model.Puzzle import Puzzle
+from controller.SaveAndLoad import SaveAndLoad
 import unittest
 
 
