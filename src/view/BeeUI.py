@@ -146,6 +146,15 @@ class BeeUI(UserInterface):
         self.textStringForCon = ""
         self.win = Toplevel() # Popout screen
         self.win.title(title)
+        self.win.geometry("300x75")
+
+        self.x = self.root.winfo_x()
+        self.y = self.root.winfo_y()
+        self.win.geometry("+%d+%d" %(self.x+300,self.y+300))
+
+        # Keep the toplevel window in front of the root window
+        self.win.wm_transient(self.root)
+
         tk.Label(self.win, text=message).pack()
         self.windowFrameBtns = tk.Frame(self.win)
         self.windowFrameBtns.columnconfigure(0, weight=1)
@@ -385,7 +394,7 @@ class BeeUI(UserInterface):
     # Private method __checkQuit
     # Tells the controller we are ready to exit the game.
     def __checkQuit(self):
-        self.myController.processInput(Commands.QUIT)
+        self.myController.processInput(Commands.EXIT)
         if not self.myController.playing:
             self.__mainMenuPage()
 
