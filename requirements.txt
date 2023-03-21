@@ -1,6 +1,0 @@
-colorama
-requests
-numpy
-pandas
-pytest
-pillow
