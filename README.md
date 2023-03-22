@@ -45,34 +45,43 @@
 
         Activating
             Linux/Mac
-                -use the command line command (python3 -m venv spell)
+                -use the command line command:
+                    ```python3 -m venv spell```
             Windows
-                -Use the command line command (py -m venv spell)
+                -Use the command line command:
+                    ```py -m venv spell```
 
         Entering
             Linux/Mac
-                -Use the command line command (source spell/bin/activate)
+                -Use the command line command:
+                    ```source spell/bin/activate```
             Windows
                 CMD
-                    -Use the command line command (spell\Scripts\activate)
+                    -Use the command line command:
+                        ```spell\Scripts\activate```
                 PowerShell
-                    -Use the command line command (spell/Scripts/activate)
+                    -Use the command line command:
+                        ```spell/Scripts/activate```
 
         Exiting
             Linux/Mac/PowerShell
-                -Use the command line command (deactivate)
+                -Use the command line command:
+                    ```deactivate```
 
     2. Building
         
-        Within the spell environment use the command (pip install -e .)
+        Within the spell environment use the command:
+            ```pip install -e .```
     
     3. Running program
 
         Within the spell environment
             GUI:
-                -Use the command line command (Bee)
+                -Use the command line command:
+                    ```Bee```
             CLI:
-                -Use the command line command (Bee --cli)
+                -Use the command line command:
+                    ```Bee --cli```
 
 
 ### CLI Instructions
@@ -116,19 +125,24 @@
     Using the Testing Suite
 
     Running a complete Test
-        - Use the command line command ( (Test) or (Test all))
-            -To add coverage use ( (Test cov) or (Test all cov))
+        - Use the command line command:
+            ```Test``` or ```Test all```
+            -To add coverage use:
+                ```Test cov``` or ```Test all cov```
     
     Testing coverage of a specific directory (IE. model, controller, view)
-        -Use the command line command ( (Test model) or (Test controller) or (Test view))
+        -Use the command line command:
+            ```Test model``` or ```Test controller``` or ```Test view```
 
     Testing a single unit test/file
-        -Use the command line command ( (Test single) ) for normal testing and ( (Test single cov)) 
-        for testing with coverage
+        -Use the command line command:
+            ```Test single``` for normal testing
+            ```Test single cov``` for testing with coverage
             -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
-            -If you do not want to choose a file, use (quit) in the command line
+            -If you do not want to choose a file:
+            use ```quit```
     
-    -Test commands (IE. Test) must be uppercase
+    -Test command ```Test``` must be uppercase
         
         
             
