@@ -32,4 +32,4 @@ jobs:
         
     - name: Run tests using pytest
       run: |
-        /src/buildTest.py
+        npm run buildTest.py
