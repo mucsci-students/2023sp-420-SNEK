@@ -36,52 +36,52 @@
 
 ### Instructions for Building using Setup
 
-    0. when using windows, execution policy for scripts must be changed
-       from default to allow scripts to run like the activate script for the
-       virtual environment. This is done by using the command 
-       (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
+0. when using windows, execution policy for scripts must be changed
+    from default to allow scripts to run like the activate script for the
+    virtual environment. This is done by using the command 
+    (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
 
-    1. Creating and entering a virtual environment
+1. Creating and entering a virtual environment
 
-        Activating
-            Linux/Mac
-                -use the command line command:
-                    ```python3 -m venv spell```
-            Windows
+    Activating
+        Linux/Mac
+            -use the command line command:
+                ```python3 -m venv spell```
+        Windows
+            -Use the command line command:
+                ```py -m venv spell```
+
+    Entering
+        Linux/Mac
+            -Use the command line command:
+                ```source spell/bin/activate```
+        Windows
+            CMD
                 -Use the command line command:
-                    ```py -m venv spell```
-
-        Entering
-            Linux/Mac
+                    ```spell\Scripts\activate```
+            PowerShell
                 -Use the command line command:
-                    ```source spell/bin/activate```
-            Windows
-                CMD
-                    -Use the command line command:
-                        ```spell\Scripts\activate```
-                PowerShell
-                    -Use the command line command:
-                        ```spell/Scripts/activate```
+                    ```spell/Scripts/activate```
 
-        Exiting
-            Linux/Mac/PowerShell
-                -Use the command line command:
-                    ```deactivate```
+    Exiting
+        Linux/Mac/PowerShell
+            -Use the command line command:
+                ```deactivate```
 
-    2. Building
-        
-        Within the spell environment use the command:
-            ```pip install -e .```
+2. Building
     
-    3. Running program
+    Within the spell environment use the command:
+        ```pip install -e .```
 
-        Within the spell environment
-            GUI:
-                -Use the command line command:
-                    ```Bee```
-            CLI:
-                -Use the command line command:
-                    ```Bee --cli```
+3. Running program
+
+    Within the spell environment
+        GUI:
+            -Use the command line command:
+                ```Bee```
+        CLI:
+            -Use the command line command:
+                ```Bee --cli```
 
 
 ### CLI Instructions
@@ -122,27 +122,27 @@
 
 ### Testing Suite
 
-    Using the Testing Suite
+Using the Testing Suite
 
-    Running a complete Test
-        - Use the command line command:
-            ```Test``` or ```Test all```
-            -To add coverage use:
-                ```Test cov``` or ```Test all cov```
-    
-    Testing coverage of a specific directory (IE. model, controller, view)
-        -Use the command line command:
-            ```Test model``` or ```Test controller``` or ```Test view```
+Running a complete Test
+    - Use the command line command:
+        ```Test``` or ```Test all```
+        -To add coverage use:
+            ```Test cov``` or ```Test all cov```
 
-    Testing a single unit test/file
-        -Use the command line command:
-            ```Test single``` for normal testing
-            ```Test single cov``` for testing with coverage
-            -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
-            -If you do not want to choose a file:
-            use ```quit```
-    
-    -Test command ```Test``` must be uppercase
+Testing coverage of a specific directory (IE. model, controller, view)
+    -Use the command line command:
+        ```Test model``` or ```Test controller``` or ```Test view```
+
+Testing a single unit test/file
+    -Use the command line command:
+        ```Test single``` for normal testing
+        ```Test single cov``` for testing with coverage
+        -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
+        -If you do not want to choose a file:
+        use ```quit```
+
+Test command ```Test``` must be uppercase
         
         
             
