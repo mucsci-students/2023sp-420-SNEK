@@ -43,25 +43,20 @@
 
 1. Creating and entering a virtual environment
 
-    Activating\
-        Linux/Mac\
-            -use the command line command: 
+    -Activating\
+        Linux/Mac:
                 ```python3 -m venv spell```\
-        Windows\
-            -Use the command line command: 
-                ```py -m venv spell```\
+        Windows:
+                ```py -m venv spell```
 
-    Entering\
-        Linux/Mac\
-            -Use the command line command: 
+    -Entering\
+        Linux/Mac
                 ```source spell/bin/activate```\
         Windows\
-            CMD\
-                -Use the command line command: 
+            CMD:
                     ```spell\Scripts\activate```\
-            PowerShell\
-                -Use the command line command: 
-                    ```spell/Scripts/activate```\
+            PowerShell:
+                    ```spell/Scripts/activate```
 
     Exiting\
         Linux/Mac/PowerShell\
