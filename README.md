@@ -7,27 +7,25 @@
     -A Spelling Bee game, implemented in Python with an SQLite database
 
 
-![Screenshot](img/SNEKTransperent.png)
+<p align="center">
+          <img src="img/SNEKTransperent.png">
+</p>
 
 ### Contributers
 
-    -Aitor Cantero Crespo
-    -Bogdan Balagurak
-    -Josue Perez-Crespo
-    -Miguel Armedariz Llanos
-    -Nick Hoopes
-    -Stephen Clugston
+<p align="center">
+    <img src="img/contributersFinal2.PNG">
+</p>
 
 ### Neccessary Libraries
 
-    Libraries not pre-packaged with Python
-    that need installation.
-
-        -colorama
-        -requests
-        -numpy
-        -pandas
-        -pytest
+* Libraries not pre-packaged with Python
+that need installation.
+    * colorama
+    * requests
+    * numpy
+    * pandas
+    * pytest
 
 ### Python Version
 
@@ -103,7 +101,9 @@
    
 ### GUI Instructions
 
-![Screenshot](img/spellBeeInstruct.PNG)
+<p align=center>
+    <img src="img/spellBeeInstruct.PNG">
+<p>
 
 ### Testing Suite
 
