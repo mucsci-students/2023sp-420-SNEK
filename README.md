@@ -42,33 +42,31 @@
     (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
 
 1. Creating and entering a virtual environment
-    -Activating\
-        -Linux/Mac:
-                ```python3 -m venv spell```\
-        -Windows:
-                ```py -m venv spell```
-    -Entering\
-        -Linux/Mac
-                ```source spell/bin/activate```\
-        -Windows\
-            -CMD:
-                    ```spell\Scripts\activate```\
-            -PowerShell:
-                    ```spell/Scripts/activate```
-    -Exiting\
-        -Linux/Mac/PowerShell:
-                ```deactivate```\
+    * Creating the environment:
+    
+        * Linux/Mac:  ```python3 -m venv spell```
+        * Windows:  ```py -m venv spell```
+        
+    * Activating/Entering the environement:
+    
+        * Linux/Mac:  ```source spell/bin/activate```
+        
+        * Windows:
+            * CMD:  ```spell\Scripts\activate```
+            * PowerShell:  ```spell/Scripts/activate```
+            
+    * Deactivating/Exiting the environment:
+    
+        * Linux/Mac/PowerShell:  ```deactivate```
 
 2. Building
-    -Within the spell environment use the command: 
-        ```pip install -e .```
+    * Within the spell environment use the command:  ```pip install -e .```
 
 3. Running program
-    -Within the spell environment
-        -GUI: 
-            ```Bee```\
-        -CLI: 
-            ```Bee --cli```\
+    * Within the spell environment:
+    
+        * GUI:   ```Bee```
+        * CLI:   ```Bee --cli```
 
 
 ### CLI Instructions
@@ -109,27 +107,22 @@
 
 ### Testing Suite
 
-Using the Testing Suite
+* Using the Testing Suite
 
-Running a complete Test\
-    - Use the command line command: 
-        ```Test``` or ```Test all```\
-        -To add coverage use: 
-            ```Test cov``` or ```Test all cov```\
+* Running a complete Test:
+    * Use the command line command:  ```Test``` or ```Test all```
+        * To add coverage use:  ```Test cov``` or ```Test all cov```
 
-Testing coverage of a specific directory (IE. model, controller, view)\
-    -Use the command line command: 
-        ```Test model``` or ```Test controller``` or ```Test view```\
+* Testing coverage of a specific directory (IE. model, controller, view)
+    * Use the command line command:  ```Test model``` or ```Test controller``` or ```Test view```
 
-Testing a single unit test/file\
-    -Use the command line command: 
-        ```Test single``` for normal testing\
-        ```Test single cov``` for testing with coverage\
-        -Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)\
-        -If you do not want to choose a file: 
-        use ```quit```\
+* Testing a single unit test/file
+    * ```Test single``` for normal testing
+    * ```Test single cov``` for testing with coverage
+        * Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
+        * If you do not want to choose a file:  ```quit```
 
-Test command ```Test``` must be uppercase
+* Test command ```Test``` must have uppercase T
         
         
             
