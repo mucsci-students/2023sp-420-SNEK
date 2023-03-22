@@ -42,41 +42,33 @@
     (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
 
 1. Creating and entering a virtual environment
-
     -Activating\
-        Linux/Mac:
+        -Linux/Mac:
                 ```python3 -m venv spell```\
-        Windows:
+        -Windows:
                 ```py -m venv spell```
-
     -Entering\
-        Linux/Mac
+        -Linux/Mac
                 ```source spell/bin/activate```\
-        Windows\
-            CMD:
+        -Windows\
+            -CMD:
                     ```spell\Scripts\activate```\
-            PowerShell:
+            -PowerShell:
                     ```spell/Scripts/activate```
-
-    Exiting\
-        Linux/Mac/PowerShell\
-            -Use the command line command: 
+    -Exiting\
+        -Linux/Mac/PowerShell:
                 ```deactivate```\
 
-2. Building\
-    
-    Within the spell environment use the command: 
-        ```pip install -e .```\
+2. Building
+    -Within the spell environment use the command: 
+        ```pip install -e .```
 
-3. Running program\
-
-    Within the spell environment\
-        GUI:\
-            -Use the command line command: 
-                ```Bee```\
-        CLI:\
-            -Use the command line command: 
-                ```Bee --cli```\
+3. Running program
+    -Within the spell environment
+        -GUI: 
+            ```Bee```\
+        -CLI: 
+            ```Bee --cli```\
 
 
 ### CLI Instructions
