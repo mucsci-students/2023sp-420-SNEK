@@ -621,7 +621,7 @@ class BeeUI(UserInterface):
         self.entryframe.columnconfigure(1, weight=1)
 
         # Defining entry box and backspace button.
-        self.entry = tk.Entry(self.entryframe, font=('Arial', 12), state="disabled")
+        self.entry = tk.Entry(self.entryframe, font=('Arial', 18), state="disabled", disabledbackground="white", disabledforeground="black")
         self.root.bind('<KeyPress>', self.__shortcut)
         self.entry.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.bck = PhotoImage(file='img/backspace.png')
