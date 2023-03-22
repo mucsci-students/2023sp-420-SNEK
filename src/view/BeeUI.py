@@ -552,8 +552,8 @@ class BeeUI(UserInterface):
 
         self.newWordLabel = tk.Label(self.newWordGrid, font=('Arial', 14), text='Type custom word here: ')
         self.newWordLabel.grid(row=0, column=0)
-        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 12))
-        self.newWord.grid(row=0, column=1)
+        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 18))
+        self.newWord.grid(row=0, column=1, ipadx=20)
 
         self.customBtnImg = PhotoImage(file='img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput("!new wrd"))
