@@ -552,8 +552,8 @@ class BeeUI(UserInterface):
 
         self.newWordLabel = tk.Label(self.newWordGrid, font=('Arial', 14), text='Type custom word here: ')
         self.newWordLabel.grid(row=0, column=0)
-        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 12))
-        self.newWord.grid(row=0, column=1)
+        self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 18))
+        self.newWord.grid(row=0, column=1, ipadx=20)
 
         self.customBtnImg = PhotoImage(file='img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput("!new wrd"))
@@ -621,7 +621,7 @@ class BeeUI(UserInterface):
         self.entryframe.columnconfigure(1, weight=1)
 
         # Defining entry box and backspace button.
-        self.entry = tk.Entry(self.entryframe, font=('Arial', 12), state="disabled")
+        self.entry = tk.Entry(self.entryframe, font=('Arial', 18), state="disabled", disabledbackground="white", disabledforeground="black")
         self.root.bind('<KeyPress>', self.__shortcut)
         self.entry.grid(row=0, column=0, sticky=tk.W+tk.E)
         self.bck = PhotoImage(file='img/backspace.png')
