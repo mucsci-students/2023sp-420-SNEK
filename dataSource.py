@@ -8,18 +8,28 @@ import random
 
 #Contains a list of the words that are going to be the possible guesses for the game
 #Contains the total number of letters in the possible words, this will be used to calculate the points
+class SingletonMeta(type):
+    """
+    The Singleton class can be implemented in different ways in Python. Some
+    possible methods include: base class, decorator, metaclass. We will use the
+    metaclass because it is best suited for this purpose.
+    """
 
+    _instances = {}
 
-class DataSource:
-    numberOfLetters = 0
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+    
+class DataSource(metaclass=SingletonMeta):
+     numberOfLetters = 0
     wordList = dict()  
-
-  
-    __instance = None
-    def __new__(cls, mandatoryLetter=None, optionalLetters=None):
-        if __instance == None:
-            cls.instance = super(DataSource, cls).__new__(cls,mandatoryLetter, optionalLetters)
-        return cls.instance
 
 
     def __init__(self, mandatoryLetter=None, optionalLetters=None):
