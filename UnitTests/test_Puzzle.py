@@ -8,11 +8,14 @@
 # are thrown for their respective cases.
 
 import sys
+
+from model.DataSource import DataSource
 sys.path.append('src/model')
 
 import random
-
-from Puzzle import Puzzle
+import sqlite3
+import os
+from model.Puzzle import Puzzle
 import unittest
 
 
@@ -20,6 +23,30 @@ class test_Puzzle(unittest.TestCase):
     word = "volcanos"
     puzzleLetters = list(set(word))
     wordsList = ["cava", "volcano", "volcanos"]
+    
+    def setUp(self):
+        if not os.path.exists("test1.db"):
+            con = sqlite3.connect("test1.db")
+            cur = con.cursor()
+            cur.execute("CREATE TABLE word_list ( numLetter INT,letter VARCHAR(10) NOT NULL,differentLetters VARCHAR(45) NOT NULL, word VARCHAR(45) NOT NULL, PRIMARY KEY (word));")
+            con.commit()
+            cur.execute(
+                "INSERT INTO word_list (letter,differentLetters , word,numLetter) VALUES ('w','waxrok', 'waxwork', '7');")
+            con.commit()
+            cur.execute(
+                "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
+            con.commit()
+            con.close()
+
+    
+      
+    def test_puzzleHIint(self):
+        dataSource = DataSource("test1.db")
+        myList = dataSource.grabWordsFor("waxworks", "x")
+        tst_puzzle = Puzzle(list(set("waxworks")), myList)
+        hint = dataSource.getHints(myList)
+        tst_puzzle.setHint(hint)
+        self.assertEquals(hint,tst_puzzle.getHint(),f"actual: {tst_puzzle.getHint()}, original: {hint}")
 
     def test_createPuzzle(self):
         tst_puzzle = Puzzle(self.puzzleLetters, self.wordsList)
@@ -96,6 +123,7 @@ class test_Puzzle(unittest.TestCase):
         expectedGuessedWords = tst_puzzle.getWordList()
         self.assertEqual(actualPoints, expectedPoints,
                          f"actual: {actualGuessedWords}\noriginal: {expectedGuessedWords}")
+    
 
 
 if __name__ == '__main__':
