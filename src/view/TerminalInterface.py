@@ -32,8 +32,8 @@ Commands:
    Call commands with a preceding '!'. Commands may be
    called at anytime.
 
-   -!new rnd - Generate a new random puzzle
-   -!new wrd - Generate a new puzzle with a user given
+   -!new random - Generate a new random puzzle
+   -!new word - Generate a new puzzle with a user given
                word.  Console will prompt for the word after
                command is given.
    -!status - Display you status for the current puzzle.
