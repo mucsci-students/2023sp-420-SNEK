@@ -21,11 +21,17 @@
 
 * Libraries not pre-packaged with Python
 that need installation.
+
+    * setuptools
     * colorama
     * requests
     * numpy
     * pandas
     * pytest
+    * pytest-cov
+    * pillow
+    * pynput
+
 
 ### Python Version
 
