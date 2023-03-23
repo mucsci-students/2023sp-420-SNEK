@@ -7,6 +7,7 @@ class Commands(Enum):
         return count + 1
 
     EXIT = auto()
+    QUIT = auto()
     HELP = auto()
     NEW_GAME_WRD = auto()
     NEW_GAME_RND = auto()
@@ -16,10 +17,11 @@ class Commands(Enum):
     GUESSED_WORDS = auto()
     RANK = auto()
     SHOW_STATUS = auto()
+    CMD_LIKE = auto()
     UNDEFINED = auto()
 
 
-    class Constant:  # use Constant(object) if in Python 2
+    class Constant:
         def __init__(self, value):
             self.value = value
 
@@ -33,6 +35,7 @@ class Commands(Enum):
     __CMD_DIC = Constant(
         {
             "exit": EXIT,
+            "quit": QUIT,
             "help": HELP,
             "new word": NEW_GAME_WRD,
             "new random": NEW_GAME_RND,
@@ -44,24 +47,29 @@ class Commands(Enum):
             "status": SHOW_STATUS
         })
 
-    @ classmethod
+    @classmethod
     def getCommandFromName(cls, name: str):
         name = name.strip().lower()
+        commandConstant = False
         if name.startswith(cls.__CMD_MARK):
             commandWithoutMarker = name[len(cls.__CMD_MARK):]
+            commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.CMD_LIKE))
         else:
             commandWithoutMarker = name
-
-        commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.UNDEFINED))
+            commandConstant = Commands(Commands.UNDEFINED)
 
         return commandConstant
 
-    @ classmethod
-    def isCommand(cls, name) -> bool:
-        if type(name) == str:
-            name = name.strip().lower()
-
-            return (name.startswith(cls.__CMD_MARK) and
-                    name[len(cls.__CMD_MARK):] in cls.__CMD_DIC.keys())
+    @classmethod
+    def isCommand(cls, cmd) -> bool:
+        if type(cmd) == str:
+            cmdName = cmd.strip().lower()
+            cmd = cls.getCommandFromName(cmdName)
+            return cmd != Commands.UNDEFINED
+        
         else:
-            return True
+            return type(cmd) == Commands
+        
+    @classmethod
+    def isCommandLike(cls, cmd: str) -> bool:
+        return cls.getCommandFromName(cmd) == Commands.CMD_LIKE
