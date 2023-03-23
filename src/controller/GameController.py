@@ -4,12 +4,12 @@
 import random
 import os
 
-from src.Model.Puzzle import Puzzle
-from src.Model.Commands import *
-from src.Controller.customExcept import *
-import src.View.UserInterface
-from src.Model.DataSource import DataSource
-from src.Controller.SaveAndLoad import SaveAndLoad
+from model.Puzzle import Puzzle
+from model.Commands import *
+from controller.customExcept import *
+import view.UserInterface
+from model.DataSource import DataSource
+from controller.SaveAndLoad import SaveAndLoad
 
 
 class GameController:
@@ -26,7 +26,7 @@ class GameController:
     # Constructor that instantiates a new GameController object.
     def __init__(self, dataSource: DataSource) -> None:
         self.myPuzzle: Puzzle = None
-        self.myUserInterface: src.View.UserInterface.UserInterface  = None
+        self.myUserInterface: view.UserInterface  = None
         self.playing: bool = False
         self.myDataSource: DataSource = dataSource
 

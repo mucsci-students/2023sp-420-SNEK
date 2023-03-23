@@ -1,7 +1,7 @@
-from src.View.UserInterface import UserInterface
+from view.UserInterface import UserInterface
 from colorama import Fore, Style
-from src.Model.Puzzle import Puzzle
-from src.Model.Commands import *
+from model.Puzzle import Puzzle
+from model.Commands import *
 import os
 
 
@@ -174,7 +174,9 @@ Commands:
 
     # Prints Exiting when a user wants to exit a puzzle
     def showExit(self) -> None:
-        self.__boldPrint("Exiting game...")
+        self.__boldPrint("Game exited.")
+        self.__boldPrint("You are at the main program (not playing).")
+        print()
 
     # If a user does not make a right guess, then it will 
     # print that they did not make a right guess

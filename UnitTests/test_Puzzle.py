@@ -7,9 +7,12 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import sys
+sys.path.append('./src')
+
 import random
 
-from src.Model.Puzzle import Puzzle
+from model.Puzzle import Puzzle
 import unittest
 
 
@@ -62,7 +65,7 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getCurrentRank()
         self.assertFalse(actual == original,
                          f"actual: {actual}\noriginal: {original}")
-        
+
         del tst_puzzle
 
     def test_addGuessWord(self):

@@ -50,17 +50,18 @@ class Commands(Enum):
     @classmethod
     def getCommandFromName(cls, name: str):
         name = name.strip().lower()
+        commandConstant = False
         if name.startswith(cls.__CMD_MARK):
             commandWithoutMarker = name[len(cls.__CMD_MARK):]
             commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.CMD_LIKE))
         else:
             commandWithoutMarker = name
-            commandConstant = Commands(cls.__CMD_DIC.get(commandWithoutMarker, Commands.UNDEFINED))
+            commandConstant = Commands(Commands.UNDEFINED)
 
         return commandConstant
 
     @classmethod
-    def isCommand(cls, cmd: str) -> bool:
+    def isCommand(cls, cmd) -> bool:
         if type(cmd) == str:
             cmdName = cmd.strip().lower()
             cmd = cls.getCommandFromName(cmdName)
@@ -68,3 +69,7 @@ class Commands(Enum):
         
         else:
             return type(cmd) == Commands
+        
+    @classmethod
+    def isCommandLike(cls, cmd: str) -> bool:
+        return cls.getCommandFromName(cmd) == Commands.CMD_LIKE

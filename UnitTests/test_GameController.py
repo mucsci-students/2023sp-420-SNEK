@@ -1,12 +1,15 @@
 # Unit tests for the GameController Module
 
-
+import sys
+sys.path.append('./src')
 
 import unittest
 
-from src.Controller.GameController import GameController
-from Mocks.SpyUserInterface import SpyUserInterface
-from src.Model.Puzzle import Puzzle
+
+from controller.GameController import GameController
+from model.Commands import Commands
+from mocks.SpyUserInterface import SpyUserInterface
+from model.Puzzle import Puzzle
 
 
 class test_GameController(unittest.TestCase):
@@ -26,7 +29,7 @@ class test_GameController(unittest.TestCase):
         gameController.processGuess("volcanos")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showCorrectGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showCorrectGuess, -1), 1, "The guess wasn't correctly checked.")
         
     def test_wrongGuessNotInWordList(self):
         spyUserInterface = SpyUserInterface()
@@ -42,7 +45,7 @@ class test_GameController(unittest.TestCase):
         gameController.processGuess("volovlov")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showWrongGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showWrongGuess, -1), 1, "The guess wasn't correctly checked.")
         
     def test_wrongGuessWithoutMandatoryLetter(self):
         spyUserInterface = SpyUserInterface()
@@ -58,7 +61,7 @@ class test_GameController(unittest.TestCase):
         gameController.processGuess("three")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showWrongGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showWrongGuess, -1), 1, "The guess wasn't correctly checked.")
         
     def test_wrongGuessAlreadyGuessedWord(self):
         spyUserInterface = SpyUserInterface()
@@ -75,10 +78,10 @@ class test_GameController(unittest.TestCase):
         gameController.processGuess("volcanos")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showCorrectGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showCorrectGuess, -1), 1, "The correct guess wasn't correctly checked.")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showWrongGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showWrongGuess, -1), 1, "The wrong guess wasn't correctly checked.")
 
     def test_wrongGuessLessThanFourLettersWord(self):
         spyUserInterface = SpyUserInterface()
@@ -94,7 +97,7 @@ class test_GameController(unittest.TestCase):
         gameController.processGuess("vov")
 
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showWrongGuess], 1, "The guess wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showWrongGuess, -1), 1, "The guess wasn't correctly checked.")
         
 
     def test_processHelpCommand(self):
@@ -102,21 +105,21 @@ class test_GameController(unittest.TestCase):
         gameController = GameController(None)
         gameController.setUserInterface(spyUserInterface)
         
-        gameController.processCommand("!help")
+        gameController.processCommand(Commands.HELP)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showHelp], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showHelp, -1), 1, "The help command wasn't correctly checked.")
         
-    def test_processExitCommand(self):
+    def test_processQuitCommand(self):
         spyUserInterface = SpyUserInterface()
         gameController = GameController(None)
         gameController.setUserInterface(spyUserInterface)
         
         gameController.playing = False
-        gameController.processCommand("!exit")
+        gameController.processCommand(Commands.QUIT)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.quitInterface], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.quitInterface, -1), 1, "The help command wasn't correctly checked.")
         
     def test_processRankCommand(self):
         spyUserInterface = SpyUserInterface()
@@ -130,12 +133,12 @@ class test_GameController(unittest.TestCase):
         testPuzzle.currentRank = "Beginner"
         gameController.playing = True
         gameController.myPuzzle = testPuzzle
-        gameController.processCommand("!rank")
+        gameController.processCommand(Commands.RANK)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showRanking], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showRanking, -1), 1, "The help command wasn't correctly checked.")
         
-    def test_processWrongCommand(self):
+    def test_processUndefinedCommand(self):
         spyUserInterface = SpyUserInterface()
         gameController = GameController(None)
         gameController.setUserInterface(spyUserInterface)
@@ -147,10 +150,27 @@ class test_GameController(unittest.TestCase):
         testPuzzle.currentRank = "Beginner"
         gameController.playing = True
         gameController.myPuzzle = testPuzzle
-        gameController.processCommand("!españita")
+        gameController.processCommand(Commands.UNDEFINED)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showError], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showError, -1), 1, "The help command wasn't correctly checked.")
+                
+    def test_processCmdLikeCommand(self):
+        spyUserInterface = SpyUserInterface()
+        gameController = GameController(None)
+        gameController.setUserInterface(spyUserInterface)
+        word = "volcanos"
+        puzzleLetters = list(set(word))
+        wordList = ["onee", "twoo", "three", "four", "five",
+                    "sixx", "seven", "eight", "nine", "volcanos"]
+        testPuzzle = Puzzle(puzzleLetters, wordList)
+        testPuzzle.currentRank = "Beginner"
+        gameController.playing = True
+        gameController.myPuzzle = testPuzzle
+        gameController.processCommand(Commands.CMD_LIKE)
+        
+        self.assertEqual(
+            spyUserInterface.spyValues.get(spyUserInterface.showError, -1), 1, "The help command wasn't correctly checked.")
         
     def test_processGuessCommand(self):
         spyUserInterface = SpyUserInterface()
@@ -164,10 +184,10 @@ class test_GameController(unittest.TestCase):
         testPuzzle.currentRank = "Beginner"
         gameController.playing = True
         gameController.myPuzzle = testPuzzle
-        gameController.processCommand("!guessed")
+        gameController.processCommand(Commands.GUESSED_WORDS)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showGuessedWords], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showGuessedWords, -1), 1, "The help command wasn't correctly checked.")
         
     def test_processGuessCommandAtInput(self):
         spyUserInterface = SpyUserInterface()
@@ -181,10 +201,10 @@ class test_GameController(unittest.TestCase):
         testPuzzle.currentRank = "Beginner"
         gameController.playing = True
         gameController.myPuzzle = testPuzzle
-        gameController.processInput("!guessed")
+        gameController.processInput(Commands.GUESSED_WORDS)
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showGuessedWords], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showGuessedWords, -1), 1, "The help command wasn't correctly checked.")
         
 
     def test_errorGuessIfNotPlayingAtInput(self):
@@ -202,7 +222,7 @@ class test_GameController(unittest.TestCase):
         gameController.processInput("cucaracha")
         
         self.assertEqual(
-            spyUserInterface.spyValues[spyUserInterface.showError], 1, "The help command wasn't correctly checked.")
+            spyUserInterface.spyValues.get(spyUserInterface.showError, -1), 1, "The help command wasn't correctly checked.")
 
 
 

@@ -1,7 +1,7 @@
 
 import json
 import os
-from src.Model.Puzzle import Puzzle
+from model.Puzzle import Puzzle
 # from customExcept import OverwriteSave
 
 # State class holding all save, load, and related methods

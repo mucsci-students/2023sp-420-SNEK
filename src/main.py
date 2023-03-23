@@ -1,12 +1,13 @@
 
-from src.Model.DataSource import *
-from src.View.UserInterface import *
-from src.Controller.GameController import *
-from src.Model.Commands import Commands
-from src.View.TerminalInterface import TerminalInterface
-from src.Controller.customExcept import InvalidArgumentException
-from src.View.BeeUI import *
 import sys
+
+
+from model.DataSource import *
+from view.UserInterface import *
+from controller.GameController import *
+from view.TerminalInterface import TerminalInterface
+from controller.customExcept import InvalidArgumentException
+from view.BeeUI import *
 
 
 
@@ -15,6 +16,12 @@ DB_FILE_NAME = "spellingBee.db"
 
 
 def main():
+    if(os.path.exists("spellingBee.db")):
+        pass
+    else:
+        with open("src/model/CreateDB.py") as f:
+            exec(f.read())
+
     # If no arguments are given
     dataSource = DataSource()
     if len(sys.argv) == 1:

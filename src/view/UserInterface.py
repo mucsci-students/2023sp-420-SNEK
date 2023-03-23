@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import src.Controller.GameController
+import controller.GameController
 
 class UserInterface(ABC):
 
@@ -8,7 +8,7 @@ class UserInterface(ABC):
         self.quit = False
 
     def setController(self, myController):
-        self.myController:src.Controller.GameController.GameController = myController
+        self.myController:controller.GameController.GameController = myController
 
     @abstractmethod
     def launch(self):
