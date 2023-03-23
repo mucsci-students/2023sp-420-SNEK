@@ -1,6 +1,7 @@
 
 import sys
 
+
 from model.DataSource import *
 from view.UserInterface import *
 from controller.GameController import *
@@ -15,6 +16,12 @@ DB_FILE_NAME = "spellingBee.db"
 
 
 def main():
+    if(os.path.exists("spellingBee.db")):
+        pass
+    else:
+        with open("src/model/CreateDB.py") as f:
+            exec(f.read())
+
     # If no arguments are given
     dataSource = DataSource()
     if len(sys.argv) == 1:
