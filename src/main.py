@@ -28,7 +28,7 @@ def main():
             exec(f.read())
 
     # If no arguments are given
-    dataSource = DataSource()
+    dataSource = DataSource("spellingBee.db")
     if len(sys.argv) == 1:
         myGameController = GameController(dataSource)
         myUserInterface = BeeUI()
