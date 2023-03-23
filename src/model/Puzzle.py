@@ -1,5 +1,7 @@
 import random
 
+from model.Hint import Hint
+
 
 class Puzzle:
     '''
@@ -52,6 +54,7 @@ class Puzzle:
         # A dictionary containing the rank names and their thresholds.
         self.rankingsAndPoints: dict[str,
                                      int] = self.__rankDict(self.maxPoints)
+        self.puzzleHint:Hint
 
     # Static method to calculate the maximum points of a game.
     @classmethod
@@ -192,7 +195,18 @@ class Puzzle:
                 the list of letters that make up the game.
         '''
         return self.puzzleLetters
+    
+    def getHint(self) -> Hint:
+        ''' Output:
+                the hint object of the puzzle.
+        '''
+        return self.puzzleHint
 
+    def setHint(self, hint:Hint):
+        ''' Input:
+                the hint object for the puzzle.
+        '''
+        self.puzzleHint = hint
     def shuffle(self):
         ''' Postcondition:
                 the list of letters that make up the game gets shuffled, except for the first one.
