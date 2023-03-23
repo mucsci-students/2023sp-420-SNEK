@@ -22,9 +22,9 @@ class test_SaveAndLoad(unittest.TestCase):
         SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
         with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['WordList'], wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['PuzzleLetters'], ''.join(puzzleLetters), "puzzle letters not saved")
         self.assertEqual(testSavedData['GuessedWords'], [
         ], "guessed words not empty")
@@ -52,9 +52,9 @@ class test_SaveAndLoad(unittest.TestCase):
         with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
 
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['WordList'], wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['PuzzleLetters'], ''.join(puzzleLetters), "puzzle letters not saved")
         self.assertEqual(
             testSavedData['GuessedWords'], wordsToBeGuessed, "guessed words not empty")
@@ -84,9 +84,9 @@ class test_SaveAndLoad(unittest.TestCase):
         SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
         puzzleActual: Puzzle = SaveAndLoad.load(self.testFileName)
 
-        self.assertEquals(
+        self.assertEqual(
             puzzleActual.getWordList(), wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             puzzleActual.getPuzzleLetters(), puzzleLetters, "puzzle letters not saved")
         self.assertEqual(puzzleActual.getGuessedWords(), [
         ], "guessed words not empty")
