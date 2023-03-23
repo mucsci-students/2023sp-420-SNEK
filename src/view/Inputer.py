@@ -18,8 +18,28 @@ class Imputer:
         self.keyboardListener = None
         self.originals = []
         
-    def __distance(self, originalStr, possibleStr):
-        return 1
+    # Fn that calculates the number of character changes needed between two strings
+    def __distance(self, str1, str2):
+        # if string 1 is empty, return the length of string 2
+        if str1 == "":
+            return len(str2)
+
+        # if string 2 is empty, return the length of string 1
+        if str2 == "":
+            return len(str1)
+
+        # if the last character in each strings are equal, set dist = 0
+        if str1[-1] == str2[-1]:
+            dist = self.__distance(str1[:-1], str2[:-1])
+
+        # else set the distance to 1
+        else:        
+            # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
+            dist = 1 + min([self.__distance(str1[:-1], str2), 
+                            self.__distance(str1, str2[:-1]), 
+                            self.__distance(str1[:-1], str2[:-1])])
+
+        return dist
     
     def __orderStrings(self, possibles):
         distances = [self.__distance(self.userInput, possible) for possible in self.possibles]
@@ -110,14 +130,13 @@ class Imputer:
 
         # <shift>+<tab>
         elif self.shift and key == keyboard.Key.tab and not self.other and not self.backspace:
-            if self.possibleIndex > 0:
-                self.possibleIndex = self.possibleIndex - 1
                 
             if len(self.possibles) > 0:
                 self.userInput = self.possibles[self.possibleIndex]
-                self.possibles = self.__orderStrings(self.possibles)
-            
-            self.__adjustOriginals()
+                
+            if self.possibleIndex > 0:
+                self.possibleIndex = self.possibleIndex - 1
+                self.__adjustOriginals()
 
         # <shift>+1 (= !)
         elif self.shift and keyChar == '1' and not self.other and not self.backspace:
@@ -127,14 +146,12 @@ class Imputer:
 
         # <tab>
         elif key == keyboard.Key.tab and not self.other and not self.shift and not self.backspace:
-            if self.possibleIndex < len(self.possibles) - 1:
-                self.possibleIndex = self.possibleIndex + 1
-                
             if len(self.possibles) > 0:
                 self.userInput = self.possibles[self.possibleIndex]
-                self.possibles = self.__orderStrings(self.possibles)
-            
-            self.__adjustOriginals()
+                
+            if self.possibleIndex < len(self.possibles) - 1:
+                self.possibleIndex = self.possibleIndex + 1
+                self.__adjustOriginals()
 
         # <enter>
         elif key == keyboard.Key.enter and not self.other and not self.shift and not self.backspace:
@@ -197,8 +214,8 @@ class Imputer:
 
     def input(self, possibles=[]):
         self.originalIndex = 0
+        self.possibleIndex = 0
         self.possibles = possibles
-        self.possibleIndex = -1
         self.userInput = ""
         self.originals = ['']
         
