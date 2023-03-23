@@ -34,8 +34,8 @@ class Commands(Enum):
         {
             "exit": EXIT,
             "help": HELP,
-            "new wrd": NEW_GAME_WRD,
-            "new rnd": NEW_GAME_RND,
+            "new word": NEW_GAME_WRD,
+            "new random": NEW_GAME_RND,
             "save": SAVE,
             "load": LOAD,
             "shuffle": SHUFFLE,

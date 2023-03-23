@@ -446,7 +446,7 @@ class BeeUI(UserInterface):
     # Notifies the controller that the user wants a new
     # random game.
     def __startGame(self):
-        self.myController.processCommand("!new rnd")
+        self.myController.processCommand("!new random")
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # # 
 
@@ -542,7 +542,7 @@ class BeeUI(UserInterface):
 
         # New Game Random
         self.randBtnImg = PhotoImage(file='img/newRand.png')
-        self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=lambda: self.myController.processInput("!new rnd"))
+        self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=lambda: self.myController.processInput("!new random"))
         self.randBtn.pack(pady=25)
 
         # New Game Custom
@@ -556,7 +556,7 @@ class BeeUI(UserInterface):
         self.newWord.grid(row=0, column=1, ipadx=20)
 
         self.customBtnImg = PhotoImage(file='img/newCustom.png')
-        self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput("!new wrd"))
+        self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput("!new word"))
         self.customBtn.grid(row=1, columnspan=2)
         self.newWordGrid.pack(pady=25)
 
