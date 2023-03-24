@@ -7,27 +7,31 @@
     -A Spelling Bee game, implemented in Python with an SQLite database
 
 
-![Screenshot](img/SNEKTransperent.png)
+<p align="center">
+          <img src="img/SNEKTransperent.png">
+</p>
 
 ### Contributers
 
-    -Aitor Cantero Crespo
-    -Bogdan Balagurak
-    -Josue Perez-Crespo
-    -Miguel Armedariz Llanos
-    -Nick Hoopes
-    -Stephen Clugston
+<p align="center">
+    <img src="img/contributersFinal2.PNG">
+</p>
 
 ### Neccessary Libraries
 
-    Libraries not pre-packaged with Python
-    that need installation.
+* Libraries not pre-packaged with Python
+that need installation.
 
-        -colorama
-        -requests
-        -numpy
-        -pandas
-        -pytest
+    * setuptools
+    * colorama
+    * requests
+    * numpy
+    * pandas
+    * pytest
+    * pytest-cov
+    * pillow
+    * pynput
+
 
 ### Python Version
 
@@ -36,31 +40,37 @@
 
 ### Instructions for Building using Setup
 
-    0. when using windows, execution policy for scripts must be changed
-       from default to allow scripts to run like the activate script for the
-       virtual environment. This is done by using the command 
-       (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
+0. when using windows, execution policy for scripts must be changed
+    from default to allow scripts to run like the activate script for the
+    virtual environment. This is done by using the command 
+    (Set-ExecutionPolicy -ExecutionPolicy RemoteSigned)
 
-    1. Run setup via command line, in the form (python setup.py (Mac/Linux)) (py setup.py (Windows))
-
-    2. setup.py will create a viurutal environment, instatiate databases,
-       and intall any required non-base modules/packages into the environment
-
-    3. Entering Virutal Environment
-            Linux/Mac
-                -use the command line command (source spell/bin/activate)
-            Windows
-                -use the command line command (spell/Scripts/activate) (powershell)
-                -use the command line command (spell\Scripts\activate) (CMD)
-                
-
-    4. You should see the virtual environment name (spell) next to the command line 
-       path in windows or username in linux/mac, from here you can start the program
-       with 
-       (python main.py (Mac/Linux) py main.py (Windows) for GUI on start)
-       (python main.py --cli (Mac/Linux) py main.py --cli (Windows) for CLI on start)
+1. Creating and entering a virtual environment
+    * Creating the environment:
     
-    5. To exit the virtual environment simply type (deactivate) into the command line
+        * Linux/Mac:  ```python3 -m venv spell```
+        * Windows:  ```py -m venv spell```
+        
+    * Activating/Entering the environement:
+    
+        * Linux/Mac:  ```source spell/bin/activate```
+        
+        * Windows:
+            * CMD:  ```spell\Scripts\activate```
+            * PowerShell:  ```spell/Scripts/activate```
+            
+    * Deactivating/Exiting the environment:
+    
+        * Linux/Mac/PowerShell:  ```deactivate```
+
+2. Building
+    * Within the spell environment use the command:  ```pip install -e .```
+
+3. Running program
+    * Within the spell environment:
+    
+        * GUI:   ```Bee```
+        * CLI:   ```Bee --cli```
 
 
 ### CLI Instructions
@@ -97,15 +107,31 @@
    
 ### GUI Instructions
 
-![Screenshot](img/spellBeeInstruct.PNG)
+<p align=center>
+    <img src="img/spellBeeInstruct.PNG">
+<p>
 
-### Running Tests
+### Testing Suite
 
-    Command to run pytest (Be sure to be in environment before using)
-        Run All:
-            - (pytest UnitTests/)
-        Run Specific:
-            - (pytest UnitTests/TestFileName)
+* Using the Testing Suite
+
+* Running a complete Test:
+    * Use the command line command:  ```Test``` or ```Test all```
+        * To add coverage use:  ```Test cov``` or ```Test all cov```
+
+* Testing coverage of a specific directory (IE. model, controller, view)
+    * Use the command line command:  ```Test model``` or ```Test controller``` or ```Test view```
+
+* Testing a single unit test/file
+    * ```Test single``` for normal testing
+    * ```Test single cov``` for testing with coverage
+        * Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
+        * If you do not want to choose a file:  ```quit```
+
+* Test command ```Test``` must have uppercase T
+        
+        
+            
 
 
 

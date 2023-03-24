@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+import controller.GameController
 
 class UserInterface(ABC):
 
@@ -8,7 +8,7 @@ class UserInterface(ABC):
         self.quit = False
 
     def setController(self, myController):
-        self.myController = myController
+        self.myController:controller.GameController.GameController = myController
 
     @abstractmethod
     def launch(self):
@@ -59,9 +59,13 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def getSaveFileName(self, saveType=""):
+    def getSaveFileName(self):
         pass
-
+    
+    @abstractmethod
+    def getLoadFileName(self):
+        pass
+    
     @abstractmethod
     def getConfirmation(self):
         pass
@@ -77,3 +81,8 @@ class UserInterface(ABC):
     @abstractmethod
     def showHints(self):
         pass
+        
+    @abstractmethod
+    def showExit(self):
+        pass
+
