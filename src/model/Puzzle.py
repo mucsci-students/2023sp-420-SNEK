@@ -30,7 +30,7 @@ class Puzzle:
     __RANK_NAMES_LIST: list[str] = ["Beginner", "Good Start", "Moving Up", "Good",
                                     "Solid", "Nice", "Great", "Amazing", "Genius"]
 
-    def __init__(self, puzzleLetters: list[str], WordList: list[str], guessedWords: list[str] = [], maxPoints: int = 0, currentPoints: int = 0) -> None:
+    def __init__(self, puzzleLetters: list[str], WordList: list[str], guessedWords: list[str] = None, maxPoints: int = 0, currentPoints: int = 0) -> None:
         ''' Inputs:
                 WordList: list of allowed words of the game.
                 puzzleLetters: list of letters of the game (the first one being the required one).
@@ -42,6 +42,8 @@ class Puzzle:
         # Words relative to the puzzle
         self.wordList: list[str] = WordList
         # Already guessed words
+        if guessedWords == None:
+            guessedWords = []
         self.guessedWords: list[str] = guessedWords
         # Current number of points for the puzzle
         self.currentPoints: int = currentPoints
