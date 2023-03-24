@@ -79,6 +79,10 @@ class UserInterface(ABC):
         pass
     
     @abstractmethod
+    def showHints(self):
+        pass
+        
+    @abstractmethod
     def showExit(self):
         pass
 
