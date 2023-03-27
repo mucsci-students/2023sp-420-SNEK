@@ -1,18 +1,13 @@
 
 import sys
-sys.path.append('src/controller')
-sys.path.append('src/model')
-sys.path.append('src/view')
 
-from DataSource import *
-from UserInterface import *
-from GameController import *
-from Commands import Commands
-from TerminalInterface import TerminalInterface
-from customExcept import InvalidArgumentException
-from BeeUI import *
-import sys
-import os
+
+from model.DataSource import *
+from view.UserInterface import *
+from controller.GameController import *
+from view.TerminalInterface import TerminalInterface
+from controller.customExcept import InvalidArgumentException
+from view.BeeUI import *
 
 
 

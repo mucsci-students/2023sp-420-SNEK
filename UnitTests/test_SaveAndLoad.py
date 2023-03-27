@@ -1,25 +1,26 @@
-import sys
 
-sys.path.append('src/controller')
-sys.path.append('src/model')
+import sys
+sys.path.append('./src')
 
 import os
 import json
 
 
-from Puzzle import Puzzle
-from SaveAndLoad import SaveAndLoad
+from model.Puzzle import Puzzle
+from controller.SaveAndLoad import SaveAndLoad
 import unittest
 
 
 class test_SaveAndLoad(unittest.TestCase):
+    testFileName = os.path.join(os.getcwd(),"testFileName.json")
+    
     def test_saveScratch(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
         
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        with open("testFileName.json", "r") as loadFile:
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
         self.assertEqual(
             testSavedData['WordList'], wordList, "word list not saved")
@@ -33,7 +34,7 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], 0, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("testFileName.json")
+        os.remove(self.testFileName)
 
     def test_saveCurrent(self):
         puzzleLetters = list("volcanos")
@@ -47,8 +48,8 @@ class test_SaveAndLoad(unittest.TestCase):
             puzzleTest.addGuessWord(guess)
 
         
-        SaveAndLoad.saveCurrent(puzzleTest, "testFileName")
-        with open("testFileName.json", "r") as loadFile:
+        SaveAndLoad.saveCurrent(puzzleTest, self.testFileName)
+        with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
 
         self.assertEqual(
@@ -63,16 +64,16 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], expectedCurrentPoints, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("testFileName.json")
+        os.remove(self.testFileName)
 
     def test_isSaved(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
         
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        self.assertTrue(SaveAndLoad.isSaved("testFileName"))
-        os.remove("testFileName.json")
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        self.assertTrue(SaveAndLoad.isSaved(self.testFileName))
+        os.remove(self.testFileName)
 
     def test_load(self):
         puzzleLetters = ["a", "b", "c", "d"]
@@ -80,8 +81,8 @@ class test_SaveAndLoad(unittest.TestCase):
                     "bacalao", "bacalao", "bacalao", "bacalao", "bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
         
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        puzzleActual: Puzzle = SaveAndLoad.load("testFileName")
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        puzzleActual: Puzzle = SaveAndLoad.load(self.testFileName)
 
         self.assertEqual(
             puzzleActual.getWordList(), wordList, "word list not saved")

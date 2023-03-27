@@ -32,7 +32,7 @@ class Puzzle:
     __RANK_NAMES_LIST: list[str] = ["Beginner", "Good Start", "Moving Up", "Good",
                                     "Solid", "Nice", "Great", "Amazing", "Genius"]
 
-    def __init__(self, puzzleLetters: list[str], WordList: list[str]) -> None:
+    def __init__(self, puzzleLetters: list[str], WordList: list[str], guessedWords: list[str] = None, maxPoints: int = 0, currentPoints: int = 0) -> None:
         ''' Inputs:
                 WordList: list of allowed words of the game.
                 puzzleLetters: list of letters of the game (the first one being the required one).
@@ -44,17 +44,22 @@ class Puzzle:
         # Words relative to the puzzle
         self.wordList: list[str] = WordList
         # Already guessed words
-        self.guessedWords: list[str] = []
-        # Current rank (beginner etc..)
-        self.currentRank: str = self.__RANK_NAMES_LIST[0]
+        if guessedWords == None:
+            guessedWords = []
+        self.guessedWords: list[str] = guessedWords
         # Current number of points for the puzzle
-        self.currentPoints: int = 0
+        self.currentPoints: int = currentPoints
         # Total number of points of given game
-        self.maxPoints: int = self.__calcMaxPoints(WordList, puzzleLetters)
+        self.maxPoints: int = maxPoints if maxPoints != 0 else self.__calcMaxPoints(WordList, puzzleLetters)
         # A dictionary containing the rank names and their thresholds.
         self.rankingsAndPoints: dict[str,
                                      int] = self.__rankDict(self.maxPoints)
+
         self.puzzleHint:Hint
+
+        # Current rank (beginner etc..)
+        self.currentRank: str = self.__calcCurrentRank()
+
 
     # Static method to calculate the maximum points of a game.
     @classmethod
@@ -66,7 +71,7 @@ class Puzzle:
             Output:
                 sum: the total maximum of points
         '''
-        sum = 0
+        sum:int = 0
         for word in WordList:
             sum = sum + cls.__pointsOf(word, puzzleLetters)
         return sum
@@ -136,7 +141,7 @@ class Puzzle:
         return self.rankingsAndPoints
 
     # Actually calculates the current rank
-    def calcCurrentRank(self) -> str:
+    def __calcCurrentRank(self) -> str:
         ''' Output:
                 the name of the current rank of the player.
         '''
@@ -144,18 +149,10 @@ class Puzzle:
             return self.__RANK_NAMES_LIST[0]
         
         i: int = 0
-        newRank: str = self.__RANK_NAMES_LIST[i]
-        # while self.currentPoints > self.rankingsAndPoints[newRank]:
-        #     print(self.currentPoints, self.rankingsAndPoints[newRank])
-        #     newRank = self.__RANK_NAMES_LIST[i]
-        #     print(newRank, i)
-        #     i += 1
-        for i in range(9):
+        for i in range(len(self.__RANK_NAMES_LIST)):
             if(self.currentPoints < self.rankingsAndPoints[self.__RANK_NAMES_LIST[i]]):
                 break
             
-
-      
         return self.__RANK_NAMES_LIST[i-1]
 
     def addGuessWord(self, word: str) -> None:
@@ -170,7 +167,7 @@ class Puzzle:
         '''
         self.guessedWords.append(word)
         self.currentPoints += self.__pointsOf(word, self.puzzleLetters)
-        self.currentRank = self.calcCurrentRank()
+        self.currentRank = self.__calcCurrentRank()
 
     def getGuessedWords(self) -> list[str]:
         ''' Output:

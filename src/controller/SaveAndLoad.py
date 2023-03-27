@@ -1,11 +1,7 @@
-import sys
-sys.path.append('../model')
 
 import json
 import os
-from customExcept import SaveNotFound
-from customExcept import MasterFileNotFound
-from Puzzle import Puzzle
+from model.Puzzle import Puzzle
 # from customExcept import OverwriteSave
 
 # State class holding all save, load, and related methods
@@ -29,20 +25,14 @@ class SaveAndLoad:
     # isSaved checks the filename in the master save file to see if it is already an in use save name
     @classmethod
     def isSaved(cls, saveName: str) -> bool:
-        if "/" in saveName:
-            return os.path.exists(saveName)
-        elif saveName == "":
-            return 3
-        else:
-            return os.path.exists(f"{os.getcwd()}/{saveName}.json")
-        # Check if master save file exists
+        return os.path.exists(saveName)
         
 
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
-    @classmethod
-    def saveCurrent(cls, puzzle: Puzzle, saveName: str):
-        cls.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
+    @staticmethod
+    def saveCurrent(puzzle: Puzzle, saveName: str):
+        SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
                      puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints())
         # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
         # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
@@ -51,6 +41,14 @@ class SaveAndLoad:
     def saveScratch(puzzle: Puzzle, saveName: str):
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(),
                              puzzle.getWordList(), [], 0, puzzle.getMaxPoints())
+        
+    @classmethod
+    def __checkJsonExt(cls, fileName:str):
+        fileName = fileName.strip()
+        if not fileName.endswith(".json"):
+            fileName += ".json"
+            
+        return fileName
 
     # Main saving function that is only called within the state class
     # Originally two functions, was able to be condensed with the use of default parameters
@@ -59,9 +57,9 @@ class SaveAndLoad:
     # ^ but with type 1 will overwrite the savefile with scratch
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
-    @ classmethod
-    def saveData(cls, saveName, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0):
-
+    @classmethod
+    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0):
+        saveName = cls.__checkJsonExt(saveName)
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
 
         # transform data from variables into json format to dump into file
@@ -71,47 +69,31 @@ class SaveAndLoad:
                              foundWords, currentPoints, requiredLetter, maxPoints)
 
         # dump new save data into master file and create if none is present
-        if "/" in saveName:
-            with open(saveName, "w") as f:
-                json.dump(data, f, indent=2)
-        else:
-            with open(f"{os.getcwd()}/{saveName}.json", "w") as f:
-                json.dump(data, f, indent=2)
+        dirs = os.path.dirname(saveName)
+        
+        os.makedirs(dirs, exist_ok=True)
+        
+        with open(saveName, "w") as f:
+            json.dump(data, f, indent=2)
         
 
     # load the save data into the class variables into the puzzle class
     @ classmethod
-    def load(cls, saveName: str) -> Puzzle:
-
-        if "/" in saveName:
-            with open(saveName, "r") as loadFile:
-                data = json.load(loadFile)
-
-        #------------------------------------------------------------------
-        elif saveName == "":
-            return 3
-        #------------------------------------------------------------------
+    def load(cls, loadName: str) -> Puzzle:
+        loadName = cls.__checkJsonExt(loadName)
         
-        else:
-            with open(f"{os.getcwd()}/{saveName}.json", "r") as loadFile:
-                data = json.load(loadFile)
+        with open(loadName, "r") as loadFile:
+            data = json.load(loadFile)
 
         puzzleLettersStr: str = data["PuzzleLetters"]
         requiredLetter = data["RequiredLetter"]
         puzzleLetters = []
         puzzleLetters.append(requiredLetter)
-        # erasing the required letter
-        puzzleLettersStr = puzzleLettersStr.replace(requiredLetter, "")
-        for i in puzzleLettersStr:
-            puzzleLetters.append(i)
+        # putting the req letter in front
+        puzzleLetters = [requiredLetter] + list(puzzleLettersStr.replace(requiredLetter, ""))
 
-        myPuzzle = Puzzle(puzzleLetters, data["WordList"])
-
-        # shove them straight into puzzle class
-        myPuzzle.guessedWords = data["GuessedWords"]
-        myPuzzle.currentPoints = data["CurrentPoints"]
-        myPuzzle.currentRank = myPuzzle.calcCurrentRank()
-
+        myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+        
         return myPuzzle
 
     # Translate from variables into json format
