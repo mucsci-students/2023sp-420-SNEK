@@ -10,6 +10,7 @@ from controller.customExcept import *
 import view.UserInterface
 from model.DataSource import DataSource
 from controller.SaveAndLoad import SaveAndLoad
+from model.Hint import Hint
 
 
 class GameController:
@@ -86,6 +87,7 @@ class GameController:
             newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]).wordList)
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
+        self.myPuzzle.setHint(Hint)
 
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
@@ -190,6 +192,13 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+        elif command == Commands.SHOW_HINTS:
+            if self.playing:
+                self.myUserInterface.showHints(
+                    self.myPuzzle)
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')

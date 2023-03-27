@@ -1,6 +1,6 @@
 import random
-
-
+from model.Hint import Hint
+from model.DataSource import DataSource
 class Puzzle:
     '''
     Model for the puzzle of the game.
@@ -54,6 +54,8 @@ class Puzzle:
                                      int] = self.__rankDict(self.maxPoints)
         # Current rank (beginner etc..)
         self.currentRank: str = self.__calcCurrentRank()
+
+        self.puzzleHint: Hint
 
     # Static method to calculate the maximum points of a game.
     @classmethod
@@ -186,6 +188,19 @@ class Puzzle:
                 the list of letters that make up the game.
         '''
         return self.puzzleLetters
+    
+    def getHints(self) -> Hint:
+        ''' Output:
+                the hint object of the puzzle.
+        '''
+        return self.puzzleHint
+
+    def setHint(self, hint:Hint):
+        ''' Input:
+                the hint object for the puzzle.
+        '''
+        self.puzzleHint = DataSource.getHints(self, self.wordList, self.puzzleLetters)
+        
 
     def shuffle(self):
         ''' Postcondition:

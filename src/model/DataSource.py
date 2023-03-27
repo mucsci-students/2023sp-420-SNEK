@@ -91,7 +91,7 @@ class DataSource:
         dt.wordList = list(dt.wordList[0])
 
         return dt
-    def getHints(self, wordList:list,optionalLetters:list)->Hint:
+    def getHints(self, wordList:list, optionalLetters:list)->Hint:
         letterMat = dict()
         maximum = 0
         beginDict = dict()
@@ -110,7 +110,6 @@ class DataSource:
         perfectPangram = 0
 
 
-        print(wordList)
 
         for word in wordList:
             auxLetterList = list(set((word)))

@@ -271,9 +271,9 @@ Commands:
             
         print(f"\t● Words: {myHints.numberOfWords}")
         print(f"\t● Points: {myPuzzle.getMaxPoints()}")
-        print(f"\t● Pangrams: {myHints.pangrams} ", end="")
-        if myHints.perfectPangrams > 0:
-            print(f"({myHints.perfectPangrams} perfect)")
+        print(f"\t● Pangrams: {myHints.pangram} ", end="")
+        if myHints.perfectPangram > 0:
+            print(f"({myHints.perfectPangram} perfect)")
         else:
             print()
         
