@@ -2,6 +2,7 @@ from view.UserInterface import UserInterface
 from colorama import Fore, Style
 from model.Puzzle import Puzzle
 from model.Commands import *
+
 import os
 
 
@@ -254,3 +255,54 @@ Commands:
     # Prints messages in cli
     def showMessage(self, message, endStr="\n"):
         print(message, end=endStr)
+
+
+
+    def showHints(self, myPuzzle:Puzzle):
+        myHints:Hint = myPuzzle.getHints()
+        puzzleLetters = myPuzzle.getPuzzleLetters()
+        
+        self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
+        print("\t● Puzzle Letters (Required first):  ", end="")
+        self.__boldPrint(Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL, endStr=" ")
+        for letter in puzzleLetters[1:]:
+            print(letter.upper(), end=" ")
+        print()
+            
+        print(f"\t● Words: {myHints.numberOfWords}")
+        print(f"\t● Points: {myPuzzle.getMaxPoints()}")
+        print(f"\t● Pangrams: {myHints.pangrams} ", end="")
+        if myHints.perfectPangrams > 0:
+            print(f"({myHints.perfectPangrams} perfect)")
+        else:
+            print()
+        
+        if myHints.bingo:
+            print("\t● Bingo")
+            
+        # Print matrix
+        print("\n\t● Hint matrix:")
+        print("\n", end="\t         ")
+        headers = list(myHints.letterMatrix.items())[0][1].items()
+        for header, _ in headers:
+            self.__boldPrint(f"{header:^4}", endStr=" ")
+            
+        separator = "‒"
+        for rowLetter, rowContent in myHints.letterMatrix.items():
+            print("\n", end="\t    ")
+            self.__boldPrint(f"{rowLetter:^4}", endStr=" ")
+            for _, column in rowContent.items():
+                if column == 0:
+                    print(f"{separator:^4}", end=" ")
+                else:
+                    print(f"{column:^4}", end=" ")
+        
+        print("\n\n\n\t● Two letter list:")
+        # Print 2 letter lists
+        previousLetter = None
+        for firstLetters, num in myHints.beginningList.items():
+            if previousLetter != firstLetters[0]:
+                previousLetter = firstLetters[0]
+                print("\n", end="\t   ")
+            print(f"  {firstLetters.upper()} → {num:<4}", end="")
+        print()

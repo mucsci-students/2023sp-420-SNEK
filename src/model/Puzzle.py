@@ -1,5 +1,7 @@
 import random
 
+from model.Hint import Hint
+
 
 class Puzzle:
     '''
@@ -30,7 +32,7 @@ class Puzzle:
     __RANK_NAMES_LIST: list[str] = ["Beginner", "Good Start", "Moving Up", "Good",
                                     "Solid", "Nice", "Great", "Amazing", "Genius"]
 
-    def __init__(self, puzzleLetters: list[str], WordList: list[str], guessedWords: list[str] = [], maxPoints: int = 0, currentPoints: int = 0) -> None:
+    def __init__(self, puzzleLetters: list[str], WordList: list[str], guessedWords: list[str] = None, maxPoints: int = 0, currentPoints: int = 0) -> None:
         ''' Inputs:
                 WordList: list of allowed words of the game.
                 puzzleLetters: list of letters of the game (the first one being the required one).
@@ -42,6 +44,8 @@ class Puzzle:
         # Words relative to the puzzle
         self.wordList: list[str] = WordList
         # Already guessed words
+        if guessedWords == None:
+            guessedWords = []
         self.guessedWords: list[str] = guessedWords
         # Current number of points for the puzzle
         self.currentPoints: int = currentPoints
@@ -50,8 +54,12 @@ class Puzzle:
         # A dictionary containing the rank names and their thresholds.
         self.rankingsAndPoints: dict[str,
                                      int] = self.__rankDict(self.maxPoints)
+
+        self.puzzleHint:Hint
+
         # Current rank (beginner etc..)
         self.currentRank: str = self.__calcCurrentRank()
+
 
     # Static method to calculate the maximum points of a game.
     @classmethod
@@ -184,7 +192,18 @@ class Puzzle:
                 the list of letters that make up the game.
         '''
         return self.puzzleLetters
+    
+    def getHint(self) -> Hint:
+        ''' Output:
+                the hint object of the puzzle.
+        '''
+        return self.puzzleHint
 
+    def setHint(self, hint:Hint):
+        ''' Input:
+                the hint object for the puzzle.
+        '''
+        self.puzzleHint = hint
     def shuffle(self):
         ''' Postcondition:
                 the list of letters that make up the game gets shuffled, except for the first one.

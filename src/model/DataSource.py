@@ -26,7 +26,6 @@ class SingletonMeta(type):
 
 class DataSource(metaclass=SingletonMeta):
     
-
     def __init__(self,dbName:str=None):
         self.dbName = dbName
         self.numberOfLetters = 0
