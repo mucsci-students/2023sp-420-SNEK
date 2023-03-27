@@ -15,13 +15,13 @@ def main():
     elif sys.argv[1].lower() == "cov-miss" or sys.argv[1].lower() == "all" and sys.argv[2].lower() == "cov-miss":
         pytest.main(["UnitTests/", "--cov-report", "term-missing", "--cov"])
 
-    elif sys.argv[1].lower() == "single":
+    elif sys.argv[1].lower() == "file":
 
         counter = 0
         filLis = os.listdir("UnitTests/")
-        filLis.remove('Mocks')
+        filLis.remove('mocks')
         for i in filLis:
-            if i == "__pycache__" or i == "Mocks" or i == "saveFiles":
+            if i == "__pycache__" or i == "mocks" or i == "saveFiles":
                 filLis.remove(i)
 
         for i in filLis:
