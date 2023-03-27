@@ -248,7 +248,7 @@ class BeeUI(UserInterface):
         self.win = Toplevel() # popout window
         self.win.title(Commands.HELP)
 
-        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = Image.open('src/img/helpscreen.PNG')
         self.helpscreenImg = self.helpscreenImg.resize((750, 500))
         self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
@@ -441,10 +441,10 @@ class BeeUI(UserInterface):
         self.welcome.pack()
 
         # Load images necessary for buttons
-        self.newImg = PhotoImage(file='img/new.png')
-        self.loadImg = PhotoImage(file='img/load.png')
-        self.helpImg = PhotoImage(file='img/how.png')
-        self.exitImg = PhotoImage(file='img/exit.png')
+        self.newImg = PhotoImage(file='src/img/new.png')
+        self.loadImg = PhotoImage(file='src/img/load.png')
+        self.helpImg = PhotoImage(file='src/img/how.png')
+        self.exitImg = PhotoImage(file='src/img/exit.png')
 
         # Create buttons for navigating menus
         self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__preGamePage)
@@ -481,7 +481,7 @@ class BeeUI(UserInterface):
         self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t\t\t ", font=('Arial bold', 24))
         self.howToLabel.pack()
 
-        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = Image.open('src/img/helpscreen.PNG')
         self.helpscreenImg = self.helpscreenImg.resize((750, 425))
         self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
@@ -490,7 +490,7 @@ class BeeUI(UserInterface):
 
         # Designs #
         # Go Back Button #
-        self.goBackImg = Image.open('img/goBack.png')
+        self.goBackImg = Image.open('src/img/goBack.png')
         self.goBackImg = self.goBackImg.resize((140, 51))
         self.goBackSized = ImageTk.PhotoImage(self.goBackImg)
 
@@ -510,7 +510,7 @@ class BeeUI(UserInterface):
         self.welcome.pack()
 
         # New Game Random
-        self.randBtnImg = PhotoImage(file='img/newRand.png')
+        self.randBtnImg = PhotoImage(file='src/img/newRand.png')
         self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=lambda: self.myController.processInput(Commands.NEW_GAME_RND))
         self.randBtn.pack(pady=25)
 
@@ -524,12 +524,12 @@ class BeeUI(UserInterface):
         self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 18))
         self.newWord.grid(row=0, column=1, ipadx=20)
 
-        self.customBtnImg = PhotoImage(file='img/newCustom.png')
+        self.customBtnImg = PhotoImage(file='src/img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput(Commands.NEW_GAME_WRD))
         self.customBtn.grid(row=1, columnspan=2)
         self.newWordGrid.pack(pady=25)
 
-        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackImg = PhotoImage(file='src/img/goBack.png')
         self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
 
@@ -593,14 +593,14 @@ class BeeUI(UserInterface):
         self.entry = tk.Entry(self.entryframe, font=('Arial', 18), state="disabled", disabledbackground="white", disabledforeground="black")
         self.root.bind('<KeyPress>', self.__shortcut)
         self.entry.grid(row=0, column=0, sticky=tk.W+tk.E)
-        self.bck = PhotoImage(file='img/backspace.png')
+        self.bck = PhotoImage(file='src/img/backspace.png')
         self.bckspce = tk.Button(self.entryframe, border='0', image=self.bck, command=self.__backspace)
         self.bckspce.grid(row=0, column=1, sticky=tk.W+tk.E)
 
         # Displaying entryframe on screen.
         self.entryframe.pack()
 
-        self.submitButtonImg = Image.open('img/submit.png')
+        self.submitButtonImg = Image.open('src/img/submit.png')
         self.submitButtonImg = self.submitButtonImg.resize((140, 51))
         self.submitButtonSized = ImageTk.PhotoImage(self.submitButtonImg)
 
@@ -612,7 +612,7 @@ class BeeUI(UserInterface):
         self.buttonframe = tk.Frame(self.mainFrame)
 
         # Opening base image for the honeycombs
-        self.combImg = Image.open('img/comb.png')
+        self.combImg = Image.open('src/img/comb.png')
         self.combImg = self.combImg.resize((100, 100))
         self.comb = ImageTk.PhotoImage(self.combImg)
 
@@ -655,7 +655,7 @@ class BeeUI(UserInterface):
         # Display the honeycomb frame to window
         self.buttonframe.pack(ipadx=200, ipady=155)
 
-        self.shuffleButtonImg = Image.open('img/shuffle.png')
+        self.shuffleButtonImg = Image.open('src/img/shuffle.png')
         self.shuffleButtonImg = self.shuffleButtonImg.resize((140, 51))
         self.shuffleButtonSized = ImageTk.PhotoImage(self.shuffleButtonImg)
 
@@ -670,14 +670,14 @@ class BeeUI(UserInterface):
     def __winPage(self):
         self.__clearFrame()
 
-        self.beestImg = Image.open('img/beest.PNG')
+        self.beestImg = Image.open('src/img/beest.PNG')
         self.beestImg = self.beestImg.resize((650, 400))
         self.beestImgSized = ImageTk.PhotoImage(self.beestImg)
 
         self.beestBtn = tk.Button(self.mainFrame, border='0', image=self.beestImgSized)
         self.beestBtn.pack()
 
-        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackImg = PhotoImage(file='src/img/goBack.png')
         self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
 
