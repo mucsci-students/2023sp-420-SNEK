@@ -46,7 +46,9 @@ Commands:
                help you find other words.
    -!guessed - Shows all the already correctly guessed words.
    -!help - Prints out the help menu.
-   -!exit - Exits the game. Will prompt to save.'''
+   -!exit - Exits the game. Will prompt to save.
+   -!quit - Exits the entire program. Will prompt to save.'''
+   
 
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
