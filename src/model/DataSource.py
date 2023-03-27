@@ -5,48 +5,37 @@ import random
 
 from model.Hint import Hint
 
+class SingletonMeta(type):
+    """
+    The Singleton class can be implemented in different ways in Python. Some
+    possible methods include: base class, decorator, metaclass. We will use the
+    metaclass because it is best suited for this purpose.
+    """
 
-class DataSource:
-    numberOfLetters = 0
-    wordList = dict()  # this is going to be a dictionary just containing the words
+    _instances = {}
 
-    def __init__(self, mandatoryLetter=None, optionalLetters=None):
-        if mandatoryLetter == None or optionalLetters == None:
-            return
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
 
-        con = sqlite3.connect("spellingBee.db")
-        cur = con.cursor()
-        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
-            return
-        cur.execute(
-            "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
-        output = cur.fetchall()
-        con.commit()
+class DataSource(metaclass=SingletonMeta):
+    
 
-        treatmentMat = np.array(output)
-        wordSet = set(treatmentMat[:, 0])
-        # just keep the words that contain only the desired letters
-        treatmentMat = np.array(output)
-        wordSet = set(treatmentMat[:, 0])
-        boolList = []
-        for word in wordSet:
-            approved = True
-            for letter in word:
-                if (letter not in optionalLetters):
-                    approved = False
-            boolList.append(approved)
-        wordDF = pd.DataFrame(wordSet)
-        wordDF = wordDF[boolList]
-
-        con.close()
-        self.wordList = wordDF
-        numberLettersList = [len(set(list(word)))
-                             for word in list(self.wordList[0])]
-        self.numberOfLetters = sum(numberLettersList)
+    def __init__(self,dbName:str=None):
+        self.dbName = dbName
+        self.numberOfLetters = 0
+        self.wordList = list()
+    
 
     # checks if a word is in the db
     def checkWord(self, searchedWord):
-        con = sqlite3.connect("spellingBee.db")
+        con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
         cur.execute(
@@ -57,7 +46,7 @@ class DataSource:
         return len(output) > 0
 
     def getRandomWord(self):
-        con = sqlite3.connect("spellingBee.db")
+        con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
         cur.execute(
@@ -85,17 +74,40 @@ class DataSource:
 
     # returns a  dataSource object built with the word and the mandatory letter
     def grabWordsFor(self, word, mandatoryLetter):
-        dt = DataSource(mandatoryLetter, list(word))
-        self.numberOfLetters = dt.numberOfLetters
-        self.wordList = list(dt.wordList[0])
-        dt.wordList = list(dt.wordList[0])
+        optionalLetters = list(set(word))
+        if mandatoryLetter == None or optionalLetters == None:
+            return
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
+            return
+        cur.execute(
+            "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
+        output = cur.fetchall()
+        con.commit()
+        treatmentMat = np.array(output)
+        wordSet = set(treatmentMat[:, 0])
+        # just keep the words that contain only the desired letters
+        boolList = []
+        for word in wordSet:
+            approved = True
+            for letter in word:
+                if (letter not in optionalLetters):
+                    approved = False
+            boolList.append(approved)
+        wordDF = pd.DataFrame(wordSet)
+        wordDF = wordDF[boolList]
+        con.close()
+        self.wordList = wordDF
+        numberLettersList = [len(set(list(word)))
+                             for word in list(self.wordList[0])]
+        self.numberOfLetters = sum(numberLettersList)
+        self.wordList = list(self.wordList[0])
 
-        return dt
     def getHints(self, wordList:list,optionalLetters:list)->Hint:
         letterMat = dict()
         maximum = 0
         beginDict = dict()
-        wordList.sort()
         for word in wordList:
             if(maximum < len(word)):
                 maximum = len(word)
@@ -133,15 +145,17 @@ class DataSource:
                 beginDict[word[:2]] += 1
 
 
-        for letter in optionalLetters:
+        finalBingo = True
+        for let in optionalLetters:
             sumatory = 0
             bingo = False
             for number in range(4, maximum+1):
-                if(letterMat[letter][str(number)] != 0):
+                if(letterMat[let][str(number)] != 0):
                     bingo = True
-                sumatory += letterMat[letter][str(number)]
+                sumatory += letterMat[let][str(number)]
             if not bingo:
-                    break
-            letterMat[letter]['Σ'] = sumatory
-        return Hint(letterMat, beginDict, pangram, perfectPangram , bingo, len(wordList))
+                finalBingo = False
+            letterMat[let]['Σ'] = sumatory
+
+        return Hint(letterMat, beginDict, pangram, perfectPangram , finalBingo, len(wordList))
     
