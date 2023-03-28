@@ -2,7 +2,6 @@ import random
 
 from model.Hint import Hint
 
-
 class Puzzle:
     '''
     Model for the puzzle of the game.

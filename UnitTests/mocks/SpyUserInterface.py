@@ -1,7 +1,7 @@
-import src.view.UserInterface
+import view.UserInterface
 
 
-class SpyUserInterface(src.view.UserInterface.UserInterface):
+class SpyUserInterface(view.UserInterface.UserInterface):
     def __init__(self) -> None:
         super().__init__()
 
@@ -94,3 +94,6 @@ class SpyUserInterface(src.view.UserInterface.UserInterface):
     def showExit(self, *args):
         count = self.spyValues.get(self.showExit, 0)
         self.spyValues[self.showExit] = count + 1
+
+    def showHints(self):
+        pass

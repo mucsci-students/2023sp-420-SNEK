@@ -2,6 +2,7 @@ from view.UserInterface import UserInterface
 from colorama import Fore, Style
 from model.Puzzle import Puzzle
 from model.Commands import *
+from model.Hint import Hint
 
 import os
 
@@ -259,7 +260,7 @@ Commands:
 
 
     def showHints(self, myPuzzle:Puzzle):
-        myHints:Hint = myPuzzle.getHints()
+        myHints:Hint = myPuzzle.getHint()
         puzzleLetters = myPuzzle.getPuzzleLetters()
         
         self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
@@ -271,9 +272,9 @@ Commands:
             
         print(f"\t● Words: {myHints.numberOfWords}")
         print(f"\t● Points: {myPuzzle.getMaxPoints()}")
-        print(f"\t● Pangrams: {myHints.pangrams} ", end="")
-        if myHints.perfectPangrams > 0:
-            print(f"({myHints.perfectPangrams} perfect)")
+        print(f"\t● Pangrams: {myHints.pangram} ", end="")
+        if myHints.perfectPangram > 0:
+            print(f"({myHints.perfectPangram} perfect)")
         else:
             print()
         

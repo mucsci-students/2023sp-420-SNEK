@@ -10,6 +10,7 @@ from controller.customExcept import *
 import view.UserInterface
 from model.DataSource import DataSource
 from controller.SaveAndLoad import SaveAndLoad
+from model.Hint import Hint
 
 
 class GameController:
@@ -82,8 +83,11 @@ class GameController:
     def __createGame(self, newBaseWord):
         newPuzzleLetters = list(set(list(newBaseWord)))
         random.shuffle(newPuzzleLetters)
+        self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0])
+        
         self.myPuzzle = Puzzle(
-            newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]).wordList)
+            newPuzzleLetters, self.myDataSource.wordList)
+        self.myPuzzle.setHint(self.myDataSource.getHints(self.myPuzzle.wordList, self.myPuzzle.puzzleLetters))
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
 
@@ -190,6 +194,13 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+        elif command == Commands.SHOW_HINTS:
+            if self.playing:
+                self.myUserInterface.showHints(
+                    self.myPuzzle)
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')

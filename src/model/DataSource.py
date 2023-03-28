@@ -102,7 +102,7 @@ class DataSource(metaclass=SingletonMeta):
                              for word in list(self.wordList[0])]
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
-
+        
     def getHints(self, wordList:list,optionalLetters:list)->Hint:
         letterMat = dict()
         maximum = 0
@@ -121,7 +121,6 @@ class DataSource(metaclass=SingletonMeta):
         perfectPangram = 0
 
 
-        print(wordList)
 
         for word in wordList:
             auxLetterList = list(set((word)))
