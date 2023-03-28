@@ -61,8 +61,8 @@ class test_DataSource(unittest.TestCase):
         letterMat['w']['Σ'] = 2
         beginning = dict()
         beginning['wa'] = 2
-        self.assertEqual(actualHints.beginingList, beginning,
-                         f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginingList}")
+        self.assertEqual(actualHints.beginningList, beginning,
+                         f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,
                          f"the list is not the expected one, the one expected was {letterMat} and the one recieved was {actualHints.letterMatrix}")
         

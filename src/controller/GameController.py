@@ -83,11 +83,13 @@ class GameController:
     def __createGame(self, newBaseWord):
         newPuzzleLetters = list(set(list(newBaseWord)))
         random.shuffle(newPuzzleLetters)
+        self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0])
+        
         self.myPuzzle = Puzzle(
-            newPuzzleLetters, self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]).wordList)
+            newPuzzleLetters, self.myDataSource.wordList)
+        self.myPuzzle.setHint(self.myDataSource.getHints(self.myPuzzle.wordList, self.myPuzzle.puzzleLetters))
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
-        self.myPuzzle.setHint(Hint)
 
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status

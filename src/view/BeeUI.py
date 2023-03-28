@@ -322,6 +322,9 @@ class BeeUI(UserInterface):
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
+    def showHints(self):
+        pass
+
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.

@@ -2,6 +2,7 @@ from view.UserInterface import UserInterface
 from colorama import Fore, Style
 from model.Puzzle import Puzzle
 from model.Commands import *
+from model.Hint import Hint
 
 import os
 
@@ -259,7 +260,7 @@ Commands:
 
 
     def showHints(self, myPuzzle:Puzzle):
-        myHints:Hint = myPuzzle.getHints()
+        myHints:Hint = myPuzzle.getHint()
         puzzleLetters = myPuzzle.getPuzzleLetters()
         
         self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
