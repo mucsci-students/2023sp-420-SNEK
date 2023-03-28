@@ -1,7 +1,7 @@
 class Hint:
  
     def __init__(self, letterMatrix:dict[str, dict[str, int]], beginingList:dict[str,int], pangram:int , perfectPangram:int , bingo:bool, numberOfWords:int ):
-        self.beginingList = beginingList
+        self.beginningList = beginingList
         self.letterMatrix = letterMatrix
         self.pangram = pangram
         self.perfectPangram = perfectPangram

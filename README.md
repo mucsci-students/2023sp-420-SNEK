@@ -8,13 +8,13 @@
 
 
 <p align="center">
-          <img src="img/SNEKTransperent.png">
+          <img src="src/img/SNEKTransperent.png">
 </p>
 
 ### Contributers
 
 <p align="center">
-    <img src="img/contributersFinal2.PNG">
+    <img src="src/img/contributersFinal2.PNG">
 </p>
 
 ### Neccessary Libraries
@@ -108,7 +108,7 @@ that need installation.
 ### GUI Instructions
 
 <p align=center>
-    <img src="img/spellBeeInstruct.PNG">
+    <img src="src/img/spellBeeInstruct.PNG">
 <p>
 
 ### Testing Suite
