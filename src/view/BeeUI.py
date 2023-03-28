@@ -77,7 +77,7 @@ class BeeUI(UserInterface):
         self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Show Rankings", command=lambda:self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(label="Show Guessed Words", command=lambda:self.myController.processInput(Commands.GUESSED_WORDS))
-        self.viewmenu.add_command(label="Show Hints", command=self.showHints) #command=lambda:self.myController.processInput(Commands.HINTS))
+        self.viewmenu.add_command(label="Show Hints", command=lambda:self.showHints(self.myController.myPuzzle)) #command=lambda:self.myController.processInput(Commands.HINTS))
         self.viewmenu.add_command(label="Show Help", command=self.showHelp)
 
 # # # # # # # # # # # # # Developer Menus # # # # # # # # # # # # #
@@ -261,9 +261,11 @@ class BeeUI(UserInterface):
     # Public method showHints
     # Creates a small popup window to display the hints screen to
     # the user to help them progress through the game.
-    def showHints(self):
+    def showHints(self, myPuzzle):
         self.hintsWin = Toplevel() # popout window
         self.hintsWin.title("Hints!")
+
+        hintsData = myPuzzle.getHint()
 
         self.hintsTextBox = tk.Text(self.hintsWin, width=50, padx=100, bg="white", fg="black", font=('Arial', 14))
         self.hintsTextBox.pack()
@@ -272,8 +274,12 @@ class BeeUI(UserInterface):
         self.hintsTextBox.tag_configure('tag_left', justify='left', font=('Courier New', 14))
         self.hintsTextBox.insert('end', "🐝 🍯 Welcome to the hints page! 🍯 🐝\n\n", 'tag_center')
         self.hintsTextBox.insert('end', "Here are the letters for the puzzle:        \n", 'tag_center')
-        self.hintsTextBox.insert('end', "V O L C A N S" + "  (First Letter Required) \n\n", 'tag_center')
-        self.hintsTextBox.insert('end', "WORDS: " + "37" + ", POINTS: " + "135" + ", PANGRAMS: " + "1 (1 perfect)\n\n", 'tag_center')
+        self.hintsTextBox.insert('end', myPuzzle.getPuzzleLetters() + "  (First Letter Required) \n\n", 'tag_center')
+        self.hintsTextBox.insert('end', "WORDS: " + hintsData.numberOfWords + ", POINTS: " + myPuzzle.getMaxPoints() + ", PANGRAMS: " + hintsData.pangram + "\n", 'tag_center')
+        if hintsData.perfectPangram > 0:
+            self.hintsTextBox.insert('end', "(" + hintsData.perfectPangram + " perfect)\n\n", 'tage_center')
+        else:
+            self.hintsTextBox.insert('end', "\n", 'tag_center')
         self.hintsTextBox.insert('end', "\t\t   4 5 6 7 8 Σ \n", 'tag_left')
         self.hintsTextBox.insert('end', "\t\tV: 1 - - 5 1 7 \n", 'tag_left')
         self.hintsTextBox.insert('end', "\t\tO: 1 - - 5 1 7 \n", 'tag_left')
