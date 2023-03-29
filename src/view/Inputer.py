@@ -16,13 +16,10 @@ class Inputer:
         self.commandKeys = ['ctrl', 'shift']
         
     def __distance(self, str1, str2) -> int:
-        suffixScore = 1
-        while suffixScore < len(str1) and suffixScore < len(str2) and str1[-suffixScore] == str2[-suffixScore]:
-            suffixScore += 1
             
         editDist = self.__lev(str1, str2)
         
-        return editDist - (suffixScore - 1)
+        return editDist
         
     # Fn that calculates the number of character changes needed between two strings
     def __lev(self, str1, str2):
@@ -35,18 +32,15 @@ class Inputer:
             return len(str1)
 
         # if the last character in each strings are equal, set dist = 0
-        if str1[-1] == str2[-1]:
-            cost = 0
+        if str1[0] == str2[0]:
+            return self.__lev(str1[1:], str2[1:])
+        
         else:
-            cost = 1
+            # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
+            return min([self.__lev(str1[1:], str2), 
+                            self.__lev(str1, str2[1:]), 
+                            self.__lev(str1[1:], str2[1:]) + 1])
 
-        # else set the distance to 1     
-        # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
-        dist = min([self.__lev(str1[:-1], str2), 
-                        self.__lev(str1, str2[:-1]), 
-                        self.__lev(str1[:-1], str2[:-1]) + cost])
-
-        return dist
     
     def __orderStrings(self, possiblesList:list[str]):
         if possiblesList == []:
@@ -174,14 +168,14 @@ class Inputer:
         
         self.__showPrompt()
         
-        keyboard.add_hotkey('tab', self.__tab, suppress=True)
-        keyboard.add_hotkey('shift+tab', self.__shift_tab, suppress=True)
-        keyboard.add_hotkey('ctrl+z', self.__ctrl_z, suppress=True)
-        keyboard.add_hotkey('ctrl+c', self.__ctrl_c, suppress=True)
-        keyboard.add_hotkey('ctrl+y', self.__ctrl_y, suppress=True)
-        keyboard.on_press(lambda x: [self.__on_press(x.name), self.__showPrompt()], suppress=True)
-        keyboard.on_release(lambda x: self.__showPrompt, suppress=True)
-        keyboard.on_release_key('enter', lambda x: keyboard.press('esc'), suppress=True)
+        keyboard.add_hotkey('tab', self.__tab)
+        keyboard.add_hotkey('shift+tab', self.__shift_tab)
+        keyboard.add_hotkey('ctrl+z', self.__ctrl_z)
+        keyboard.add_hotkey('ctrl+c', self.__ctrl_c)
+        keyboard.add_hotkey('ctrl+y', self.__ctrl_y)
+        keyboard.on_press(lambda x: [self.__on_press(x.name), self.__showPrompt()])
+        keyboard.on_release(lambda x: self.__showPrompt)
+        keyboard.on_release_key('enter', lambda x: keyboard.press('esc'))
         keyboard.wait('enter', suppress=True)
         keyboard.stash_state()
         

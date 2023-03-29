@@ -126,6 +126,7 @@ Commands:
     # required letter is in the center and always stays there when a user 
     # uses the shuffle command
     def showPuzzle(self, myPuzzle: Puzzle) -> None:
+        os.system('cls')
         self.showProgress(myPuzzle.getCurrentRank(), list(myPuzzle.getRankingsAndPoints().values()),myPuzzle.getCurrentPoints())
         myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
         YB = Fore.YELLOW + Style.BRIGHT
