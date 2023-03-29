@@ -1,12 +1,15 @@
-import sys
-sys.path.append('../controller')
-sys.path.append('../view')
-
-from UserInterface import UserInterface
+from view.UserInterface import UserInterface
 from colorama import Fore, Style
+<<<<<<< HEAD
 from Puzzle import Puzzle
 from Commands import Commands
 from Inputer import Inputer
+=======
+from model.Puzzle import Puzzle
+from model.Commands import *
+from model.Hint import Hint
+
+>>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
 import os
 
 
@@ -38,8 +41,8 @@ Commands:
    Call commands with a preceding '!'. Commands may be
    called at anytime.
 
-   -!new rnd - Generate a new random puzzle
-   -!new wrd - Generate a new puzzle with a user given
+   -!new random - Generate a new random puzzle
+   -!new word - Generate a new puzzle with a user given
                word.  Console will prompt for the word after
                command is given.
    -!status - Display you status for the current puzzle.
@@ -51,13 +54,22 @@ Commands:
                help you find other words.
    -!guessed - Shows all the already correctly guessed words.
    -!help - Prints out the help menu.
-   -!exit - Exits the game. Will prompt to save.'''
+   -!exit - Exits the game. Will prompt to save.
+   -!quit - Exits the entire program. Will prompt to save.'''
+   
 
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
     def launch(self):
         while not self.quit:
+<<<<<<< HEAD
             userInput = self.__getUserInput(options=Commands.getCommandNameList())
+=======
+            userInput = self.__getUserInput()
+            if Commands.isCommand(userInput):
+                userInput = Commands.getCommandFromName(userInput)
+
+>>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
             self.myController.processInput(userInput)
 
     # Flag if the game is quit
@@ -66,8 +78,13 @@ Commands:
 
     # Gets user input from cli and checks if there is a command that
     # a user wants to use
+<<<<<<< HEAD
     def __getUserInput(self, message: str = "", options = []) -> str:
         userInput = self.myInputer.input(self.__CMD_PREFIX + message + " ", options).strip().lower()
+=======
+    def __getUserInput(self, message: str = "") -> str:
+        userInput = input(self.__CMD_PREFIX + message + " ").strip()
+>>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
         return userInput
     
     # Path in directory that the user wants to save their games
@@ -178,37 +195,60 @@ Commands:
 
     # Prints Exiting when a user wants to exit a puzzle
     def showExit(self) -> None:
-        self.__boldPrint("Exiting...")
+        self.__boldPrint("Game exited.")
+        self.__boldPrint("You are at the main program (not playing).")
+        print()
 
     # If a user does not make a right guess, then it will 
     # print that they did not make a right guess
     def showWrongGuess(self, message="") -> None:
-        self.__boldPrint("Wrong guess")
+        self.__boldPrint("Wrong guess", endStr = "")
         if message == "":
             print("...")
         else:
-            print(": " + message)
+            print(": \n\t" + message)
 
     # When a user makes the right guess, then it will
     # tell the user that they made the right guess
     def showCorrectGuess(self) -> None:
         self.__boldPrint("Good guess!")
+        
+        
+    def __getPath(self) -> str:
+        self.__boldPrint("Desired save path: ")
+        name = self.__getUserInputPath()
+        while name == "" or name == ".json":
+            self.showError("The file has to have a name.", "Please try again:")
+            name = self.__getUserInputPath()
+            
+        name = name if name.endswith(".json") else name + ".json "
+            
+        if not os.path.isabs(name):
+            baseDir = os.getcwd()
+            name = os.path.join(baseDir, name)
+            
+        fileName = os.path.normpath(name)
+        
+        return fileName
 
-    # When a user wants to oepn their saved game, then it will 
-    # ask what save file theu want to open
-    def getSaveFileName(self, saveType = "") -> str:
-        self.__boldPrint("Default save dir: " + os.getcwd())
-        diffPath = self.getConfirmation("Would you like to use a different path?")
-        if(diffPath == True):
-            self.__boldPrint("Desired save path (No empty save names): ")
-            path = self.__getUserInputPath()
-            self.__boldPrint("Desired save name (No empty save names): ")
-            name = self.__getUserInput()
-            return path + "/" + name + ".json"
-        else:
-            self.__boldPrint("Desired save name (No empty names): ")
-            name = self.__getUserInput()
-            return name
+    # When a user wants to open their saved game, then it will 
+    # ask what save file they want to open
+    def getSaveFileName(self) -> str:
+        fileName =  self.__getPath()
+        
+        if os.path.exists(fileName):
+            self.showMessage("This file already exists")
+            overwrite = self.getConfirmation("Do you want to overwrite it?")
+            if not overwrite:
+                name = os.path.join(os.getcwd(), ".json")
+                fileName = os.path.normpath(name)
+
+        return fileName
+
+    # When a user wants to open their saved game, then it will 
+    # ask what save file they want to open
+    def getLoadFileName(self) -> str:
+        return self.__getPath()
 
     # When !guessed is types, then it will print a list of all 
     # the words that the user has found in the game
@@ -224,10 +264,17 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
+<<<<<<< HEAD
         choice = str(self.__getUserInput(options=[okStr, nokStr])).lower().strip()
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
             choice = self.__getUserInput(options=[okStr, nokStr]).lower().strip()
+=======
+        choice = str(self.__getUserInput())
+        while choice != okStr and choice != nokStr:
+            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
+            choice = self.__getUserInput()
+>>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
 
         confirmation = choice == okStr
         return confirmation
@@ -235,3 +282,54 @@ Commands:
     # Prints messages in cli
     def showMessage(self, message, endStr="\n"):
         print(message, end=endStr)
+
+
+
+    def showHints(self, myPuzzle:Puzzle):
+        myHints:Hint = myPuzzle.getHint()
+        puzzleLetters = myPuzzle.getPuzzleLetters()
+        
+        self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
+        print("\t● Puzzle Letters (Required first):  ", end="")
+        self.__boldPrint(Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL, endStr=" ")
+        for letter in puzzleLetters[1:]:
+            print(letter.upper(), end=" ")
+        print()
+            
+        print(f"\t● Words: {myHints.numberOfWords}")
+        print(f"\t● Points: {myPuzzle.getMaxPoints()}")
+        print(f"\t● Pangrams: {myHints.pangram} ", end="")
+        if myHints.perfectPangram > 0:
+            print(f"({myHints.perfectPangram} perfect)")
+        else:
+            print()
+        
+        if myHints.bingo:
+            print("\t● Bingo")
+            
+        # Print matrix
+        print("\n\t● Hint matrix:")
+        print("\n", end="\t         ")
+        headers = list(myHints.letterMatrix.items())[0][1].items()
+        for header, _ in headers:
+            self.__boldPrint(f"{header:^4}", endStr=" ")
+            
+        separator = "‒"
+        for rowLetter, rowContent in myHints.letterMatrix.items():
+            print("\n", end="\t    ")
+            self.__boldPrint(f"{rowLetter:^4}", endStr=" ")
+            for _, column in rowContent.items():
+                if column == 0:
+                    print(f"{separator:^4}", end=" ")
+                else:
+                    print(f"{column:^4}", end=" ")
+        
+        print("\n\n\n\t● Two letter list:")
+        # Print 2 letter lists
+        previousLetter = None
+        for firstLetters, num in myHints.beginningList.items():
+            if previousLetter != firstLetters[0]:
+                previousLetter = firstLetters[0]
+                print("\n", end="\t   ")
+            print(f"  {firstLetters.upper()} → {num:<4}", end="")
+        print()

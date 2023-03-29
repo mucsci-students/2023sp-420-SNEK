@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spellingBee"
+version = "2.0.0"
+description = "A simple spelling bee game"
+dependencies = [
+    'setuptools',
+    'colorama',
+    'requests',
+    'numpy',
+    'pandas',
+    'pytest',
+    'pytest-cov',
+    'pillow',
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "UnitTests"
+]
+
+[project.scripts]
+Bee = "main:main"
+Btest = "buildTest:main"
+bee = "main:main"
+btest = "buildTest:main"

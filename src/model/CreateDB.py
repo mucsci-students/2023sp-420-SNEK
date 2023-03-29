@@ -1,14 +1,11 @@
 
 ##
-#this script creates the db after depurating the words, it inserts them
-#Run this script only once, if else it will giver error messages for trying to overwrite the DB
-#
-#
+# this script creates the db after depurating the words, it inserts them
+# Run this script only once, if else it will giver error messages for trying to overwrite the DB
+##
 
 
 import requests
-import json
-import numpy as np
 import sqlite3
 import pandas as pd
 
