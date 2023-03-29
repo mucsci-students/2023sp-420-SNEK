@@ -4,7 +4,7 @@ from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
-import os
+import os, keyboard, time
 
 
 
@@ -247,7 +247,23 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.__getUserInput())
+
+        while True:
+            if okStr == "scratch":
+                choice = str(self.__getUserInput())
+                break
+            elif keyboard.is_pressed("Y"):
+                choice = "y"
+                keyboard.press("backspace")
+                time.sleep(0.2)
+                print(" " + "y") 
+                break
+            elif keyboard.is_pressed("N"):
+                choice = "n"
+                keyboard.press("backspace")
+                print(" " + "n")
+                break
+        
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
             choice = self.__getUserInput()
