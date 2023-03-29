@@ -1,5 +1,0 @@
-buildTest
-controller
-main
-model
-view

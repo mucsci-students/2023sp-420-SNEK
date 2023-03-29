@@ -1,3 +1,0 @@
-[console_scripts]
-Bee = main:main
-Test = buildTest:main
