@@ -1,15 +1,10 @@
 from view.UserInterface import UserInterface
 from colorama import Fore, Style
-<<<<<<< HEAD
-from Puzzle import Puzzle
-from Commands import Commands
-from Inputer import Inputer
-=======
+from view.Inputer import Inputer
 from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
->>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
 import os
 
 
@@ -62,14 +57,10 @@ Commands:
     # input while the game is not quit
     def launch(self):
         while not self.quit:
-<<<<<<< HEAD
-            userInput = self.__getUserInput(options=Commands.getCommandNameList())
-=======
             userInput = self.__getUserInput()
             if Commands.isCommand(userInput):
                 userInput = Commands.getCommandFromName(userInput)
 
->>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
             self.myController.processInput(userInput)
 
     # Flag if the game is quit
@@ -78,13 +69,8 @@ Commands:
 
     # Gets user input from cli and checks if there is a command that
     # a user wants to use
-<<<<<<< HEAD
     def __getUserInput(self, message: str = "", options = []) -> str:
         userInput = self.myInputer.input(self.__CMD_PREFIX + message + " ", options).strip().lower()
-=======
-    def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip()
->>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
         return userInput
     
     # Path in directory that the user wants to save their games
@@ -264,17 +250,10 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-<<<<<<< HEAD
         choice = str(self.__getUserInput(options=[okStr, nokStr])).lower().strip()
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
             choice = self.__getUserInput(options=[okStr, nokStr]).lower().strip()
-=======
-        choice = str(self.__getUserInput())
-        while choice != okStr and choice != nokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
-            choice = self.__getUserInput()
->>>>>>> e4f8ea0274dbe628087d549d0df121c0d9d8c316
 
         confirmation = choice == okStr
         return confirmation
