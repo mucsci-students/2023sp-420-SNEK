@@ -1,9 +1,9 @@
-from src.view.BeeUI import BeeUI
-from src.view.TerminalInterface import TerminalInterface
+from view.BeeUI import BeeUI
+from view.TerminalInterface import TerminalInterface
 
 
 class Factory:
-    def __init__(interFaceOption):
+    def produceInterface(self, interFaceOption):
     
         options = {
             "CLI": TerminalInterface,
