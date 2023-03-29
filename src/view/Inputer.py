@@ -50,9 +50,8 @@ class Inputer:
         prefixed = [possible for possible in possiblesList if possible.startswith(self.userInput)]
         nonPrefixed = [possible for possible in possiblesList if not possible.startswith(self.userInput)]
         prefixedDistances = [self.__distance(self.userInput, possible) for possible in prefixed]
-        nonPrefixedDistances = [self.__distance(self.userInput, possible) for possible in nonPrefixed]
         SortedPrefixed = [possible for _, possible in sorted(zip(prefixedDistances, prefixed))]
-        SortedNonPrefixed = [possible for _, possible in sorted(zip(nonPrefixedDistances, nonPrefixed))]
+        SortedNonPrefixed = nonPrefixed
         mostPossibles = SortedPrefixed + SortedNonPrefixed
         return mostPossibles
     
@@ -80,8 +79,9 @@ class Inputer:
     def __ctrl_c(self):
         keyboard.press('esc')
         keyboard.stash_state()
+        keyboard.unhook_all()
         os.kill(os.getpid(), signal.SIGABRT)
-        
+
     # <shift>+<tab>
     def __shift_tab(self):
             
@@ -155,10 +155,11 @@ class Inputer:
     def __showPrompt(self):
         hidingSpaces = ''.join([' '] * (len(self.originals[self.originalIndex-1]) + 3))
         print("\r" + self.msg + self.userInput, end=hidingSpaces)
+        print("\r" + self.msg + self.userInput, end=hidingSpaces)
 
 
     def input(self, msg: str = "", possibles=[]):
-        keyboard.unhook_all()
+        # keyboard.unhook_all()
         self.msg = msg
         self.originalIndex = 0
         self.possibleIndex = -1
@@ -168,14 +169,14 @@ class Inputer:
         
         self.__showPrompt()
         
-        keyboard.add_hotkey('tab', self.__tab)
-        keyboard.add_hotkey('shift+tab', self.__shift_tab)
-        keyboard.add_hotkey('ctrl+z', self.__ctrl_z)
-        keyboard.add_hotkey('ctrl+c', self.__ctrl_c)
-        keyboard.add_hotkey('ctrl+y', self.__ctrl_y)
-        keyboard.on_press(lambda x: [self.__on_press(x.name), self.__showPrompt()])
-        keyboard.on_release(lambda x: self.__showPrompt)
-        keyboard.on_release_key('enter', lambda x: keyboard.press('esc'))
+        keyboard.add_hotkey('tab', self.__tab, suppress=True)
+        keyboard.add_hotkey('shift+tab', self.__shift_tab, suppress=True)
+        keyboard.add_hotkey('ctrl+z', self.__ctrl_z, suppress=True)
+        keyboard.add_hotkey('ctrl+y', self.__ctrl_y, suppress=True)
+        keyboard.add_hotkey('ctrl+c', self.__ctrl_c, suppress=True)
+        keyboard.on_press(lambda x: [self.__on_press(x.name), self.__showPrompt()], suppress=True)
+        keyboard.on_release(lambda x: self.__showPrompt(), suppress=False)
+        keyboard.on_release_key('enter', lambda x: keyboard.press('esc'), suppress=True)
         keyboard.wait('enter', suppress=True)
         keyboard.stash_state()
         
