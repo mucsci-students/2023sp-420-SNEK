@@ -5,6 +5,8 @@ sys.path.append('../view')
 from UserInterface import UserInterface
 from colorama import Fore, Style
 from Puzzle import Puzzle
+from Commands import Commands
+from Inputer import Inputer
 import os
 
 
@@ -14,11 +16,12 @@ class TerminalInterface(UserInterface):
     # Initialization of styles for game title
     def __init__(self) -> None:
         super().__init__()
-        self.__CMD_PREFIX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
-        self.__DONE_PROGRESS = Fore.YELLOW + "⬢" + Style.RESET_ALL
-        self.__LEFT_PROGRESS = "⬡" + Style.RESET_ALL
-        self.__HELP_TITLE = "\n\tSpelling Bee Game!              🍯 🐝"
-        self.__HELP_STRING = '''
+        self.myInputer: Inputer = Inputer()
+        self.__CMD_PREFIX: str = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
+        self.__DONE_PROGRESS: str = Fore.YELLOW + "⬢" + Style.RESET_ALL
+        self.__LEFT_PROGRESS: str = "⬡" + Style.RESET_ALL
+        self.__HELP_TITLE: str = "\n\tSpelling Bee Game!              🍯 🐝"
+        self.__HELP_STRING: str = '''
 
 How to play:
    You are given a word puzzle with a bunch of letters
@@ -54,7 +57,7 @@ Commands:
     # input while the game is not quit
     def launch(self):
         while not self.quit:
-            userInput = self.__getUserInput()
+            userInput = self.__getUserInput(options=Commands.getCommandNameList())
             self.myController.processInput(userInput)
 
     # Flag if the game is quit
@@ -63,8 +66,8 @@ Commands:
 
     # Gets user input from cli and checks if there is a command that
     # a user wants to use
-    def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip().lower()
+    def __getUserInput(self, message: str = "", options = []) -> str:
+        userInput = self.myInputer.input(self.__CMD_PREFIX + message + " ", options).strip().lower()
         return userInput
     
     # Path in directory that the user wants to save their games
@@ -220,10 +223,10 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.__getUserInput()).lower()
+        choice = str(self.__getUserInput(options=[okStr, nokStr])).lower().strip()
         while choice != okStr and choice != nokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
-            choice = self.__getUserInput().lower()
+            choice = self.__getUserInput(options=[okStr, nokStr]).lower().strip()
 
         confirmation = choice == okStr
         return confirmation

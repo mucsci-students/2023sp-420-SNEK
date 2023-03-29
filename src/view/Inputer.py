@@ -1,25 +1,31 @@
-from pynput import keyboard, mouse
-import pygetwindow as gw
-import os
-import signal
+import keyboard
+import signal, os
 
-class Imputer:
+
+class Inputer:
 
     def __init__(self):
-        activeWindow = gw.getActiveWindow()
-        self.myWindow = '' if not hasattr(activeWindow, 'title') else activeWindow.title
-        self.shift = False
-        self.control = False
-        self.other = False
         self.endOfInput = False
-        self.backspace = False
         self.userInput = ""
         self.originalIndex = 0
-        self.keyboardListener = None
         self.originals = []
+        self.msg = ""
+        self.prev = None
+        self.specialDouble = '¨`´^'
+        self.commandLetters = 'zyc'
+        self.commandKeys = ['ctrl', 'shift']
+        
+    def __distance(self, str1, str2) -> int:
+        suffixScore = 1
+        while suffixScore < len(str1) and suffixScore < len(str2) and str1[-suffixScore] == str2[-suffixScore]:
+            suffixScore += 1
+            
+        editDist = self.__lev(str1, str2)
+        
+        return editDist - (suffixScore - 1)
         
     # Fn that calculates the number of character changes needed between two strings
-    def __distance(self, str1, str2):
+    def __lev(self, str1, str2):
         # if string 1 is empty, return the length of string 2
         if str1 == "":
             return len(str2)
@@ -30,154 +36,121 @@ class Imputer:
 
         # if the last character in each strings are equal, set dist = 0
         if str1[-1] == str2[-1]:
-            dist = self.__distance(str1[:-1], str2[:-1])
+            cost = 0
+        else:
+            cost = 1
 
-        # else set the distance to 1
-        else:        
-            # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
-            dist = 1 + min([self.__distance(str1[:-1], str2), 
-                            self.__distance(str1, str2[:-1]), 
-                            self.__distance(str1[:-1], str2[:-1])])
+        # else set the distance to 1     
+        # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
+        dist = min([self.__lev(str1[:-1], str2), 
+                        self.__lev(str1, str2[:-1]), 
+                        self.__lev(str1[:-1], str2[:-1]) + cost])
 
         return dist
     
-    def __orderStrings(self, possibles):
-        distances = [self.__distance(self.userInput, possible) for possible in self.possibles]
-        possibles = [possible for _, possible in sorted(zip(distances, possibles))]
-        return possibles
+    def __orderStrings(self, possiblesList:list[str]):
+        if possiblesList == []:
+            return possiblesList
+        
+        self.possibleIndex = -1
+        prefixed = [possible for possible in possiblesList if possible.startswith(self.userInput)]
+        nonPrefixed = [possible for possible in possiblesList if not possible.startswith(self.userInput)]
+        prefixedDistances = [self.__distance(self.userInput, possible) for possible in prefixed]
+        nonPrefixedDistances = [self.__distance(self.userInput, possible) for possible in nonPrefixed]
+        SortedPrefixed = [possible for _, possible in sorted(zip(prefixedDistances, prefixed))]
+        SortedNonPrefixed = [possible for _, possible in sorted(zip(nonPrefixedDistances, nonPrefixed))]
+        mostPossibles = SortedPrefixed + SortedNonPrefixed
+        return mostPossibles
     
     
-    def on_click(self, x, y, button, pressed):
-        activeWindow = gw.getActiveWindow()
-        newWindow = '' if not hasattr(activeWindow, 'title') else activeWindow.title
+    
+    # <ctrl>+'z'
+    def __ctrl_z(self):
+        if self.originalIndex > 0:
+            self.originalIndex -= 1
+            
+        if len(self.originals) > 0:
+            self.userInput = self.originals[self.originalIndex]
+            self.possibles = self.__orderStrings(self.possibles)
+
+    # <ctrl>+'y'
+    def __ctrl_y(self):
+        if self.originalIndex < len(self.originals) - 1:
+            self.originalIndex += 1
+            
+        if len(self.originals) > 0:
+            self.userInput = self.originals[self.originalIndex]
+            self.possibles = self.__orderStrings(self.possibles)
+
+    # <ctrl>+'c'
+    def __ctrl_c(self):
+        keyboard.press('esc')
+        keyboard.stash_state()
+        os.kill(os.getpid(), signal.SIGABRT)
         
-        if newWindow != self.myWindow:
-            self.keyboardListener.stop()
-        elif not self.keyboardListener.is_alive():
-            self.keyboardListener = self.__createKeyboardListener()
-            self.keyboardListener.start()
+    # <shift>+<tab>
+    def __shift_tab(self):
+            
+        if self.possibleIndex > 0:
+            self.possibleIndex = self.possibleIndex - 1
+            
+        if len(self.possibles) > 0:
+            self.userInput = self.possibles[self.possibleIndex]
+            self.__adjustOriginals()
 
-    def on_release(self, key: keyboard.Key):
-        if (key == keyboard.Key.shift or key == keyboard.Key.shift_l or key == keyboard.Key.shift_r):
-            self.shift = False
-
-        elif (key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r or key == keyboard.Key.ctrl):
-            self.control = False
-
-        elif key == keyboard.Key.backspace:
-            self.backspace = False
-
-        elif key != keyboard.Key.tab:
-            self.other = False
+    # <tab>
+    def __tab(self):
         
-        self.__showPrompt()
+        if self.possibleIndex < len(self.possibles) - 1:
+            self.possibleIndex = self.possibleIndex + 1
+            
+        if len(self.possibles) > 0:
+            self.userInput = self.possibles[self.possibleIndex]
+            self.__adjustOriginals()
+    
 
-    def on_press(self, key: keyboard.Key):
+    def __on_press(self, key:str):
         
-        if hasattr(key, "char"):
-            keyChar = key.char
+        if key == self.prev and key in self.specialDouble:
+            self.userInput += (key + key)
+            self.possibles = self.__orderStrings(self.possibles)
+            self.__adjustOriginals()
+
         else:
-            keyChar = None
-            
-        # <ctrl> [either normal, right or left]
-        if ((key == keyboard.Key.ctrl_l or key == keyboard.Key.ctrl_r or key == keyboard.Key.ctrl)
-            and not self.other and not self.backspace):
-            self.control = True
-            
-        # <ctrl>+'c'
-        elif keyChar == 'c' and self.control and not self.other and not self.shift:
-            self.endOfInput = True
-            self.keyboardListener.stop()
-            self.mouseListener.stop()
-            os.kill(os.getpid(), signal.SIGABRT)
-            
-        # <backspace>
-        elif (key == keyboard.Key.backspace and not self.other and not self.shift):
-            self.backspace = True
-            k = len(self.userInput) - 1
-            if k > 0:
-                self.userInput = self.userInput[:k]
-            else:
-                self.userInput = ""
-            self.possibles = self.__orderStrings(self.possibles)
-            
-            self.__adjustOriginals()
+            if len(key) == 1 and key not in self.specialDouble:
+                specialKeyPressed = False
+                if key in self.commandLetters:
+                    for specialKey in self.commandKeys:
+                        specialKeyPressed = specialKeyPressed or keyboard.is_pressed(specialKey)
+                if not specialKeyPressed:
+                    self.userInput += key
+                    self.possibles = self.__orderStrings(self.possibles)
+                    self.__adjustOriginals()
 
-        # <shift> [either normal, right or left]
-        elif ((key == keyboard.Key.shift or key == keyboard.Key.shift_l or key == keyboard.Key.shift_r)
-               and not self.other and not self.control and not self.backspace):
-            self.shift = True
-            
-        # <ctrl>+'z'
-        elif (keyChar == 'z' and not self.shift
-                and self.control and not self.other and not self.backspace):
-            if self.originalIndex > 0:
-                self.originalIndex -= 1
-                
-            if len(self.originals) > 0:
-                self.userInput = self.originals[self.originalIndex]
-                self.possibles = self.__orderStrings(self.possibles)
-
-        # <ctrl>+'y'
-        elif (keyChar == 'y' and not self.shift
-                and self.control and not self.other and not self.backspace):
-            if self.originalIndex < len(self.originals) - 1:
-                self.originalIndex += 1
-                
-            if len(self.originals) > 0:
-                self.userInput = self.originals[self.originalIndex]
-                self.possibles = self.__orderStrings(self.possibles)
-
-        # <shift>+<tab>
-        elif self.shift and key == keyboard.Key.tab and not self.other and not self.backspace:
-                
-            if len(self.possibles) > 0:
-                self.userInput = self.possibles[self.possibleIndex]
-                
-            if self.possibleIndex > 0:
-                self.possibleIndex = self.possibleIndex - 1
-                self.__adjustOriginals()
-
-        # <shift>+1 (= !)
-        elif self.shift and keyChar == '1' and not self.other and not self.backspace:
-            self.userInput += '!'
-            self.possibles = self.__orderStrings(self.possibles)
-            self.__adjustOriginals()
-
-        # <tab>
-        elif key == keyboard.Key.tab and not self.other and not self.shift and not self.backspace:
-            if len(self.possibles) > 0:
-                self.userInput = self.possibles[self.possibleIndex]
-                
-            if self.possibleIndex < len(self.possibles) - 1:
-                self.possibleIndex = self.possibleIndex + 1
-                self.__adjustOriginals()
-
-        # <enter>
-        elif key == keyboard.Key.enter and not self.other and not self.shift and not self.backspace:
-            self.endOfInput = True
-            self.keyboardListener.stop()
-            self.mouseListener.stop()
-
-        # <space>
-        elif key == keyboard.Key.space and not self.other and not self.shift and not self.backspace:
-            self.userInput += ' '
-            self.possibles = self.__orderStrings(self.possibles)
-            self.__adjustOriginals()
-
-        # any key that is not either of the above combinations 
-        else:
-            self.other = True
-            if keyChar != None:
-                self.userInput += keyChar
+            elif key == 'space':
+                self.userInput += ' '
                 self.possibles = self.__orderStrings(self.possibles)
                 self.__adjustOriginals()
+            
+            # <backspace>
+            elif (key == 'backspace'):
+                k = len(self.userInput) - 1
+                if k > 0:
+                    self.userInput = self.userInput[:k]
+                else:
+                    self.userInput = ""
+                self.possibles = self.__orderStrings(self.possibles)
                 
+                self.__adjustOriginals()
+
+            self.prev = key
+            
         self.__showPrompt()
 
     def __adjustOriginals(self):
         if self.originalIndex == 0:
             self.originals = ['']
+            
         elif self.originalIndex < (len(self.originals) - 1):
             self.originals = self.originals[:self.originalIndex]
         
@@ -186,53 +159,33 @@ class Imputer:
         
         
     def __showPrompt(self):
-        hidingSpaces = ''.join([' '] * (len(self.originals[self.originalIndex-1]) + 2))
-        print("\r>> " + self.userInput, end=hidingSpaces)
-        
-    def __createKeyboardListener(self):
-        listener = keyboard.Listener(
-            on_press=self.on_press,
-            on_release=self.on_release,
-            suppress=True)
-        
-        return listener
+        hidingSpaces = ''.join([' '] * (len(self.originals[self.originalIndex-1]) + 3))
+        print("\r" + self.msg + self.userInput, end=hidingSpaces)
 
-    def on_press_option(self, key: keyboard.Key):
-        
-        if hasattr(key, "char"):
-            self.userInput = key.char
-            self.optionListener.stop()
 
-    def inputSingleLetter(self):
-        self.optionListener = keyboard.Listener(
-            on_press=self.on_press_option,
-            suppress=True)
-        self.optionListener.start()
-        self.optionListener.join()
-        
-        return self.userInput
-
-    def input(self, possibles=[]):
+    def input(self, msg: str = "", possibles=[]):
+        keyboard.unhook_all()
+        self.msg = msg
         self.originalIndex = 0
-        self.possibleIndex = 0
+        self.possibleIndex = -1
         self.possibles = possibles
         self.userInput = ""
         self.originals = ['']
         
-        self.mouseListener = mouse.Listener(on_click=self.on_click)
-        self.mouseListener.start()
-
-        self.keyboardListener = self.__createKeyboardListener()
-        
         self.__showPrompt()
         
-        self.keyboardListener.start()
-        self.mouseListener.join()
+        keyboard.add_hotkey('tab', self.__tab, suppress=True)
+        keyboard.add_hotkey('shift+tab', self.__shift_tab, suppress=True)
+        keyboard.add_hotkey('ctrl+z', self.__ctrl_z, suppress=True)
+        keyboard.add_hotkey('ctrl+c', self.__ctrl_c, suppress=True)
+        keyboard.add_hotkey('ctrl+y', self.__ctrl_y, suppress=True)
+        keyboard.on_press(lambda x: [self.__on_press(x.name), self.__showPrompt()], suppress=True)
+        keyboard.on_release(lambda x: self.__showPrompt, suppress=True)
+        keyboard.on_release_key('enter', lambda x: keyboard.press('esc'), suppress=True)
+        keyboard.wait('enter', suppress=True)
+        keyboard.stash_state()
+        
         print('\n', end="\r")
-
+        keyboard.unhook_all()
+        
         return self.userInput
-    
-
-i = Imputer()
-m = i.input(["a", "b", "c"])
-print('.'+m+'.')
