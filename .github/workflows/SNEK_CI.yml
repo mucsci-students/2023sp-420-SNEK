@@ -41,5 +41,16 @@ jobs:
       with: 
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
-        working-directory: src/model
+        ignore: 
+          - "UnitTests"
+          - "spell"
+          - ".gitignore"
+          - "pyproject.toml"
+          - "__ init __.py"
+          - "src/controller"
+          - "src/view"
+          - "src/img"
+          - "src/__init__.py"
+          - "src/buildTest.py"
+          - "src/main.py"
       
