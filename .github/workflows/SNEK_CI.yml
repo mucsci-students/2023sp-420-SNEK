@@ -44,7 +44,7 @@ jobs:
         verbose: true
         coverage:
           round: down
-            status:
-              project:
-                default:
-                  target: 80%
+          status:
+            project:
+              default:
+                target: 80%
