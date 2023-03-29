@@ -127,7 +127,8 @@ class GameController:
             if loadingFile == ".json":
                 self.myUserInterface.showError("The file has to have a name.")
                 return
-
+            if loadingFile == "":
+                return
 
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
