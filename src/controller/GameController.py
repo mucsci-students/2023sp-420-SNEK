@@ -65,7 +65,7 @@ class GameController:
     # Uses the SaveAndLoad module to handle saving a game into the json format.
     def __saveFile(self) -> None:
         scratchMode = self.myUserInterface.getConfirmation(
-            "How do you want to save?", okStr="scratch", nokStr="current")
+            "How do you want to save?", okStr="scratch", nokStr="current", cokStr="\b")
         
         fileName = self.myUserInterface.getSaveFileName()
         

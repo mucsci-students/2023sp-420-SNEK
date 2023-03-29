@@ -243,10 +243,11 @@ Commands:
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="Y", nokStr="N"):
+    def getConfirmation(self, message, okStr="Y", nokStr="N", cokStr="C"):
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
+        cokStr = cokStr.lower()
+        self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
 
         while True:
             if okStr == "scratch":
@@ -256,16 +257,22 @@ Commands:
                 choice = "y"
                 keyboard.press("backspace")
                 time.sleep(0.2)
-                print(" " + "y") 
+                print("y") 
                 break
             elif keyboard.is_pressed("N"):
                 choice = "n"
                 keyboard.press("backspace")
-                print(" " + "n")
+                time.sleep(0.2)
+                print("n")
+                break
+            elif keyboard.is_pressed("C"):
+                keyboard.press("backspace")
+                print("c")
+                return 0
                 break
         
-        while choice != okStr and choice != nokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
+        while choice != okStr and choice != nokStr and choice !=cokStr:
+            print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
             choice = self.__getUserInput()
 
         confirmation = choice == okStr
