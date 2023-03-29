@@ -265,24 +265,31 @@ class BeeUI(UserInterface):
         self.hintsWin = Toplevel() # popout window
         self.hintsWin.title("Hints!")
 
+        # Data of hints
         hintsData = myPuzzle.getHint()
 
+        # create variable scrollbar for the hints window
         self.v = tk.Scrollbar(self.hintsWin, orient='vertical')
         self.v.pack(side='right', fill='y')
 
+        # Create the textbox where all information will be typed
         self.hintsTextBox = tk.Text(self.hintsWin, width=50, padx=100, bg="white", fg="black", font=('Arial', 14), yscrollcommand=self.v.set)
-        self.v.configure(command=self.hintsTextBox.yview)
+        self.v.configure(command=self.hintsTextBox.yview) # add scrollbar
         self.hintsTextBox.pack()
 
+        # Configure tags for printing styles
         self.hintsTextBox.tag_configure('tag_center', justify='center')
         self.hintsTextBox.tag_configure('tag_left', justify='center', font=('Courier New', 11))
         self.hintsTextBox.tag_configure('tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
+        
+        # Welcome info
         self.hintsTextBox.insert('end', "🐝 🍯 Welcome to the hints page! 🍯 🐝\n\n", 'tag_center')
         self.hintsTextBox.insert('end', "Here are the letters for the puzzle:        \n", 'tag_center')
         for stri in myPuzzle.getPuzzleLetters():
             self.hintsTextBox.insert('end', stri + " ", 'tag_center')
         self.hintsTextBox.insert('end', "  (First Letter Required) \n\n", 'tag_center')
         
+        # print all information about puzzle hints
         self.hintsTextBox.insert('end', "WORDS: " + str(hintsData.numberOfWords) + ", POINTS: " + str(myPuzzle.getMaxPoints()) + ", PANGRAMS: " + str(hintsData.pangram) + "\n", 'tag_center')
         if hintsData.perfectPangram > 0:
             self.hintsTextBox.insert('end', "(" + hintsData.perfectPangram + " perfect)\n\n", 'tag_center')
@@ -293,6 +300,7 @@ class BeeUI(UserInterface):
         if hintsData.bingo:
             self.hintsTextBox.insert('end', "Bingo!\n\n", 'tag_center')
 
+        # WORD MATRIX
         headers = list(hintsData.letterMatrix.items())[0][1].items()
         self.hintsTextBox.insert('end', "    ", 'tag_left_bold')
         for header, _ in headers:
@@ -308,8 +316,10 @@ class BeeUI(UserInterface):
                 else:
                     self.hintsTextBox.insert('end', f"{column:^4}", 'tag_left')
 
+        # Spacing between Matrix and Two Letter List
         self.hintsTextBox.insert('end', "\n\n", 'tag_left')
 
+        # Create Two Letter List
         self.hintsTextBox.insert('end', "Two Letter List:\n", 'tag_center')
         previousLetter = None
         for firstLetters, num in hintsData.beginningList.items():
@@ -318,6 +328,7 @@ class BeeUI(UserInterface):
                 self.hintsTextBox.insert('end', "\n", 'tag_left')
             self.hintsTextBox.insert('end', f" {firstLetters.upper()} → {num:<4}", 'tag_left')
 
+        # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
     # Public method showProgress
