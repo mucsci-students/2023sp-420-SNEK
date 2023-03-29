@@ -41,16 +41,5 @@ jobs:
       with: 
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true
-        ignore: 
-          - "UnitTests"
-          - "spell"
-          - ".gitignore"
-          - "pyproject.toml"
-          - "__ init __.py"
-          - "src/controller"
-          - "src/view"
-          - "src/img"
-          - "src/__init__.py"
-          - "src/buildTest.py"
-          - "src/main.py"
-      
+        gcov: true
+        gcov_include: src/model
