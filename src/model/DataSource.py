@@ -110,7 +110,8 @@ class DataSource(metaclass=SingletonMeta):
         for word in wordList:
             if(maximum < len(word)):
                 maximum = len(word)
-            
+        optionalLetters.sort()
+        wordList.sort()
         for letter in optionalLetters:
             letterMat[letter]= dict()
             for number in range(4, maximum+1):
@@ -119,9 +120,6 @@ class DataSource(metaclass=SingletonMeta):
 
         pangram = 0
         perfectPangram = 0
-
-
-
         for word in wordList:
             auxLetterList = list(set((word)))
             auxLetterList.sort()
