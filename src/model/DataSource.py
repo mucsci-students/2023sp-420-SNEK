@@ -102,7 +102,7 @@ class DataSource(metaclass=SingletonMeta):
                              for word in list(self.wordList[0])]
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
-        return list(wordDF[0])
+        return self.wordList
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
         letterMat = dict()
