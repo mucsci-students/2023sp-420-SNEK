@@ -1,5 +1,6 @@
 
 
+
 import sys
 sys.path.append('./src')
 
@@ -43,7 +44,7 @@ class test_DataSource(unittest.TestCase):
         self.assertEqual(actualWord, expectedWord,
                          f"the word is not the expected one, the one expected was {expectedWord} and the one recieved was {actualWord}")
 
-   def test_getHints(self):
+    def test_getHints(self):
         dataSource = DataSource("test1.db")
         dataSource.grabWordsFor("waxworks", "x")
         actualHints:Hint = dataSource.getHints(
@@ -73,7 +74,6 @@ class test_DataSource(unittest.TestCase):
         self.assertEqual(actualHints.letterMatrix, letterMat,
                          f"the list is not the expected one, the one expected was {letterMat} and the one recieved was {actualHints.letterMatrix}")
         
-        
 
     def test_notInDataBase(self):
         dataSource = DataSource("test1.db")
@@ -83,3 +83,4 @@ class test_DataSource(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
