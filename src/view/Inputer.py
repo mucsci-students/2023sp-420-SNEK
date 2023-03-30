@@ -97,7 +97,6 @@ class Inputer:
 
     # <tab>
     def __tab(self):
-        print(self.possibles)
         if self.possibleIndex < len(self.possibles) - 1:
             self.possibleIndex = self.possibleIndex + 1
 
