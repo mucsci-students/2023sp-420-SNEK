@@ -192,7 +192,7 @@ class BeeUI(UserInterface):
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
     def getLoadFileName(self):
-        return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
+        return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
     # Accepts a message msgString
@@ -292,7 +292,7 @@ class BeeUI(UserInterface):
         # print all information about puzzle hints
         self.hintsTextBox.insert('end', "WORDS: " + str(hintsData.numberOfWords) + ", POINTS: " + str(myPuzzle.getMaxPoints()) + ", PANGRAMS: " + str(hintsData.pangram) + "\n", 'tag_center')
         if hintsData.perfectPangram > 0:
-            self.hintsTextBox.insert('end', "(" + hintsData.perfectPangram + " perfect)\n\n", 'tag_center')
+            self.hintsTextBox.insert('end', "(" + str(hintsData.perfectPangram) + " perfect)\n\n", 'tag_center')
         else:
             self.hintsTextBox.insert('end', "\n", 'tag_center')
 
