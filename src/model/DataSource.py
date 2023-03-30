@@ -5,6 +5,7 @@ import random
 
 from model.Hint import Hint
 
+
 class SingletonMeta(type):
     """
     The Singleton class can be implemented in different ways in Python. Some
@@ -24,15 +25,16 @@ class SingletonMeta(type):
             cls._instances[cls] = instance
         return cls._instances[cls]
 
+
 class DataSource(metaclass=SingletonMeta):
-    
-    def __init__(self,dbName:str=None):
+
+    def __init__(self, dbName: str = None):
         self.dbName = dbName
         self.numberOfLetters = 0
         self.wordList = list()
-    
 
     # checks if a word is in the db
+
     def checkWord(self, searchedWord):
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
@@ -102,32 +104,35 @@ class DataSource(metaclass=SingletonMeta):
                              for word in list(self.wordList[0])]
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
-        
-    def getHints(self, wordList:list,optionalLetters:list)->Hint:
+        return self.wordList
+
+    def getHints(self, wordList: list, optionalLetters: list) -> Hint:
         letterMat = dict()
         maximum = 0
         beginDict = dict()
         for word in wordList:
-            if(maximum < len(word)):
+            if (maximum < len(word)):
                 maximum = len(word)
-            
+
         for letter in optionalLetters:
-            letterMat[letter]= dict()
+            letterMat[letter] = dict()
             for number in range(4, maximum+1):
-                letterMat[letter][str(number)]= 0
-            letterMat[letter]['Σ']= 0
+                letterMat[letter][str(number)] = 0
+            letterMat[letter]['Σ'] = 0
+        letterMat['Σ'] = dict()
+        for number in range(4, maximum+1):
+            letterMat['Σ'][str(number)] = 0
+        letterMat['Σ']['Σ'] = 0
 
         pangram = 0
         perfectPangram = 0
-
-
 
         for word in wordList:
             auxLetterList = list(set((word)))
             auxLetterList.sort()
             if auxLetterList == optionalLetters:
                 pangram += 1
-                if(len(word) == 7):
+                if (len(word) == 7):
                     perfectPangram += 1
             if (letterMat.get(word[0]) == None):
                 letterMat[word[0]][str(len(word))] = 1
@@ -142,18 +147,25 @@ class DataSource(metaclass=SingletonMeta):
             else:
                 beginDict[word[:2]] += 1
 
-
         finalBingo = True
         for let in optionalLetters:
             sumatory = 0
             bingo = False
             for number in range(4, maximum+1):
-                if(letterMat[let][str(number)] != 0):
+                if (letterMat[let][str(number)] != 0):
                     bingo = True
                 sumatory += letterMat[let][str(number)]
             if not bingo:
                 finalBingo = False
             letterMat[let]['Σ'] = sumatory
+        for number in range(4, maximum+1):
+            sumatory = 0
+            for letter in optionalLetters:
+                sumatory += letterMat[letter][str(number)]
+            letterMat['Σ'][str(number)] = sumatory
+        sumatory = 0
+        for letter in optionalLetters:
+            sumatory += letterMat[letter]['Σ']
+        letterMat['Σ']['Σ'] = sumatory
 
-        return Hint(letterMat, beginDict, pangram, perfectPangram , finalBingo, len(wordList))
-    
+        return Hint(letterMat, beginDict, pangram, perfectPangram, finalBingo, len(wordList))
