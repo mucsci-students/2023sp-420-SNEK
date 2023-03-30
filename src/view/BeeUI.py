@@ -292,7 +292,7 @@ class BeeUI(UserInterface):
         # print all information about puzzle hints
         self.hintsTextBox.insert('end', "WORDS: " + str(hintsData.numberOfWords) + ", POINTS: " + str(myPuzzle.getMaxPoints()) + ", PANGRAMS: " + str(hintsData.pangram) + "\n", 'tag_center')
         if hintsData.perfectPangram > 0:
-            self.hintsTextBox.insert('end', "(" + hintsData.perfectPangram + " perfect)\n\n", 'tag_center')
+            self.hintsTextBox.insert('end', "(" + str(hintsData.perfectPangram) + " perfect)\n\n", 'tag_center')
         else:
             self.hintsTextBox.insert('end', "\n", 'tag_center')
 
