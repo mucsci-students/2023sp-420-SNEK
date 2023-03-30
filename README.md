@@ -102,8 +102,10 @@ that need installation.
                         required center letter.  You can use this to
                         help you find other words.
             -!guessed - Shows all the already correctly guessed words.
+            -!hints - prints out all the hints for the given puzzle
             -!help - Prints out the help menu.
-            -!exit - Exits the game. Will prompt to save.'''
+            -!exit - Exits the game. Will prompt to save.
+            -!quit - Exits the entire program. Will prompt to save.'''
    
 ### GUI Instructions
 
