@@ -83,10 +83,10 @@ class GameController:
     def __createGame(self, newBaseWord):
         newPuzzleLetters = list(set(list(newBaseWord)))
         random.shuffle(newPuzzleLetters)
-        self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0])
+        
         
         self.myPuzzle = Puzzle(
-            newPuzzleLetters, self.myDataSource.wordList)
+            newPuzzleLetters,  self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0]))
         self.myPuzzle.setHint(self.myDataSource.getHints(self.myPuzzle.wordList, self.myPuzzle.puzzleLetters))
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
