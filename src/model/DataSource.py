@@ -152,6 +152,15 @@ class DataSource(metaclass=SingletonMeta):
             if not bingo:
                 finalBingo = False
             letterMat[let]['Σ'] = sumatory
+        for number in range(4, maximum+1):
+            sumatory = 0
+            for letter in optionalLetters:
+                sumatory+=letterMat[letter][str(number)]
+            letterMat['Σ'][str(number)] = sumatory
+        sumatory = 0
+        for letter in optionalLetters:
+                sumatory+=letterMat[letter]['Σ']
+        letterMat['Σ']['Σ'] = sumatory  
 
         return Hint(letterMat, beginDict, pangram, perfectPangram , finalBingo, len(wordList))
     
