@@ -5,7 +5,7 @@ from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
-import os
+import os, keyboard, time
 
 
 class TerminalInterface(UserInterface):
@@ -248,14 +248,37 @@ Commands:
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="Y", nokStr="N"):
+    def getConfirmation(self, message, okStr="Y", nokStr="N", cokStr="C"):
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.__getUserInput(
-            options=[okStr, nokStr])).lower().strip()
-        while choice != okStr and choice != nokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
+        cokStr = cokStr.lower()
+        self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
+
+        while True:
+            if okStr == "scratch":
+                choice = str(self.__getUserInput(
+                  options=[okStr, nokStr])).lower().strip()
+                break
+            elif keyboard.is_pressed("Y"):
+                choice = "y"
+                keyboard.press("backspace")
+                time.sleep(0.2)
+                print("y") 
+                break
+            elif keyboard.is_pressed("N"):
+                choice = "n"
+                keyboard.press("backspace")
+                time.sleep(0.2)
+                print("n")
+                break
+            elif keyboard.is_pressed("C"):
+                keyboard.press("backspace")
+                print("c")
+                return
+                break
+        
+        while choice != okStr and choice != nokStr and choice != cokStr:
+            print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
             choice = self.__getUserInput(
                 options=[okStr, nokStr]).lower().strip()
 

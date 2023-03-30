@@ -65,10 +65,11 @@ class GameController:
 
     def __saveFile(self) -> None:
         scratchMode = self.myUserInterface.getConfirmation(
-            "How do you want to save?", okStr="scratch", nokStr="current")
-
+            "How do you want to save?", okStr="scratch", nokStr="current", cokStr="\b")
+        
         fileName = self.myUserInterface.getSaveFileName()
-
+        if(fileName == ""):
+            return
         if not os.path.basename(fileName) == ".json":
             if scratchMode:
                 SaveAndLoad.saveScratch(self.myPuzzle, fileName)
