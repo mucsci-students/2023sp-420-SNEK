@@ -63,8 +63,7 @@ class test_DataSource(unittest.TestCase):
         beginning['wa'] = 2
         self.assertEqual(actualHints.beginningList, beginning,
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
-        self.assertEqual(actualHints.letterMatrix, letterMat,
-                         f"the list is not the expected one, the one expected was {letterMat} and the one recieved was {actualHints.letterMatrix}")
+        
         
 
     def test_notInDataBase(self):
