@@ -45,9 +45,6 @@ class GameController:
             self.myUserInterface.showError(
                 "That is not a command, to show commands, type !help")
         else:
-            print(userInput)
-            print(self.myPuzzle.getPuzzleLetters())
-            print(self.myPuzzle.getWordList())
             self.processGuess(userInput)
 
     # A private function that asks whether the user wants to save when the program is in the process of exiting.
