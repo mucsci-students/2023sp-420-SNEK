@@ -27,7 +27,7 @@ class GameController:
     # Constructor that instantiates a new GameController object.
     def __init__(self, dataSource: DataSource) -> None:
         self.myPuzzle: Puzzle = None
-        self.myUserInterface: view.UserInterface  = None
+        self.myUserInterface: view.UserInterface = None
         self.playing: bool = False
         self.myDataSource: DataSource = dataSource
 
@@ -35,8 +35,8 @@ class GameController:
     def setUserInterface(self, myUserInterface):
         self.myUserInterface = myUserInterface
 
-    # Function to process input from the user. 
-    # Correctly handles the cases in which a command is called, for when a game is playing and not. 
+    # Function to process input from the user.
+    # Correctly handles the cases in which a command is called, for when a game is playing and not.
     # If the input is not a command, the string is passed to processGuess and evaluated.
     def processInput(self, userInput) -> None:
         if Commands.isCommand(userInput):
@@ -55,39 +55,42 @@ class GameController:
             save = self.myUserInterface.getConfirmation("Do you want to save?")
             if save:
                 self.__saveFile()
-                
+
             self.myUserInterface.showExit()
-            
+
         return exitGame
-            
 
     # A private function that handles the functionality of saving a file and all of its cases.
     # Uses the SaveAndLoad module to handle saving a game into the json format.
+
     def __saveFile(self) -> None:
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current")
-        
+
         fileName = self.myUserInterface.getSaveFileName()
-        
+
         if not os.path.basename(fileName) == ".json":
             if scratchMode:
                 SaveAndLoad.saveScratch(self.myPuzzle, fileName)
             else:
                 SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
 
-            self.myUserInterface.showMessage("The file has been saved: " + fileName)
+            self.myUserInterface.showMessage(
+                "The file has been saved: " + fileName)
 
-    # Private function to create a new game from a newBaseWord 
+    # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
     # and tells the UI to display the puzzle
     def __createGame(self, newBaseWord):
-        newPuzzleLetters = list(set(list(newBaseWord)))
+        newPuzzleLetters = list(set(newBaseWord))
         random.shuffle(newPuzzleLetters)
-        self.myDataSource.grabWordsFor(newBaseWord, newPuzzleLetters[0])
-        
-        self.myPuzzle = Puzzle(
-            newPuzzleLetters, self.myDataSource.wordList)
-        self.myPuzzle.setHint(self.myDataSource.getHints(self.myPuzzle.wordList, self.myPuzzle.puzzleLetters))
+        wordList = self.myDataSource.grabWordsFor(
+            newBaseWord, newPuzzleLetters[0])
+
+        self.myPuzzle = Puzzle(newPuzzleLetters, wordList)
+        newHints = self.myDataSource.getHints(
+            self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
+        self.myPuzzle.setHint(newHints)
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
 
@@ -133,7 +136,8 @@ class GameController:
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
                 self.playing = True
-                self.myUserInterface.showMessage("The file has been loaded: " + loadingFile)
+                self.myUserInterface.showMessage(
+                    "The file has been loaded: " + loadingFile)
                 self.myUserInterface.showPuzzle(self.myPuzzle)
             else:
                 self.myUserInterface.showError("That file does not exist.")
@@ -181,11 +185,12 @@ class GameController:
                 self.__askExitAndSave()
 
             newBaseWord = self.myUserInterface.getBaseWord()
-            if(len(set(newBaseWord)) != 7):
-                self.myUserInterface.showError("That word does not have 7 different letters.")
-            elif(not self.myDataSource.checkWord(newBaseWord) ):
+            if (len(set(newBaseWord)) != 7):
+                self.myUserInterface.showError(
+                    "That word does not have 7 different letters.")
+            elif (not self.myDataSource.checkWord(newBaseWord)):
                 self.myUserInterface.showError("That word is not in the DB.")
-            else:                    
+            else:
                 self.__createGame(newBaseWord)
 
         elif command == Commands.SHOW_STATUS:
@@ -207,8 +212,8 @@ class GameController:
                 "Not a valid command:", 'Type "!help" to show all possibilities')
 
     # Function to process the guess from the user. Called by processInput.
-    # Correctly handles the situations in which the guess is correct, but also when the guess is simply incorrect 
-    # (not a word, or not in the database), and more specifically when the guess isn't longer than 3 letters, 
+    # Correctly handles the situations in which the guess is correct, but also when the guess is simply incorrect
+    # (not a word, or not in the database), and more specifically when the guess isn't longer than 3 letters,
     # if the guess doesn't have the required letter, and the word was already guessed.
     def processGuess(self, userGuess: str):
         if len(userGuess) < Puzzle.MIN_WRD_LEN:
@@ -238,4 +243,3 @@ class GameController:
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
             self.playing = False
-           
