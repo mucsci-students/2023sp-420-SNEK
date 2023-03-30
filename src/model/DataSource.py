@@ -117,6 +117,10 @@ class DataSource(metaclass=SingletonMeta):
             for number in range(4, maximum+1):
                 letterMat[letter][str(number)]= 0
             letterMat[letter]['Σ']= 0
+        letterMat['Σ']= dict()
+        for number in range(4, maximum+1):
+            letterMat['Σ'][str(number)] = 0
+        letterMat['Σ']['Σ'] = 0
 
         pangram = 0
         perfectPangram = 0
