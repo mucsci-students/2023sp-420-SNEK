@@ -68,6 +68,8 @@ class GameController:
             "How do you want to save?", okStr="scratch", nokStr="current", cokStr="\b")
         
         fileName = self.myUserInterface.getSaveFileName()
+        if(fileName == ""):
+            return
         
         if not os.path.basename(fileName) == ".json":
             if scratchMode:

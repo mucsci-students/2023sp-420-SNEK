@@ -138,13 +138,13 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="yes", nokStr="no"):
-        return self.__messageWindow("title", inputString, okStr, nokStr)
+    def getConfirmation(self, inputString, okStr="yes", nokStr="no", cokStr="cancel"):
+        return self.__messageWindow("title", inputString, okStr, nokStr, cokStr)
         
     
     # Private method __messageWindow
     # Accepts a title for the window, and a message for the window.
-    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch',nokStr='current'):
+    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch',nokStr='current', cokStr='\b'):
         self.textStringForCon = ""
         self.win = Toplevel() # Popout screen
         self.win.title(title)
@@ -166,6 +166,7 @@ class BeeUI(UserInterface):
         # a Current save.
         self.scratchBtn = tk.Button(self.windowFrameBtns, text=okStr, command=lambda:[self.__textHelper(okStr)])
         self.currentBtn = tk.Button(self.windowFrameBtns, text=nokStr, command=lambda:[self.__textHelper(nokStr)])
+        self.cancelBtn = tk.Button(self.windowFrameBtns, text=cokStr, command=lambda:[self.__textHelper(cokStr)])
 
         self.scratchBtn.grid(row=0, column=0)
         self.currentBtn.grid(row=0, column=1)

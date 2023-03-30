@@ -268,7 +268,7 @@ Commands:
             elif keyboard.is_pressed("C"):
                 keyboard.press("backspace")
                 print("c")
-                return 0
+                return
                 break
         
         while choice != okStr and choice != nokStr and choice !=cokStr:
