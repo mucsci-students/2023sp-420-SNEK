@@ -103,10 +103,12 @@ class DataSource(metaclass=SingletonMeta):
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
         
-    def getHints(self, wordList:list,optionalLetters:list)->Hint:
+   def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
         letterMat = dict()
         maximum = 0
         beginDict = dict()
+        optionalLetters = inputOptionalLetters
+        wordList = inputWordList
         for word in wordList:
             if(maximum < len(word)):
                 maximum = len(word)
