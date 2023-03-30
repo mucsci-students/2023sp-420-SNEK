@@ -20,7 +20,7 @@ def main():
     if(os.path.exists("spellingBee.db")):
         pass
     else:
-        with open("src/model/CreateDB.py") as f:
+        with open("./model/CreateDB.py") as f:
             exec(f.read())
 
     # If no arguments are given

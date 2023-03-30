@@ -56,8 +56,9 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
+        commandStrings = Commands.getCommandNameList()
         while not self.quit:
-            userInput = self.__getUserInput()
+            userInput = self.__getUserInput(options=commandStrings)
             if Commands.isCommand(userInput):
                 userInput = Commands.getCommandFromName(userInput)
 
@@ -94,7 +95,7 @@ Commands:
     # enter what base word they want to use for the puzzle
     def getBaseWord(self) -> str:
         self.__boldPrint("Base word: ")
-        baseWord = self.__getUserInput()
+        baseWord = input().lower().strip()
         return baseWord
 
     # If user wants to see their points and rank status
@@ -130,7 +131,7 @@ Commands:
     # required letter is in the center and always stays there when a user
     # uses the shuffle command
     def showPuzzle(self, myPuzzle: Puzzle) -> None:
-        os.system('cls' or 'clear')
+        # os.system('cls' or 'clear')
         self.showProgress(myPuzzle.getCurrentRank(), list(
             myPuzzle.getRankingsAndPoints().values()), myPuzzle.getCurrentPoints())
         myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
