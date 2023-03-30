@@ -1,14 +1,12 @@
 
 
-
+import unittest
+import os
+from model.Hint import Hint
+from model.DataSource import DataSource
+import sqlite3
 import sys
 sys.path.append('./src')
-
-import sqlite3
-from model.DataSource import DataSource
-from model.Hint import Hint
-import os
-import unittest
 
 
 class test_DataSource(unittest.TestCase):
@@ -47,7 +45,7 @@ class test_DataSource(unittest.TestCase):
     def test_getHints(self):
         dataSource = DataSource("test1.db")
         dataSource.grabWordsFor("waxworks", "x")
-        actualHints:Hint = dataSource.getHints(
+        actualHints: Hint = dataSource.getHints(
             dataSource.wordList, list(set("waxworks")))
         letterMat = dict()
         letters = list(set("waxworks"))
@@ -60,7 +58,7 @@ class test_DataSource(unittest.TestCase):
         letterMat['Σ'] = dict()
         for number in range(4, maximum+1):
             letterMat['Σ'][str(number)] = 0
-        
+
         letterMat['w']['8'] = 1
         letterMat['w']['7'] = 1
         letterMat['w']['Σ'] = 2
@@ -73,14 +71,14 @@ class test_DataSource(unittest.TestCase):
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,
                          f"the list is not the expected one, the one expected was {letterMat} and the one recieved was {actualHints.letterMatrix}")
-        
 
     def test_notInDataBase(self):
         dataSource = DataSource("test1.db")
-        self.assertFalse(dataSource.checkWord("pamplona"),"this word shouldnt be in this db")
-        self.assertTrue(dataSource.checkWord("waxworks"),"this word should be in the db")
+        self.assertFalse(dataSource.checkWord("pamplona"),
+                         "this word shouldnt be in this db")
+        self.assertTrue(dataSource.checkWord("waxworks"),
+                        "this word should be in the db")
 
 
 if __name__ == '__main__':
     unittest.main()
-

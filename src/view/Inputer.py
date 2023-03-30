@@ -1,6 +1,7 @@
 import keyboard
 import signal
 import os
+import sys
 
 
 class Inputer:
@@ -105,7 +106,6 @@ class Inputer:
             self.__adjustOriginals()
 
     def __on_press(self, key: str):
-
         if key == self.prev and key in self.specialDouble:
             self.userInput += (key + key)
             self.possibles = self.__orderStrings(self.possibles)

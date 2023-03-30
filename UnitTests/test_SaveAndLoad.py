@@ -1,24 +1,21 @@
 
+import unittest
+from controller.SaveAndLoad import SaveAndLoad
+from model.Puzzle import Puzzle
+import json
+import os
 import sys
 sys.path.append('./src')
 
-import os
-import json
-
-
-from model.Puzzle import Puzzle
-from controller.SaveAndLoad import SaveAndLoad
-import unittest
-
 
 class test_SaveAndLoad(unittest.TestCase):
-    testFileName = os.path.join(os.getcwd(),"testFileName.json")
-    
+    testFileName = os.path.join(os.getcwd(), "testFileName.json")
+
     def test_saveScratch(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
+
         SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
         with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
@@ -47,7 +44,6 @@ class test_SaveAndLoad(unittest.TestCase):
         for guess in wordsToBeGuessed:
             puzzleTest.addGuessWord(guess)
 
-        
         SaveAndLoad.saveCurrent(puzzleTest, self.testFileName)
         with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
@@ -70,7 +66,7 @@ class test_SaveAndLoad(unittest.TestCase):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
+
         SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
         self.assertTrue(SaveAndLoad.isSaved(self.testFileName))
         os.remove(self.testFileName)
@@ -80,7 +76,7 @@ class test_SaveAndLoad(unittest.TestCase):
         wordList = ["bacalao", "bacalao", "bacalao", "bacalao",
                     "bacalao", "bacalao", "bacalao", "bacalao", "bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
+
         SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
         puzzleActual: Puzzle = SaveAndLoad.load(self.testFileName)
 

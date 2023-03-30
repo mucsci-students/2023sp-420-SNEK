@@ -5,7 +5,10 @@ from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
-import os, keyboard, time
+import os
+import keyboard
+import time
+import sys
 
 
 class TerminalInterface(UserInterface):
@@ -56,15 +59,21 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        commandStrings = Commands.getCommandNameList()
-        while not self.quit:
-            userInput = self.__getUserInput(options=commandStrings)
-            if Commands.isCommand(userInput):
-                userInput = Commands.getCommandFromName(userInput)
+        try:
+            commandStrings = Commands.getCommandNameList()
+            while not self.quit:
+                userInput = self.__getUserInput(options=commandStrings)
+                if Commands.isCommand(userInput):
+                    userInput = Commands.getCommandFromName(userInput)
 
-            self.myController.processInput(userInput)
+                self.myController.processInput(userInput)
+        except:
+            sys.stdout.flush()
+            print()
+            exit()
 
     # Flag if the game is quit
+
     def quitInterface(self):
         self.quit = True
 
@@ -253,17 +262,18 @@ Commands:
         nokStr = nokStr.lower()
         cokStr = cokStr.lower()
         self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
-
+        print(self.__CMD_PREFIX, end=" ")
+        sys.stdout.flush()
         while True:
             if okStr == "scratch":
                 choice = str(self.__getUserInput(
-                  options=[okStr, nokStr])).lower().strip()
+                    options=[okStr, nokStr, cokStr])).lower().strip()
                 break
             elif keyboard.is_pressed("Y"):
                 choice = "y"
                 keyboard.press("backspace")
                 time.sleep(0.2)
-                print("y") 
+                print("y")
                 break
             elif keyboard.is_pressed("N"):
                 choice = "n"
@@ -276,11 +286,11 @@ Commands:
                 print("c")
                 return
                 break
-        
+
         while choice != okStr and choice != nokStr and choice != cokStr:
             print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
             choice = self.__getUserInput(
-                options=[okStr, nokStr]).lower().strip()
+                options=[okStr, nokStr, cokStr]).lower().strip()
 
         confirmation = choice == okStr
         return confirmation
