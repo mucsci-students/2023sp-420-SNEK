@@ -107,8 +107,8 @@ class DataSource(metaclass=SingletonMeta):
         letterMat = dict()
         maximum = 0
         beginDict = dict()
-        optionalLetters = inputOptionalLetters
-        wordList = inputWordList
+        optionalLetters = inputOptionalLetters.copy()
+        wordList = inputWordList.copy()
         for word in wordList:
             if(maximum < len(word)):
                 maximum = len(word)
