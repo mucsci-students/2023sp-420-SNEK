@@ -5,3 +5,4 @@ saveFiles/*
 .pytest_cache/
 spell/
 *.json
+spellingBee.egg-info/

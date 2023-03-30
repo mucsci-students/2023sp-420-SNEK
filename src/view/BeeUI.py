@@ -77,7 +77,7 @@ class BeeUI(UserInterface):
         self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Show Rankings", command=lambda:self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(label="Show Guessed Words", command=lambda:self.myController.processInput(Commands.GUESSED_WORDS))
-        self.viewmenu.add_command(label="Show Hints", command=lambda:self.showHints(self.myController.myPuzzle)) #command=lambda:self.myController.processInput(Commands.HINTS))
+        self.viewmenu.add_command(label="Show Hints", command=lambda:self.myController.processInput(Commands.SHOW_HINTS))
         self.viewmenu.add_command(label="Show Help", command=self.showHelp)
 
 # # # # # # # # # # # # # Developer Menus # # # # # # # # # # # # #
@@ -193,7 +193,7 @@ class BeeUI(UserInterface):
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
     def getLoadFileName(self):
-        return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
+        return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
     # Accepts a message msgString
@@ -266,36 +266,70 @@ class BeeUI(UserInterface):
         self.hintsWin = Toplevel() # popout window
         self.hintsWin.title("Hints!")
 
+        # Data of hints
         hintsData = myPuzzle.getHint()
 
-        self.hintsTextBox = tk.Text(self.hintsWin, width=50, padx=100, bg="white", fg="black", font=('Arial', 14))
+        # create variable scrollbar for the hints window
+        self.v = tk.Scrollbar(self.hintsWin, orient='vertical')
+        self.v.pack(side='right', fill='y')
+
+        # Create the textbox where all information will be typed
+        self.hintsTextBox = tk.Text(self.hintsWin, width=50, padx=100, bg="white", fg="black", font=('Arial', 14), yscrollcommand=self.v.set)
+        self.v.configure(command=self.hintsTextBox.yview) # add scrollbar
         self.hintsTextBox.pack()
 
+        # Configure tags for printing styles
         self.hintsTextBox.tag_configure('tag_center', justify='center')
-        self.hintsTextBox.tag_configure('tag_left', justify='left', font=('Courier New', 14))
+        self.hintsTextBox.tag_configure('tag_left', justify='center', font=('Courier New', 11))
+        self.hintsTextBox.tag_configure('tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
+        
+        # Welcome info
         self.hintsTextBox.insert('end', "🐝 🍯 Welcome to the hints page! 🍯 🐝\n\n", 'tag_center')
         self.hintsTextBox.insert('end', "Here are the letters for the puzzle:        \n", 'tag_center')
-        self.hintsTextBox.insert('end', myPuzzle.getPuzzleLetters() + "  (First Letter Required) \n\n", 'tag_center')
-        self.hintsTextBox.insert('end', "WORDS: " + hintsData.numberOfWords + ", POINTS: " + myPuzzle.getMaxPoints() + ", PANGRAMS: " + hintsData.pangram + "\n", 'tag_center')
+        for stri in myPuzzle.getPuzzleLetters():
+            self.hintsTextBox.insert('end', stri + " ", 'tag_center')
+        self.hintsTextBox.insert('end', "  (First Letter Required) \n\n", 'tag_center')
+        
+        # print all information about puzzle hints
+        self.hintsTextBox.insert('end', "WORDS: " + str(hintsData.numberOfWords) + ", POINTS: " + str(myPuzzle.getMaxPoints()) + ", PANGRAMS: " + str(hintsData.pangram) + "\n", 'tag_center')
         if hintsData.perfectPangram > 0:
-            self.hintsTextBox.insert('end', "(" + hintsData.perfectPangram + " perfect)\n\n", 'tage_center')
+            self.hintsTextBox.insert('end', "(" + str(hintsData.perfectPangram) + " perfect)\n\n", 'tag_center')
         else:
             self.hintsTextBox.insert('end', "\n", 'tag_center')
-        self.hintsTextBox.insert('end', "\t\t   4 5 6 7 8 Σ \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tV: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tO: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tL: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tC: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tA: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tN: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tS: 1 - - 5 1 7 \n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tΣ: 7 - - 35 7 49 \n\n", 'tag_left')
-        self.hintsTextBox.insert('end', "Two Letter List:                       \n", 'tag_center')
-        self.hintsTextBox.insert('end', "\t\tVO-2\n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tNO-5\n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tON-4\n", 'tag_left')
-        self.hintsTextBox.insert('end', "\t\tLO-2 LE-1\n", 'tag_left')
 
+        # Only prints if the puzzle has a bingo
+        if hintsData.bingo:
+            self.hintsTextBox.insert('end', "Bingo!\n\n", 'tag_center')
+
+        # WORD MATRIX
+        headers = list(hintsData.letterMatrix.items())[0][1].items()
+        self.hintsTextBox.insert('end', "    ", 'tag_left_bold')
+        for header, _ in headers:
+            self.hintsTextBox.insert('end', f"{header:^4}", 'tag_left_bold')
+
+        separator = "-"
+        for rowLetter, rowContent in hintsData.letterMatrix.items():
+            self.hintsTextBox.insert('end', "\n", 'tag_left')
+            self.hintsTextBox.insert('end', f"{rowLetter:^4}", 'tag_left')
+            for _, column in rowContent.items():
+                if column == 0:
+                    self.hintsTextBox.insert('end', f"{separator:^4}", 'tag_left')
+                else:
+                    self.hintsTextBox.insert('end', f"{column:^4}", 'tag_left')
+
+        # Spacing between Matrix and Two Letter List
+        self.hintsTextBox.insert('end', "\n\n", 'tag_left')
+
+        # Create Two Letter List
+        self.hintsTextBox.insert('end', "Two Letter List:\n", 'tag_center')
+        previousLetter = None
+        for firstLetters, num in hintsData.beginningList.items():
+            if previousLetter != firstLetters[0]:
+                previousLetter = firstLetters[0]
+                self.hintsTextBox.insert('end', "\n", 'tag_left')
+            self.hintsTextBox.insert('end', f" {firstLetters.upper()} → {num:<4}", 'tag_left')
+
+        # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
     # Public method showProgress
@@ -364,10 +398,7 @@ class BeeUI(UserInterface):
     # Shows the user why their guess is incorrect
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
-
-    def showHints(self):
-        pass
-
+    
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.

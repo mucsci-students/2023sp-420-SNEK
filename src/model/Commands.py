@@ -61,6 +61,11 @@ class Commands(Enum):
             commandConstant = Commands(Commands.UNDEFINED)
 
         return commandConstant
+    
+    @classmethod
+    def getCommandNameList(cls):
+        commandNameList = [cls.__CMD_MARK + cmdName for cmdName in list(cls.__CMD_DIC.keys())]
+        return commandNameList
 
     @classmethod
     def isCommand(cls, cmd) -> bool:

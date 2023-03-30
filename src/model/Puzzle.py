@@ -2,6 +2,7 @@ import random
 
 from model.Hint import Hint
 
+
 class Puzzle:
     '''
     Model for the puzzle of the game.
@@ -49,18 +50,19 @@ class Puzzle:
         # Current number of points for the puzzle
         self.currentPoints: int = currentPoints
         # Total number of points of given game
-        self.maxPoints: int = maxPoints if maxPoints != 0 else self.__calcMaxPoints(WordList, puzzleLetters)
+        self.maxPoints: int = maxPoints if maxPoints != 0 else self.__calcMaxPoints(
+            WordList, puzzleLetters)
         # A dictionary containing the rank names and their thresholds.
         self.rankingsAndPoints: dict[str,
                                      int] = self.__rankDict(self.maxPoints)
 
-        self.puzzleHint:Hint
+        self.puzzleHint: Hint
 
         # Current rank (beginner etc..)
         self.currentRank: str = self.__calcCurrentRank()
 
-
     # Static method to calculate the maximum points of a game.
+
     @classmethod
     def __calcMaxPoints(cls, WordList: list[str], puzzleLetters: list[str]) -> int:
         ''' Inputs:
@@ -70,7 +72,7 @@ class Puzzle:
             Output:
                 sum: the total maximum of points
         '''
-        sum:int = 0
+        sum: int = 0
         for word in WordList:
             sum = sum + cls.__pointsOf(word, puzzleLetters)
         return sum
@@ -146,12 +148,12 @@ class Puzzle:
         '''
         if (self.currentPoints == 0):
             return self.__RANK_NAMES_LIST[0]
-        
+
         i: int = 0
         for i in range(len(self.__RANK_NAMES_LIST)):
-            if(self.currentPoints < self.rankingsAndPoints[self.__RANK_NAMES_LIST[i]]):
+            if (self.currentPoints < self.rankingsAndPoints[self.__RANK_NAMES_LIST[i]]):
                 break
-            
+
         return self.__RANK_NAMES_LIST[i-1]
 
     def addGuessWord(self, word: str) -> None:
@@ -191,18 +193,19 @@ class Puzzle:
                 the list of letters that make up the game.
         '''
         return self.puzzleLetters
-    
+
     def getHint(self) -> Hint:
         ''' Output:
                 the hint object of the puzzle.
         '''
         return self.puzzleHint
 
-    def setHint(self, hint:Hint):
+    def setHint(self, hint: Hint):
         ''' Input:
                 the hint object for the puzzle.
         '''
         self.puzzleHint = hint
+
     def shuffle(self):
         ''' Postcondition:
                 the list of letters that make up the game gets shuffled, except for the first one.

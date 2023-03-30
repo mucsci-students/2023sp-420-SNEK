@@ -7,25 +7,23 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import unittest
+from model.Puzzle import Puzzle
+import os
+import sqlite3
+import random
 import sys
 
 
 from model.DataSource import DataSource
 sys.path.append('src/model')
 
-import random
-import sqlite3
-import os
-
-from model.Puzzle import Puzzle
-import unittest
-
 
 class test_Puzzle(unittest.TestCase):
     word = "volcanos"
     puzzleLetters = list(set(word))
     wordsList = ["cava", "volcano", "volcanos"]
-    
+
     def setUp(self):
         if not os.path.exists("test1.db"):
             con = sqlite3.connect("test1.db")
@@ -40,16 +38,15 @@ class test_Puzzle(unittest.TestCase):
             con.commit()
             con.close()
 
-    
-      
     def test_puzzleHint(self):
         dataSource = DataSource("test1.db")
         dataSource.grabWordsFor("waxworks", "x")
         myList = dataSource.wordList
         tst_puzzle = Puzzle(list(set("waxworks")), myList)
-        hint = dataSource.getHints(myList, "waorsk")
+        hint = dataSource.getHints(myList, list("waorsk"))
         tst_puzzle.setHint(hint)
-        self.assertEquals(hint,tst_puzzle.getHint(),f"actual: {tst_puzzle.getHint()}, original: {hint}")
+        self.assertEquals(hint, tst_puzzle.getHint(),
+                          f"actual: {tst_puzzle.getHint()}, original: {hint}")
 
     def test_createPuzzle(self):
         tst_puzzle = Puzzle(self.puzzleLetters, self.wordsList)
@@ -83,7 +80,7 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getMaxPoints()
         self.assertEqual(actual, expected,
                          f"actual: {actual}\nexpected: {expected}")
-        
+
         del tst_puzzle
 
     def test_shuffle(self):
@@ -100,7 +97,7 @@ class test_Puzzle(unittest.TestCase):
 
     def test_addGuessWord(self):
         aWordsList = ["onee", "twoo", "three", "four",
-                     "five", "sixx", "seven", "eight", "nine", "volcanos"]
+                      "five", "sixx", "seven", "eight", "nine", "volcanos"]
         tst_puzzle = Puzzle(self.puzzleLetters, aWordsList)
         guessWord = "four"
         expectedPoints = 1
@@ -131,9 +128,7 @@ class test_Puzzle(unittest.TestCase):
         self.assertEqual(actualPoints, expectedPoints,
                          f"actual: {actualGuessedWords}\noriginal: {expectedGuessedWords}")
 
-        
         del tst_puzzle
-
 
 
 if __name__ == '__main__':
