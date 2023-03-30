@@ -192,7 +192,7 @@ class BeeUI(UserInterface):
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
     def getLoadFileName(self):
-        return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
+        return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
     # Accepts a message msgString
