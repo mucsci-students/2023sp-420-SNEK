@@ -264,13 +264,13 @@ Commands:
         self.choice = ""
 
         if okStr == "":
-            okStr = self.defaultYes
+            okStr = 'y'
 
         if nokStr == "":
-            nokStr = self.defaultNo
+            nokStr = 'n'
 
         if canStr == "":
-            canStr = self.defaultCancel
+            canStr = 'c'
 
         okStr = okStr.lower()
         nokStr = nokStr.lower()
@@ -284,7 +284,7 @@ Commands:
             choice = str(self.__getUserInput(
                 options=[okStr, nokStr, canStr])).lower().strip()
 
-        while self.choice != okStr and self.choice != nokStr and self.choice != canStr:
+        while choice != okStr and choice != nokStr and choice != canStr:
             print(f"Unrecognized choice [{okStr}/{nokStr}/{canStr}]: ")
             choice = self.__getUserInput(
                 options=[okStr, nokStr, canStr]).lower().strip()

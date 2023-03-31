@@ -75,7 +75,7 @@ class GameController:
 
     def __saveFile(self) -> None:
         scratchMode = self.myUserInterface.getConfirmation(
-            "How do you want to save?", okStr="scratch", nokStr="current", cokStr="cancel")
+            "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
         fileName = self.myUserInterface.getSaveFileName()
         if (fileName == ""):
