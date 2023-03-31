@@ -46,7 +46,7 @@ Commands:
    -!save - Bring up the prompts for saving your current game.
    -!load - Bring up the prompts for loading a saved game.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-               the order of the letter randomly other than the 
+               the order of the letter randomly other than the
                required center letter.  You can use this to
                help you find other words.
    -!guessed - Shows all the already correctly guessed words.
@@ -152,7 +152,7 @@ Commands:
                      ___╱ {} ╲___
                     ╱ {} ╲___╱ {} ╲
                     ╲___╱ {} ╲___╱
-                    ╱ {} ╲___╱ {} ╲ 
+                    ╱ {} ╲___╱ {} ╲
                     ╲___╱ {} ╲___╱
                         ╲___╱ '''.format(N + myLetters[1] + YB,
                                          N + myLetters[2] + YB,
@@ -254,46 +254,42 @@ Commands:
         for word in guessedWords:
             print("\t" + word)
 
+    def __getQuickInput(self, okStr, nokStr, canStr):
+        return self.myInputer.quickInput(self.__CMD_PREFIX, [okStr, nokStr, canStr])
+
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="Y", nokStr="N", cokStr="C"):
+    def getConfirmation(self, message, okStr="", nokStr="", canStr=""):
+        self.choice = ""
+
+        if okStr == "":
+            okStr = self.defaultYes
+
+        if nokStr == "":
+            nokStr = self.defaultNo
+
+        if canStr == "":
+            canStr = self.defaultCancel
+
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        cokStr = cokStr.lower()
-        self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
-        print(self.__CMD_PREFIX, end=" ")
-        sys.stdout.flush()
-        while True:
-            if okStr == "scratch":
-                choice = str(self.__getUserInput(
-                    options=[okStr, nokStr, cokStr])).lower().strip()
-                break
-            elif keyboard.is_pressed("Y"):
-                choice = "y"
-                keyboard.press("backspace")
-                time.sleep(0.2)
-                print("y")
-                break
-            elif keyboard.is_pressed("N"):
-                choice = "n"
-                keyboard.press("backspace")
-                time.sleep(0.2)
-                print("n")
-                break
-            elif keyboard.is_pressed("C"):
-                keyboard.press("backspace")
-                print("c")
-                return
-                break
+        canStr = canStr.lower()
 
-        while choice != okStr and choice != nokStr and choice != cokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
+        self.__boldPrint(message + f" [{okStr}/{nokStr}/{canStr}]: ")
+        if len(okStr) == 1 and len(nokStr) == 1 and len(canStr) == 1:
+            print(self.__CMD_PREFIX, end=" ")
+            choice = self.__getQuickInput(okStr, nokStr, canStr)
+        else:
+            choice = str(self.__getUserInput(
+                options=[okStr, nokStr, canStr])).lower().strip()
+
+        while self.choice != okStr and self.choice != nokStr and self.choice != canStr:
+            print(f"Unrecognized choice [{okStr}/{nokStr}/{canStr}]: ")
             choice = self.__getUserInput(
-                options=[okStr, nokStr, cokStr]).lower().strip()
+                options=[okStr, nokStr, canStr]).lower().strip()
 
-        confirmation = choice == okStr
-        return confirmation
+        return choice == okStr
 
     # Prints messages in cli
     def showMessage(self, message, endStr="\n"):
