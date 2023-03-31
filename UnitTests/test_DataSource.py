@@ -1,5 +1,6 @@
 
 
+
 import sys
 sys.path.append('./src')
 
@@ -46,7 +47,7 @@ class test_DataSource(unittest.TestCase):
     def test_getHints(self):
         dataSource = DataSource("test1.db")
         dataSource.grabWordsFor("waxworks", "x")
-        actualHints = dataSource.getHints(
+        actualHints:Hint = dataSource.getHints(
             dataSource.wordList, list(set("waxworks")))
         letterMat = dict()
         letters = list(set("waxworks"))
@@ -56,9 +57,16 @@ class test_DataSource(unittest.TestCase):
             for number in range(4, maximum+1):
                 letterMat[letter][str(number)] = 0
             letterMat[letter]['Σ'] = 0
+        letterMat['Σ'] = dict()
+        for number in range(4, maximum+1):
+            letterMat['Σ'][str(number)] = 0
+        
         letterMat['w']['8'] = 1
         letterMat['w']['7'] = 1
         letterMat['w']['Σ'] = 2
+        letterMat['Σ']['8'] = 1
+        letterMat['Σ']['7'] = 1
+        letterMat['Σ']['Σ'] = 2
         beginning = dict()
         beginning['wa'] = 2
         self.assertEqual(actualHints.beginningList, beginning,
@@ -75,3 +83,4 @@ class test_DataSource(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

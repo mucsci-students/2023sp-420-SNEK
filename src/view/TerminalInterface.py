@@ -1,11 +1,11 @@
 from view.UserInterface import UserInterface
 from colorama import Fore, Style
+from view.Inputer import Inputer
 from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
-import os
-
+import os, keyboard, time
 
 
 class TerminalInterface(UserInterface):
@@ -13,11 +13,12 @@ class TerminalInterface(UserInterface):
     # Initialization of styles for game title
     def __init__(self) -> None:
         super().__init__()
-        self.__CMD_PREFIX = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
-        self.__DONE_PROGRESS = Fore.YELLOW + "⬢" + Style.RESET_ALL
-        self.__LEFT_PROGRESS = "⬡" + Style.RESET_ALL
-        self.__HELP_TITLE = "\n\tSpelling Bee Game!              🍯 🐝"
-        self.__HELP_STRING = '''
+        self.myInputer: Inputer = Inputer()
+        self.__CMD_PREFIX: str = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
+        self.__DONE_PROGRESS: str = Fore.YELLOW + "⬢" + Style.RESET_ALL
+        self.__LEFT_PROGRESS: str = "⬡" + Style.RESET_ALL
+        self.__HELP_TITLE: str = "\n\tSpelling Bee Game!              🍯 🐝"
+        self.__HELP_STRING: str = '''
 
 How to play:
    You are given a word puzzle with a bunch of letters
@@ -46,14 +47,18 @@ Commands:
                required center letter.  You can use this to
                help you find other words.
    -!guessed - Shows all the already correctly guessed words.
+   -!hints - prints out all the hints for the given puzzle
    -!help - Prints out the help menu.
-   -!exit - Exits the game. Will prompt to save.'''
+   -!exit - Exits the game. Will prompt to save.
+   -!quit - Exits the entire program. Will prompt to save.'''
 
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
+
     def launch(self):
+        commandStrings = Commands.getCommandNameList()
         while not self.quit:
-            userInput = self.__getUserInput()
+            userInput = self.__getUserInput(options=commandStrings)
             if Commands.isCommand(userInput):
                 userInput = Commands.getCommandFromName(userInput)
 
@@ -65,16 +70,17 @@ Commands:
 
     # Gets user input from cli and checks if there is a command that
     # a user wants to use
-    def __getUserInput(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip()
+    def __getUserInput(self, message: str = "", options=[]) -> str:
+        userInput = self.myInputer.input(
+            self.__CMD_PREFIX + message + " ", options).strip().lower()
         return userInput
-    
+
     # Path in directory that the user wants to save their games
     def __getUserInputPath(self, message: str = "") -> str:
         userInput = input(self.__CMD_PREFIX + message + " ").strip()
         return userInput
 
-    # Reset colorama text so that it does not 
+    # Reset colorama text so that it does not
     # change other text to a bold print
     def __boldPrint(self, message: str, endStr: str = "\n") -> None:
         print(Style.BRIGHT + message + Style.RESET_ALL, end=endStr)
@@ -85,11 +91,11 @@ Commands:
         if description != "":
             print("\t" + description)
 
-    # Print the words base word so that the user can 
+    # Print the words base word so that the user can
     # enter what base word they want to use for the puzzle
     def getBaseWord(self) -> str:
         self.__boldPrint("Base word: ")
-        baseWord = self.__getUserInput()
+        baseWord = input().lower().strip()
         return baseWord
 
     # If user wants to see their points and rank status
@@ -99,7 +105,7 @@ Commands:
         self.__boldPrint(rank + ": " + str(currentPoints))
 
     # Progress bar that shows users current rank and and displays it
-    # in a nice progress bar that shows how many ranks in you are and 
+    # in a nice progress bar that shows how many ranks in you are and
     # how many ranks are left to get to top rank
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
@@ -122,10 +128,12 @@ Commands:
             print(self.__LEFT_PROGRESS + "  🐝")
 
     # Prints the puzzle into a honeycomb to display in the cli
-    # required letter is in the center and always stays there when a user 
+    # required letter is in the center and always stays there when a user
     # uses the shuffle command
     def showPuzzle(self, myPuzzle: Puzzle) -> None:
-        self.showProgress(myPuzzle.getCurrentRank(), list(myPuzzle.getRankingsAndPoints().values()),myPuzzle.getCurrentPoints())
+        # os.system('cls' or 'clear')
+        self.showProgress(myPuzzle.getCurrentRank(), list(
+            myPuzzle.getRankingsAndPoints().values()), myPuzzle.getCurrentPoints())
         myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
         YB = Fore.YELLOW + Style.BRIGHT
         N = Fore.WHITE + Style.NORMAL
@@ -157,7 +165,7 @@ Commands:
         self.__boldPrint(self.__HELP_TITLE)
         print(self.__HELP_STRING)
 
-    # Print rankings based on what puzzle is open and it shows how 
+    # Print rankings based on what puzzle is open and it shows how
     # many points the user needs to achieve the next rank status
     def showRanking(self, rankingsAndPoints: dict[str, int]) -> None:
         print("The ranking points change based on the specific game you are playing:")
@@ -180,10 +188,10 @@ Commands:
         self.__boldPrint("You are at the main program (not playing).")
         print()
 
-    # If a user does not make a right guess, then it will 
+    # If a user does not make a right guess, then it will
     # print that they did not make a right guess
     def showWrongGuess(self, message="") -> None:
-        self.__boldPrint("Wrong guess", endStr = "")
+        self.__boldPrint("Wrong guess", endStr="")
         if message == "":
             print("...")
         else:
@@ -193,30 +201,29 @@ Commands:
     # tell the user that they made the right guess
     def showCorrectGuess(self) -> None:
         self.__boldPrint("Good guess!")
-        
-        
+
     def __getPath(self) -> str:
         self.__boldPrint("Desired save path: ")
         name = self.__getUserInputPath()
         while name == "" or name == ".json":
             self.showError("The file has to have a name.", "Please try again:")
             name = self.__getUserInputPath()
-            
+
         name = name if name.endswith(".json") else name + ".json "
-            
+
         if not os.path.isabs(name):
             baseDir = os.getcwd()
             name = os.path.join(baseDir, name)
-            
+
         fileName = os.path.normpath(name)
-        
+
         return fileName
 
-    # When a user wants to open their saved game, then it will 
+    # When a user wants to open their saved game, then it will
     # ask what save file they want to open
     def getSaveFileName(self) -> str:
-        fileName =  self.__getPath()
-        
+        fileName = self.__getPath()
+
         if os.path.exists(fileName):
             self.showMessage("This file already exists")
             overwrite = self.getConfirmation("Do you want to overwrite it?")
@@ -226,12 +233,12 @@ Commands:
 
         return fileName
 
-    # When a user wants to open their saved game, then it will 
+    # When a user wants to open their saved game, then it will
     # ask what save file they want to open
     def getLoadFileName(self) -> str:
         return self.__getPath()
 
-    # When !guessed is types, then it will print a list of all 
+    # When !guessed is types, then it will print a list of all
     # the words that the user has found in the game
     def showGuessedWords(self, guessedWords: list) -> None:
         self.__boldPrint("Guessed Words:")
@@ -241,14 +248,39 @@ Commands:
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="Y", nokStr="N"):
+    def getConfirmation(self, message, okStr="Y", nokStr="N", cokStr="C"):
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        self.__boldPrint(message + f" [{okStr}/{nokStr}]: ")
-        choice = str(self.__getUserInput())
-        while choice != okStr and choice != nokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}]: ")
-            choice = self.__getUserInput()
+        cokStr = cokStr.lower()
+        self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
+
+        while True:
+            if okStr == "scratch":
+                choice = str(self.__getUserInput(
+                  options=[okStr, nokStr])).lower().strip()
+                break
+            elif keyboard.is_pressed("Y"):
+                choice = "y"
+                keyboard.press("backspace")
+                time.sleep(0.2)
+                print("y") 
+                break
+            elif keyboard.is_pressed("N"):
+                choice = "n"
+                keyboard.press("backspace")
+                time.sleep(0.2)
+                print("n")
+                break
+            elif keyboard.is_pressed("C"):
+                keyboard.press("backspace")
+                print("c")
+                return
+                break
+        
+        while choice != okStr and choice != nokStr and choice != cokStr:
+            print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
+            choice = self.__getUserInput(
+                options=[okStr, nokStr]).lower().strip()
 
         confirmation = choice == okStr
         return confirmation
@@ -257,19 +289,18 @@ Commands:
     def showMessage(self, message, endStr="\n"):
         print(message, end=endStr)
 
-
-
-    def showHints(self, myPuzzle:Puzzle):
-        myHints:Hint = myPuzzle.getHint()
+    def showHints(self, myPuzzle: Puzzle):
+        myHints: Hint = myPuzzle.getHint()
         puzzleLetters = myPuzzle.getPuzzleLetters()
-        
+
         self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
         print("\t● Puzzle Letters (Required first):  ", end="")
-        self.__boldPrint(Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL, endStr=" ")
+        self.__boldPrint(
+            Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL, endStr=" ")
         for letter in puzzleLetters[1:]:
             print(letter.upper(), end=" ")
         print()
-            
+
         print(f"\t● Words: {myHints.numberOfWords}")
         print(f"\t● Points: {myPuzzle.getMaxPoints()}")
         print(f"\t● Pangrams: {myHints.pangram} ", end="")
@@ -277,17 +308,17 @@ Commands:
             print(f"({myHints.perfectPangram} perfect)")
         else:
             print()
-        
+
         if myHints.bingo:
             print("\t● Bingo")
-            
+
         # Print matrix
         print("\n\t● Hint matrix:")
         print("\n", end="\t         ")
         headers = list(myHints.letterMatrix.items())[0][1].items()
         for header, _ in headers:
             self.__boldPrint(f"{header:^4}", endStr=" ")
-            
+
         separator = "‒"
         for rowLetter, rowContent in myHints.letterMatrix.items():
             print("\n", end="\t    ")
@@ -297,7 +328,7 @@ Commands:
                     print(f"{separator:^4}", end=" ")
                 else:
                     print(f"{column:^4}", end=" ")
-        
+
         print("\n\n\n\t● Two letter list:")
         # Print 2 letter lists
         previousLetter = None

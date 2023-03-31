@@ -77,6 +77,7 @@ class BeeUI(UserInterface):
         self.viewmenu = tk.Menu(self.menubar, tearoff=0)
         self.viewmenu.add_command(label="Show Rankings", command=lambda:self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(label="Show Guessed Words", command=lambda:self.myController.processInput(Commands.GUESSED_WORDS))
+        self.viewmenu.add_command(label="Show Hints", command=lambda:self.myController.processInput(Commands.SHOW_HINTS))
         self.viewmenu.add_command(label="Show Help", command=self.showHelp)
 
 # # # # # # # # # # # # # Developer Menus # # # # # # # # # # # # #
@@ -127,7 +128,9 @@ class BeeUI(UserInterface):
     def __onLoad(self):
         self.myController.processInput(Commands.LOAD)
             
-            
+    # Public method showExit
+    # Upon exit of a game, showExit will load the preGamePage
+    # To play another game.
     def showExit(self):
         self.__preGamePage()
 
@@ -135,13 +138,13 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="yes", nokStr="no"):
-        return self.__messageWindow("title", inputString, okStr, nokStr)
+    def getConfirmation(self, inputString, okStr="yes", nokStr="no", cokStr="cancel"):
+        return self.__messageWindow("title", inputString, okStr, nokStr, cokStr)
         
     
     # Private method __messageWindow
     # Accepts a title for the window, and a message for the window.
-    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch',nokStr='current'):
+    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch',nokStr='current', cokStr='\b'):
         self.textStringForCon = ""
         self.win = Toplevel() # Popout screen
         self.win.title(title)
@@ -163,6 +166,7 @@ class BeeUI(UserInterface):
         # a Current save.
         self.scratchBtn = tk.Button(self.windowFrameBtns, text=okStr, command=lambda:[self.__textHelper(okStr)])
         self.currentBtn = tk.Button(self.windowFrameBtns, text=nokStr, command=lambda:[self.__textHelper(nokStr)])
+        self.cancelBtn = tk.Button(self.windowFrameBtns, text=cokStr, command=lambda:[self.__textHelper(cokStr)])
 
         self.scratchBtn.grid(row=0, column=0)
         self.currentBtn.grid(row=0, column=1)
@@ -189,7 +193,7 @@ class BeeUI(UserInterface):
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
     def getLoadFileName(self):
-        return filedialog.askopenfilename(title="Select the file", filetype=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
+        return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
     # Accepts a message msgString
@@ -246,14 +250,87 @@ class BeeUI(UserInterface):
     # the user.
     def showHelp(self):
         self.win = Toplevel() # popout window
-        self.win.title(Commands.HELP)
+        self.win.title("Help!")
 
-        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = Image.open('src/img/helpscreen.PNG')
         self.helpscreenImg = self.helpscreenImg.resize((750, 500))
         self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
         self.helpscreenImg = tk.Button(self.win, image=self.helpscreenImgSized) # Unusable button
         self.helpscreenImg.pack()
+
+    # Public method showHints
+    # Creates a small popup window to display the hints screen to
+    # the user to help them progress through the game.
+    def showHints(self, myPuzzle):
+        self.hintsWin = Toplevel() # popout window
+        self.hintsWin.title("Hints!")
+
+        # Data of hints
+        hintsData = myPuzzle.getHint()
+
+        # create variable scrollbar for the hints window
+        self.v = tk.Scrollbar(self.hintsWin, orient='vertical')
+        self.v.pack(side='right', fill='y')
+
+        # Create the textbox where all information will be typed
+        self.hintsTextBox = tk.Text(self.hintsWin, width=50, padx=100, bg="white", fg="black", font=('Arial', 14), yscrollcommand=self.v.set)
+        self.v.configure(command=self.hintsTextBox.yview) # add scrollbar
+        self.hintsTextBox.pack()
+
+        # Configure tags for printing styles
+        self.hintsTextBox.tag_configure('tag_center', justify='center')
+        self.hintsTextBox.tag_configure('tag_left', justify='center', font=('Courier New', 11))
+        self.hintsTextBox.tag_configure('tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
+        
+        # Welcome info
+        self.hintsTextBox.insert('end', "🐝 🍯 Welcome to the hints page! 🍯 🐝\n\n", 'tag_center')
+        self.hintsTextBox.insert('end', "Here are the letters for the puzzle:        \n", 'tag_center')
+        for stri in myPuzzle.getPuzzleLetters():
+            self.hintsTextBox.insert('end', stri + " ", 'tag_center')
+        self.hintsTextBox.insert('end', "  (First Letter Required) \n\n", 'tag_center')
+        
+        # print all information about puzzle hints
+        self.hintsTextBox.insert('end', "WORDS: " + str(hintsData.numberOfWords) + ", POINTS: " + str(myPuzzle.getMaxPoints()) + ", PANGRAMS: " + str(hintsData.pangram) + "\n", 'tag_center')
+        if hintsData.perfectPangram > 0:
+            self.hintsTextBox.insert('end', "(" + str(hintsData.perfectPangram) + " perfect)\n\n", 'tag_center')
+        else:
+            self.hintsTextBox.insert('end', "\n", 'tag_center')
+
+        # Only prints if the puzzle has a bingo
+        if hintsData.bingo:
+            self.hintsTextBox.insert('end', "Bingo!\n\n", 'tag_center')
+
+        # WORD MATRIX
+        headers = list(hintsData.letterMatrix.items())[0][1].items()
+        self.hintsTextBox.insert('end', "    ", 'tag_left_bold')
+        for header, _ in headers:
+            self.hintsTextBox.insert('end', f"{header:^4}", 'tag_left_bold')
+
+        separator = "-"
+        for rowLetter, rowContent in hintsData.letterMatrix.items():
+            self.hintsTextBox.insert('end', "\n", 'tag_left')
+            self.hintsTextBox.insert('end', f"{rowLetter:^4}", 'tag_left')
+            for _, column in rowContent.items():
+                if column == 0:
+                    self.hintsTextBox.insert('end', f"{separator:^4}", 'tag_left')
+                else:
+                    self.hintsTextBox.insert('end', f"{column:^4}", 'tag_left')
+
+        # Spacing between Matrix and Two Letter List
+        self.hintsTextBox.insert('end', "\n\n", 'tag_left')
+
+        # Create Two Letter List
+        self.hintsTextBox.insert('end', "Two Letter List:\n", 'tag_center')
+        previousLetter = None
+        for firstLetters, num in hintsData.beginningList.items():
+            if previousLetter != firstLetters[0]:
+                previousLetter = firstLetters[0]
+                self.hintsTextBox.insert('end', "\n", 'tag_left')
+            self.hintsTextBox.insert('end', f" {firstLetters.upper()} → {num:<4}", 'tag_left')
+
+        # Disable textbox so that data can not be edited by user.
+        self.hintsTextBox.configure(state="disabled")
 
     # Public method showProgress
     # Params:
@@ -321,10 +398,7 @@ class BeeUI(UserInterface):
     # Shows the user why their guess is incorrect
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
-
-    def showHints(self):
-        pass
-
+    
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
@@ -437,6 +511,7 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
         # Label at the top of the screen
@@ -444,10 +519,10 @@ class BeeUI(UserInterface):
         self.welcome.pack()
 
         # Load images necessary for buttons
-        self.newImg = PhotoImage(file='img/new.png')
-        self.loadImg = PhotoImage(file='img/load.png')
-        self.helpImg = PhotoImage(file='img/how.png')
-        self.exitImg = PhotoImage(file='img/exit.png')
+        self.newImg = PhotoImage(file='src/img/new.png')
+        self.loadImg = PhotoImage(file='src/img/load.png')
+        self.helpImg = PhotoImage(file='src/img/how.png')
+        self.exitImg = PhotoImage(file='src/img/exit.png')
 
         # Create buttons for navigating menus
         self.newGameBtn = tk.Button(self.mainFrame, border='0', image=self.newImg, command=self.__preGamePage)
@@ -481,10 +556,10 @@ class BeeUI(UserInterface):
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
         self.welcome.pack()
 
-        self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t\t\t ", font=('Arial bold', 24))
+        self.howToLabel = tk.Label(self.mainFrame, text="How To Play:\t ", font=('Arial bold', 24))
         self.howToLabel.pack()
 
-        self.helpscreenImg = Image.open('img/helpscreen.PNG')
+        self.helpscreenImg = Image.open('src/img/helpscreen.PNG')
         self.helpscreenImg = self.helpscreenImg.resize((750, 425))
         self.helpscreenImgSized = ImageTk.PhotoImage(self.helpscreenImg)
 
@@ -493,7 +568,7 @@ class BeeUI(UserInterface):
 
         # Designs #
         # Go Back Button #
-        self.goBackImg = Image.open('img/goBack.png')
+        self.goBackImg = Image.open('src/img/goBack.png')
         self.goBackImg = self.goBackImg.resize((140, 51))
         self.goBackSized = ImageTk.PhotoImage(self.goBackImg)
 
@@ -508,12 +583,20 @@ class BeeUI(UserInterface):
     def __preGamePage(self):
         self.__clearFrame()
 
+        # Disable all unusable menus
+        self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Exit Current Game", state="disabled")
+        self.viewmenu.entryconfig("Show Rankings", state="disabled")
+        self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Show Hints", state="disabled")
+        self.filemenu.entryconfig("Close Program", command=self.__onClosing)
+
         #Label at the top of the screen
         self.welcome = tk.Label(self.mainFrame, text="Welcome to the Spelling Bee Game! 🐝", font=('Arial', 30))
         self.welcome.pack()
 
         # New Game Random
-        self.randBtnImg = PhotoImage(file='img/newRand.png')
+        self.randBtnImg = PhotoImage(file='src/img/newRand.png')
         self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg, command=lambda: self.myController.processInput(Commands.NEW_GAME_RND))
         self.randBtn.pack(pady=25)
 
@@ -527,12 +610,12 @@ class BeeUI(UserInterface):
         self.newWord = tk.Entry(self.newWordGrid, font=('Arial', 18))
         self.newWord.grid(row=0, column=1, ipadx=20)
 
-        self.customBtnImg = PhotoImage(file='img/newCustom.png')
+        self.customBtnImg = PhotoImage(file='src/img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg, command=lambda:self.myController.processInput(Commands.NEW_GAME_WRD))
         self.customBtn.grid(row=1, columnspan=2)
         self.newWordGrid.pack(pady=25)
 
-        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackImg = PhotoImage(file='src/img/goBack.png')
         self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
 
@@ -554,6 +637,7 @@ class BeeUI(UserInterface):
 
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
+        self.viewmenu.entryconfig("Show Hints", state="normal")
 
         self.correctLabel = tk.Label(self.mainFrame, text="", font=('Arial', 25))
 
@@ -596,14 +680,14 @@ class BeeUI(UserInterface):
         self.entry = tk.Entry(self.entryframe, font=('Arial', 18), state="disabled", disabledbackground="white", disabledforeground="black")
         self.root.bind('<KeyPress>', self.__shortcut)
         self.entry.grid(row=0, column=0, sticky=tk.W+tk.E)
-        self.bck = PhotoImage(file='img/backspace.png')
+        self.bck = PhotoImage(file='src/img/backspace.png')
         self.bckspce = tk.Button(self.entryframe, border='0', image=self.bck, command=self.__backspace)
         self.bckspce.grid(row=0, column=1, sticky=tk.W+tk.E)
 
         # Displaying entryframe on screen.
         self.entryframe.pack()
 
-        self.submitButtonImg = Image.open('img/submit.png')
+        self.submitButtonImg = Image.open('src/img/submit.png')
         self.submitButtonImg = self.submitButtonImg.resize((140, 51))
         self.submitButtonSized = ImageTk.PhotoImage(self.submitButtonImg)
 
@@ -615,7 +699,7 @@ class BeeUI(UserInterface):
         self.buttonframe = tk.Frame(self.mainFrame)
 
         # Opening base image for the honeycombs
-        self.combImg = Image.open('img/comb.png')
+        self.combImg = Image.open('src/img/comb.png')
         self.combImg = self.combImg.resize((100, 100))
         self.comb = ImageTk.PhotoImage(self.combImg)
 
@@ -658,7 +742,7 @@ class BeeUI(UserInterface):
         # Display the honeycomb frame to window
         self.buttonframe.pack(ipadx=200, ipady=155)
 
-        self.shuffleButtonImg = Image.open('img/shuffle.png')
+        self.shuffleButtonImg = Image.open('src/img/shuffle.png')
         self.shuffleButtonImg = self.shuffleButtonImg.resize((140, 51))
         self.shuffleButtonSized = ImageTk.PhotoImage(self.shuffleButtonImg)
 
@@ -673,14 +757,14 @@ class BeeUI(UserInterface):
     def __winPage(self):
         self.__clearFrame()
 
-        self.beestImg = Image.open('img/beest.PNG')
+        self.beestImg = Image.open('src/img/beest.PNG')
         self.beestImg = self.beestImg.resize((650, 400))
         self.beestImgSized = ImageTk.PhotoImage(self.beestImg)
 
         self.beestBtn = tk.Button(self.mainFrame, border='0', image=self.beestImgSized)
         self.beestBtn.pack()
 
-        self.goBackImg = PhotoImage(file='img/goBack.png')
+        self.goBackImg = PhotoImage(file='src/img/goBack.png')
         self.goBackBtn = tk.Button(self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
 

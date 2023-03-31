@@ -3,6 +3,7 @@ import sys
 
 
 from model.DataSource import *
+from model.Factory import Factory
 from view.UserInterface import *
 from controller.GameController import *
 from view.TerminalInterface import TerminalInterface
@@ -19,14 +20,15 @@ def main():
     if(os.path.exists("spellingBee.db")):
         pass
     else:
-        with open("src/model/CreateDB.py") as f:
+        with open("./model/CreateDB.py") as f:
             exec(f.read())
 
     # If no arguments are given
     dataSource = DataSource("spellingBee.db")
+    myFactory = Factory()
     if len(sys.argv) == 1:
         myGameController = GameController(dataSource)
-        myUserInterface = BeeUI()
+        myUserInterface = myFactory.produceInterface("GUI")
 
         myGameController.setUserInterface(myUserInterface)
         myUserInterface.setController(myGameController)
@@ -34,7 +36,7 @@ def main():
     # If first arg given is --cli
     elif sys.argv[1] == '--cli':
         myGameController = GameController(dataSource)
-        myUserInterface = TerminalInterface()
+        myUserInterface = myFactory.produceInterface("CLI")
         myGameController.setUserInterface(myUserInterface)
         myUserInterface.setController(myGameController)
         myUserInterface.showHelp()
