@@ -1,0 +1,8 @@
+setuptools
+colorama
+requests
+numpy
+pandas
+pytest
+pytest-cov
+pillow
