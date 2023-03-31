@@ -107,10 +107,13 @@ class DataSource(metaclass=SingletonMeta):
         return self.wordList
 
     def getHints(self, inputWordList: list, inputOptionalLetters: list) -> Hint:
+
+    def getHints(self, inputWordList: list, inputOptionalLetters: list) -> Hint:
         letterMat = dict()
         maximum = 0
         beginDict = dict()
         optionalLetters = inputOptionalLetters.copy()
+        optionalLetters = list(''.join(optionalLetters).upper())
         wordList = inputWordList.copy()
         for word in wordList:
             if (maximum < len(word)):
@@ -118,8 +121,13 @@ class DataSource(metaclass=SingletonMeta):
         optionalLetters.sort()
         wordList.sort()
         for letter in optionalLetters:
+            letter = letter.upper()
             letterMat[letter] = dict()
             for number in range(4, maximum+1):
+                letterMat[letter][str(number)] = 0
+            letterMat[letter]['Σ'] = 0
+        letterMat['Σ'] = dict()
+
                 letterMat[letter][str(number)] = 0
             letterMat[letter]['Σ'] = 0
         letterMat['Σ'] = dict()
@@ -132,6 +140,7 @@ class DataSource(metaclass=SingletonMeta):
         perfectPangram = 0
 
         for word in wordList:
+            word = word.upper()
             auxLetterList = list(set((word)))
             auxLetterList.sort()
             if auxLetterList == optionalLetters:
@@ -165,11 +174,14 @@ class DataSource(metaclass=SingletonMeta):
         for number in range(4, maximum+1):
             sumatory = 0
             for letter in optionalLetters:
+                sumatory += letterMat[letter][str(number)]
 
                 sumatory += letterMat[letter][str(number)]
             letterMat['Σ'][str(number)] = sumatory
         sumatory = 0
         for letter in optionalLetters:
+            sumatory += letterMat[letter]['Σ']
+        letterMat['Σ']['Σ'] = sumatory
             sumatory += letterMat[letter]['Σ']
         letterMat['Σ']['Σ'] = sumatory
 

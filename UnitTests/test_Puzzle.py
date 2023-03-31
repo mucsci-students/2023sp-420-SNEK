@@ -45,8 +45,8 @@ class test_Puzzle(unittest.TestCase):
         tst_puzzle = Puzzle(list(set("waxworks")), myList)
         hint = dataSource.getHints(myList, list("waorsk"))
         tst_puzzle.setHint(hint)
-        self.assertEquals(hint, tst_puzzle.getHint(),
-                          f"actual: {tst_puzzle.getHint()}, original: {hint}")
+        self.assertEqual(hint, tst_puzzle.getHint(),
+                         f"actual: {tst_puzzle.getHint()}, original: {hint}")
 
     def test_createPuzzle(self):
         tst_puzzle = Puzzle(self.puzzleLetters, self.wordsList)
