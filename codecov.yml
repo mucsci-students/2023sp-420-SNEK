@@ -4,6 +4,7 @@ codecov:
 
 ignore:
   - "src/model/__ init __.py"
+  - "src/model/Create.DB"
 
 coverage:
   round: down
