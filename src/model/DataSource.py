@@ -118,10 +118,10 @@ class DataSource(metaclass=SingletonMeta):
         optionalLetters.sort()
         wordList.sort()
         for letter in optionalLetters:
-            letterMat[letter] = dict()
+            letterMat[letter.upper()] = dict()
             for number in range(4, maximum+1):
-                letterMat[letter][str(number)]= 0
-            letterMat[letter]['Σ']= 0
+                letterMat[letter.upper()][str(number)]= 0
+            letterMat[letter.upper()]['Σ']= 0
         letterMat['Σ']= dict()
         
         for number in range(4, maximum+1):
@@ -138,13 +138,13 @@ class DataSource(metaclass=SingletonMeta):
                 pangram += 1
                 if (len(word) == 7):
                     perfectPangram += 1
-            if (letterMat.get(word[0]) == None):
-                letterMat[word[0]][str(len(word))] = 1
+            if (letterMat.get(word[0].upper()) == None):
+                letterMat[word[0].upper()][str(len(word))] = 1
             else:
-                if (letterMat[word[0]].get(str(len(word))) == None):
-                    letterMat[word[0]][str(len(word))] = 1
+                if (letterMat[word[0].upper()].get(str(len(word))) == None):
+                    letterMat[word[0].upper()][str(len(word))] = 1
                 else:
-                    letterMat[word[0]][str(len(word))] += 1
+                    letterMat[word[0].upper()][str(len(word))] += 1
 
             if (beginDict.get(word[:2]) == None):
                 beginDict[word[:2]] = 1
@@ -156,21 +156,21 @@ class DataSource(metaclass=SingletonMeta):
             sumatory = 0
             bingo = False
             for number in range(4, maximum+1):
-                if (letterMat[let][str(number)] != 0):
+                if (letterMat[let.upper()][str(number)] != 0):
                     bingo = True
-                sumatory += letterMat[let][str(number)]
+                sumatory += letterMat[let.upper()][str(number)]
             if not bingo:
                 finalBingo = False
-            letterMat[let]['Σ'] = sumatory
+            letterMat[let.upper()]['Σ'] = sumatory
         for number in range(4, maximum+1):
             sumatory = 0
             for letter in optionalLetters:
 
-                sumatory+=letterMat[letter][str(number)]
+                sumatory+=letterMat[letter.upper()][str(number)]
             letterMat['Σ'][str(number)] = sumatory
         sumatory = 0
         for letter in optionalLetters:
-                sumatory+=letterMat[letter]['Σ']
+                sumatory+=letterMat[letter.upper()]['Σ']
         letterMat['Σ']['Σ'] = sumatory  
 
         return Hint(letterMat, beginDict, pangram, perfectPangram, finalBingo, len(wordList))
