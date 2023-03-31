@@ -4,11 +4,14 @@ codecov:
 
 ignore:
   - "src/model/__ init __.py"
-  - "src/model/Create.DB"
+  - "src/model/CreateDB.py"
 
 coverage:
   round: down
   status:
     project:
+      default:
+        target: 80%
+    patch:
       default:
         target: 80%
