@@ -51,6 +51,8 @@ def main():
             pytest.main(["UnitTests/" + filLis[selection - 1], "--cov-report", "term-missing", "--cov"])
         elif len(sys.argv) > 2 and sys.argv[2].lower() == "single":
             testNm = input("Desired Test from File: ")
+            if(testNm.lower() == "quit"):
+                return
             pytest.main(["UnitTests/" + filLis[selection - 1], "-k", testNm])
         else:
             pytest.main(["UnitTests/" + filLis[selection - 1]])

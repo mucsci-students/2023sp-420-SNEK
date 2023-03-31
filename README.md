@@ -30,7 +30,7 @@ that need installation.
     * pytest
     * pytest-cov
     * pillow
-    * pynput
+    * keyboard
 
 
 ### Python Version
@@ -69,8 +69,8 @@ that need installation.
 3. Running program
     * Within the spell environment:
     
-        * GUI:   ```Bee```
-        * CLI:   ```Bee --cli```
+        * GUI:   ```bee```
+        * CLI:   ```bee --cli```
 
 
 ### CLI Instructions
@@ -102,8 +102,10 @@ that need installation.
                         required center letter.  You can use this to
                         help you find other words.
             -!guessed - Shows all the already correctly guessed words.
+            -!hints - prints out all the hints for the given puzzle
             -!help - Prints out the help menu.
-            -!exit - Exits the game. Will prompt to save.'''
+            -!exit - Exits the game. Will prompt to save.
+            -!quit - Exits the entire program. Will prompt to save.'''
    
 ### GUI Instructions
 
@@ -116,19 +118,19 @@ that need installation.
 * Using the Testing Suite
 
 * Running a complete Test:
-    * Use the command line command:  ```Test``` or ```Test all```
-        * To add coverage use:  ```Test cov``` or ```Test all cov```
+    * Use the command line command:  ```btest``` or ```btest all```
+        * To add coverage use:  ```btest cov``` or ```btest all cov```
 
 * Testing coverage of a specific directory (IE. model, controller, view)
-    * Use the command line command:  ```Test model``` or ```Test controller``` or ```Test view```
+    * Use the command line command:  ```btest model``` or ```btest controller``` or ```btest view```
 
-* Testing a single unit test/file
-    * ```Test single``` for normal testing
-    * ```Test single cov``` for testing with coverage
+* Testing individual files and unit test
+    * ```btest file``` for normal testing
+    * ```btest file cov``` for testing with coverage
+    * ```btest file single``` for testing one individual unit test from the file
         * Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
         * If you do not want to choose a file:  ```quit```
 
-* Test command ```Test``` must have uppercase T
         
         
             
