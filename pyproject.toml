@@ -15,7 +15,7 @@ dependencies = [
     'pytest',
     'pytest-cov',
     'pillow',
-    'keyboard'
+    'prompt-toolkit'
 ]
 
 [tool.pytest.ini_options]
