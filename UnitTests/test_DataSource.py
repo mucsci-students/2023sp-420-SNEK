@@ -45,7 +45,7 @@ class test_DataSource(unittest.TestCase):
     def test_getHints(self):
         dataSource = DataSource("test1.db")
         dataSource.grabWordsFor("waxworks", "x")
-        actualHints: Hint = dataSource.getHints(
+        actualHints:Hint = dataSource.getHints(
             dataSource.wordList, list(set("waxworks")))
         letterMat = dict()
         letters = list(set("waxworks"))
@@ -58,11 +58,15 @@ class test_DataSource(unittest.TestCase):
         letterMat['Σ'] = dict()
         for number in range(4, maximum+1):
             letterMat['Σ'][str(number)] = 0
+        
+        letterMat['W']['8'] = 1
+        letterMat['W']['7'] = 1
+        letterMat['W']['Σ'] = 2
         letterMat['Σ']['8'] = 1
         letterMat['Σ']['7'] = 1
         letterMat['Σ']['Σ'] = 2
         beginning = dict()
-        beginning['WA'] = 2
+        beginning['wa'] = 2
         self.assertEqual(actualHints.beginningList, beginning,
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,
