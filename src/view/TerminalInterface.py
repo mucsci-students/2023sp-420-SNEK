@@ -86,7 +86,8 @@ Commands:
 
     # Path in directory that the user wants to save their games
     def __getUserInputPath(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip()
+        userInput = self.myInputer.inputPath(
+            self.__CMD_PREFIX + message + " ").strip()
         return userInput
 
     # Reset colorama text so that it does not
@@ -212,7 +213,9 @@ Commands:
         self.__boldPrint("Good guess!")
 
     def __getPath(self) -> str:
-        self.__boldPrint("Desired save path: ")
+        baseDir = os.getcwd()
+        self.__boldPrint("Desired save path:")
+        print(f"\tDefault directory: {baseDir}")
         name = self.__getUserInputPath()
         while name == "" or name == ".json":
             self.showError("The file has to have a name.", "Please try again:")
@@ -221,7 +224,6 @@ Commands:
         name = name if name.endswith(".json") else name + ".json "
 
         if not os.path.isabs(name):
-            baseDir = os.getcwd()
             name = os.path.join(baseDir, name)
 
         fileName = os.path.normpath(name)
