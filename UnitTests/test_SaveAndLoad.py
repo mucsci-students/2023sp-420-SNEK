@@ -1,11 +1,12 @@
 
+import sys
+sys.path.append('./src')
+
 import unittest
 from controller.SaveAndLoad import SaveAndLoad
 from model.Puzzle import Puzzle
 import json
 import os
-import sys
-sys.path.append('./src')
 
 
 class test_SaveAndLoad(unittest.TestCase):

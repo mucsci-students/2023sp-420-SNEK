@@ -1,12 +1,12 @@
 
-
-import unittest
-import os
-from model.Hint import Hint
-from model.DataSource import DataSource
-import sqlite3
 import sys
 sys.path.append('./src')
+
+import sqlite3
+from model.DataSource import DataSource
+from model.Hint import Hint
+import os
+import unittest
 
 
 class test_DataSource(unittest.TestCase):

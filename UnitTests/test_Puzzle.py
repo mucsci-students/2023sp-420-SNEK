@@ -7,16 +7,17 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import sys
+sys.path.append('src/model')
+
 import unittest
 from model.Puzzle import Puzzle
 import os
 import sqlite3
 import random
-import sys
 
 
 from model.DataSource import DataSource
-sys.path.append('src/model')
 
 
 class test_Puzzle(unittest.TestCase):
