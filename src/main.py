@@ -3,7 +3,7 @@ import sys
 
 
 from model.DataSource import *
-from model.Factory import Factory
+from controller.Factory import Factory
 from view.UserInterface import *
 from controller.GameController import *
 from view.TerminalInterface import TerminalInterface
