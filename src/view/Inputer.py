@@ -2,6 +2,10 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit import prompt
 from prompt_toolkit.application import run_in_terminal, in_terminal
 from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
+from prompt_toolkit.filters import Filter
+from prompt_toolkit import print_formatted_text, ANSI
+from prompt_toolkit.keys import Keys
+import os
 
 
 class Inputer:
@@ -55,11 +59,39 @@ class Inputer:
             return mostPossibles
 
         def get_completions(self, document, complete_event):
-            # print(document.cursor_position)
             self.userInput = document.text
             self.options = self.__orderStrings(self.options)
             for possible in self.options:
                 yield Completion(possible, start_position=-document.cursor_position)
+
+    class MyCustomPathCompleter(Completer):
+
+        def __init__(self, basedir: str = None):
+            self.basedir = basedir
+
+            if self.basedir == "":
+                self.basedir = os.getcwd()
+            else:
+                self.basedir = os.path.normpath(self.basedir)
+                self.basedir = os.path.abspath(self.basedir)
+
+                if not os.path.exists(self.basedir):
+                    self.basedir = os.getcwd()
+
+        def __calcDirs(self, basedir):
+            basedir = os.path.normpath(basedir)
+            basedir = os.path.abspath(basedir)
+            if os.path.exists(basedir):
+                return os.listdir(basedir)
+            else:
+                return []
+
+        def get_completions(self, document, complete_event):
+            self.userInput = document.text
+            self.basedir = document.text
+            dirs = self.__calcDirs(self.basedir)
+            for possible in dirs:
+                yield Completion(possible, start_position=0)
 
     def input(self, msg: str = "", possibles=[]):
         ''' Input:
@@ -70,7 +102,22 @@ class Inputer:
                 A string containing the desired (typed) user input.
         '''
 
-        userInput = prompt(msg, completer=self.MyCustomCompleter(possibles))
+        userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
+            possibles), complete_while_typing=False)
+
+        return userInput
+
+    def inputPath(self, msg: str = "", basedir=""):
+        ''' Input:
+                msg: the message to show before the prompts.
+                possibles: the list of possible tab completions.
+
+            Output:
+                A string containing the desired (typed) user input.
+        '''
+
+        userInput = prompt(ANSI(msg), completer=self.MyCustomPathCompleter(
+            basedir), complete_while_typing=True)
 
         return userInput
 
@@ -84,10 +131,10 @@ class Inputer:
         for l in options:
             @bindings.add(l)
             def _(event: KeyPressEvent):
-                f" Say 'hello' when {l} is pressed. "
                 event.current_buffer.insert_text(event.data)
                 event.app.exit(event.data)
 
-        userInput = prompt(msg, key_bindings=bindings)
+        userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
+            options), key_bindings=bindings)
 
         return userInput
