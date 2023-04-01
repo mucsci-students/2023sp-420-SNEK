@@ -1,0 +1,17 @@
+codecov:
+  token: ${{secrets.CODECOV_TOKEN}}
+  require_ci_to_pass: yes
+
+ignore:
+  - "src/model/__ init __.py"
+  - "src/model/CreateDB.py"
+
+coverage:
+  round: down
+  status:
+    project:
+      default:
+        target: 80%
+    patch:
+      default:
+        target: 80%

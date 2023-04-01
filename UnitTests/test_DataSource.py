@@ -51,17 +51,13 @@ class test_DataSource(unittest.TestCase):
         letters = list(set("waxworks"))
         maximum = 8
         for letter in letters:
-            letterMat[letter] = dict()
+            letterMat[letter.upper()] = dict()
             for number in range(4, maximum+1):
-                letterMat[letter][str(number)] = 0
-            letterMat[letter]['Σ'] = 0
+                letterMat[letter.upper()][str(number)] = 0
+            letterMat[letter.upper()]['Σ'] = 0
         letterMat['Σ'] = dict()
         for number in range(4, maximum+1):
             letterMat['Σ'][str(number)] = 0
-
-        letterMat['w']['8'] = 1
-        letterMat['w']['7'] = 1
-        letterMat['w']['Σ'] = 2
         letterMat['Σ']['8'] = 1
         letterMat['Σ']['7'] = 1
         letterMat['Σ']['Σ'] = 2
