@@ -11,6 +11,15 @@ import os
 class Inputer:
 
     class MyCustomCompleter(Completer):
+        ''' Class for completing paths extending the 'Completer' base class.
+
+            Behavior:
+                Gives the completer the right strings to complete the input (in order).
+
+            Notes:
+                Completes with the nearest option from the given ones, preferring the ones
+                that start the same way as the input.
+        '''
 
         def __init__(self, options: list[str] = None):
             self.options = options if options is not None else []
@@ -43,6 +52,12 @@ class Inputer:
                             self.__lev(str1[1:], str2[1:]) + 1])
 
         def __orderStrings(self, possiblesList: list[str]):
+            ''' Input:
+                    two strings to compare (str1 and str2).
+
+                Output:
+                    the edit distance between the 2 strings (starting from the front).
+            '''
             if possiblesList == []:
                 return possiblesList
 
@@ -59,12 +74,27 @@ class Inputer:
             return mostPossibles
 
         def get_completions(self, document, complete_event):
+            ''' Input:
+                    Defaults for the class to work.
+
+                Output:
+                    Yields every possible completion based on the input already given.
+            '''
             self.userInput = document.text
             self.options = self.__orderStrings(self.options)
             for possible in self.options:
                 yield Completion(possible, start_position=-document.cursor_position)
 
     class MyCustomPathCompleter(Completer):
+        ''' Class for completing paths extending the 'Completer' base class.
+
+            Behavior:
+                Gives the completer the right strings to complete the input (in order).
+
+            Notes:
+                Completes just the last part of the path (normalized). 
+                If no base path is given the current one is chosen.
+        '''
 
         def __init__(self, basedir: str = None):
             self.basedir = basedir
@@ -87,6 +117,12 @@ class Inputer:
                 return []
 
         def get_completions(self, document, complete_event):
+            ''' Input:
+                    Defaults for the class to work.
+
+                Output:
+                    Yields every possible completion based on the input already given.
+            '''
             self.userInput = document.text
             self.basedir = document.text
             dirs = self.__calcDirs(self.basedir)
@@ -110,7 +146,7 @@ class Inputer:
     def inputPath(self, msg: str = "", basedir=""):
         ''' Input:
                 msg: the message to show before the prompts.
-                possibles: the list of possible tab completions.
+                basedir: the base dir from which start the tab completion.
 
             Output:
                 A string containing the desired (typed) user input.
@@ -122,6 +158,13 @@ class Inputer:
         return userInput
 
     def quickInput(self, msg: str = '', options=[]):
+        ''' Input:
+                msg: the message to show before the prompts.
+                options: the valid options for the input.
+
+            Output:
+                A string containing the desired (typed) user input, without waiting for an enter.
+        '''
         bindings = KeyBindings()
 
         @bindings.add('<any>')
