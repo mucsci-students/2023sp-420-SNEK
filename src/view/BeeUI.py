@@ -327,7 +327,7 @@ class BeeUI(UserInterface):
         self.hintsTextBox.insert(
             'end', "Here are the letters for the puzzle:        \n", 'tag_center')
         for stri in myPuzzle.getPuzzleLetters():
-            self.hintsTextBox.insert('end', stri + " ", 'tag_center')
+            self.hintsTextBox.insert('end', stri.upper() + " ", 'tag_center')
         self.hintsTextBox.insert(
             'end', "  (First Letter Required) \n\n", 'tag_center')
 
