@@ -1,189 +1,183 @@
-import keyboard
-import signal
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit import prompt
+from prompt_toolkit.application import run_in_terminal, in_terminal
+from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
+from prompt_toolkit.filters import Filter
+from prompt_toolkit import print_formatted_text, ANSI
+from prompt_toolkit.keys import Keys
 import os
 
 
 class Inputer:
 
-    def __init__(self):
-        self.endOfInput = False
-        self.userInput = ""
-        self.originalIndex = 0
-        self.originals = []
-        self.msg = ""
-        self.prev = None
-        self.specialDouble = '¨`´^'
-        self.commandLetters = 'zyc'
-        self.commandKeys = ['ctrl', 'shift']
+    class MyCustomCompleter(Completer):
+        ''' Class for completing paths extending the 'Completer' base class.
 
-    def __distance(self, str1, str2) -> int:
+            Behavior:
+                Gives the completer the right strings to complete the input (in order).
 
-        editDist = self.__lev(str1, str2)
+            Notes:
+                Completes with the nearest option from the given ones, preferring the ones
+                that start the same way as the input.
+        '''
 
-        return editDist
+        def __init__(self, options: list[str] = None):
+            self.options = options if options is not None else []
+            self.userInput = ''
 
-    # Fn that calculates the number of character changes needed between two strings
-    def __lev(self, str1, str2):
-        # if string 1 is empty, return the length of string 2
-        if str1 == "":
-            return len(str2)
+        # Fn that calculates the number of character changes needed between two strings
+        def __lev(self, str1: str, str2: str) -> int:
+            ''' Input:
+                    two strings to compare (str1 and str2).
 
-        # if string 2 is empty, return the length of string 1
-        if str2 == "":
-            return len(str1)
+                Output:
+                    the edit distance between the 2 strings (starting from the front).
+            '''
+            # if string 1 is empty, return the length of string 2
+            if str1 == "":
+                return len(str2)
 
-        # if the last character in each strings are equal, set dist = 0
-        if str1[0] == str2[0]:
-            return self.__lev(str1[1:], str2[1:])
+            # if string 2 is empty, return the length of string 1
+            if str2 == "":
+                return len(str1)
 
-        else:
-            # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
-            return min([self.__lev(str1[1:], str2),
-                        self.__lev(str1, str2[1:]),
-                        self.__lev(str1[1:], str2[1:]) + 1])
+            # if the last character in each strings are equal, set dist = 0
+            if str1[0] == str2[0]:
+                return self.__lev(str1[1:], str2[1:])
 
-    def __orderStrings(self, possiblesList: list[str]):
-        if possiblesList == []:
-            return possiblesList
+            else:
+                # sum of the distance between the levDist for str1 - 1, for str2 - 1, str1 - 1 and str2 - 1
+                return min([self.__lev(str1[1:], str2),
+                            self.__lev(str1, str2[1:]),
+                            self.__lev(str1[1:], str2[1:]) + 1])
 
-        self.possibleIndex = -1
-        prefixed = [
-            possible for possible in possiblesList if possible.startswith(self.userInput)]
-        nonPrefixed = [
-            possible for possible in possiblesList if not possible.startswith(self.userInput)]
-        prefixedDistances = [self.__distance(
-            self.userInput, possible) for possible in prefixed]
-        SortedPrefixed = [possible for _, possible in sorted(
-            zip(prefixedDistances, prefixed))]
-        SortedNonPrefixed = nonPrefixed
-        mostPossibles = SortedPrefixed + SortedNonPrefixed
-        return mostPossibles
+        def __orderStrings(self, possiblesList: list[str]):
+            ''' Input:
+                    two strings to compare (str1 and str2).
 
-    # <ctrl>+'z'
+                Output:
+                    the edit distance between the 2 strings (starting from the front).
+            '''
+            if possiblesList == []:
+                return possiblesList
 
-    def __ctrl_z(self):
-        if self.originalIndex > 0:
-            self.originalIndex -= 1
+            prefixed = [
+                possible for possible in possiblesList if possible.startswith(self.userInput)]
+            nonPrefixed = [
+                possible for possible in possiblesList if not possible.startswith(self.userInput)]
+            prefixedDistances = [self.__lev(
+                self.userInput, possible) for possible in prefixed]
+            SortedPrefixed = [possible for _, possible in sorted(
+                zip(prefixedDistances, prefixed))]
+            SortedNonPrefixed = nonPrefixed
+            mostPossibles = SortedPrefixed + SortedNonPrefixed
+            return mostPossibles
 
-        if len(self.originals) > 0:
-            self.userInput = self.originals[self.originalIndex]
-            self.possibles = self.__orderStrings(self.possibles)
+        def get_completions(self, document, complete_event):
+            ''' Input:
+                    Defaults for the class to work.
 
-    # <ctrl>+'y'
-    def __ctrl_y(self):
-        if self.originalIndex < len(self.originals) - 1:
-            self.originalIndex += 1
+                Output:
+                    Yields every possible completion based on the input already given.
+            '''
+            self.userInput = document.text
+            self.options = self.__orderStrings(self.options)
+            for possible in self.options:
+                yield Completion(possible, start_position=-document.cursor_position)
 
-        if len(self.originals) > 0:
-            self.userInput = self.originals[self.originalIndex]
-            self.possibles = self.__orderStrings(self.possibles)
+    class MyCustomPathCompleter(Completer):
+        ''' Class for completing paths extending the 'Completer' base class.
 
-    # <ctrl>+'c'
-    def __ctrl_c(self):
-        keyboard.press('esc')
-        keyboard.stash_state()
-        keyboard.unhook_all()
-        os.kill(os.getpid(), signal.SIGABRT)
+            Behavior:
+                Gives the completer the right strings to complete the input (in order).
 
-    # <shift>+<tab>
-    def __shift_tab(self):
+            Notes:
+                Completes just the last part of the path (normalized). 
+                If no base path is given the current one is chosen.
+        '''
 
-        if self.possibleIndex > 0:
-            self.possibleIndex = self.possibleIndex - 1
+        def __init__(self, basedir: str = None):
+            self.basedir = basedir
 
-        if len(self.possibles) > 0:
-            self.userInput = self.possibles[self.possibleIndex]
-            self.__adjustOriginals()
+            if self.basedir == "":
+                self.basedir = os.getcwd()
+            else:
+                self.basedir = os.path.normpath(self.basedir)
+                self.basedir = os.path.abspath(self.basedir)
 
-    # <tab>
-    def __tab(self):
-        if self.possibleIndex < len(self.possibles) - 1:
-            self.possibleIndex = self.possibleIndex + 1
+                if not os.path.exists(self.basedir):
+                    self.basedir = os.getcwd()
 
-        if len(self.possibles) > 0:
-            self.userInput = self.possibles[self.possibleIndex]
-            self.__adjustOriginals()
+        def __calcDirs(self, basedir):
+            basedir = os.path.normpath(basedir)
+            basedir = os.path.abspath(basedir)
+            if os.path.exists(basedir):
+                return os.listdir(basedir)
+            else:
+                return []
 
-    def __on_press(self, key: str):
+        def get_completions(self, document, complete_event):
+            ''' Input:
+                    Defaults for the class to work.
 
-        if key == self.prev and key in self.specialDouble:
-            self.userInput += (key + key)
-            self.possibles = self.__orderStrings(self.possibles)
-            self.__adjustOriginals()
-
-        else:
-            if len(key) == 1 and key not in self.specialDouble:
-                specialKeyPressed = False
-                if key in self.commandLetters:
-                    for specialKey in self.commandKeys:
-                        specialKeyPressed = specialKeyPressed or keyboard.is_pressed(
-                            specialKey)
-                if not specialKeyPressed:
-                    self.userInput += key
-                    self.possibles = self.__orderStrings(self.possibles)
-                    self.__adjustOriginals()
-
-            elif key == 'space':
-                self.userInput += ' '
-                self.possibles = self.__orderStrings(self.possibles)
-                self.__adjustOriginals()
-
-            # <backspace>
-            elif (key == 'backspace'):
-                k = len(self.userInput) - 1
-                if k > 0:
-                    self.userInput = self.userInput[:k]
-                else:
-                    self.userInput = ""
-                self.possibles = self.__orderStrings(self.possibles)
-
-                self.__adjustOriginals()
-
-            self.prev = key
-
-        self.__showPrompt()
-
-    def __adjustOriginals(self):
-        if self.originalIndex == 0:
-            self.originals = ['']
-
-        elif self.originalIndex < (len(self.originals) - 1):
-            self.originals = self.originals[:self.originalIndex]
-
-        self.originals += [self.userInput]
-        self.originalIndex += 1
-
-    def __showPrompt(self):
-        hidingSpaces = ''.join(
-            [' '] * (len(self.originals[self.originalIndex-1]) + 3))
-        print("\r" + self.msg + self.userInput, end=hidingSpaces)
-        print("\r" + self.msg + self.userInput, end=hidingSpaces)
+                Output:
+                    Yields every possible completion based on the input already given.
+            '''
+            self.userInput = document.text
+            self.basedir = document.text
+            dirs = self.__calcDirs(self.basedir)
+            for possible in dirs:
+                yield Completion(possible, start_position=0)
 
     def input(self, msg: str = "", possibles=[]):
-        # keyboard.unhook_all()
-        self.msg = msg
-        self.originalIndex = 0
-        self.possibleIndex = -1
-        self.possibles = possibles
-        self.userInput = ""
-        self.originals = ['']
+        ''' Input:
+                msg: the message to show before the prompts.
+                possibles: the list of possible tab completions.
 
-        self.__showPrompt()
+            Output:
+                A string containing the desired (typed) user input.
+        '''
 
-        keyboard.add_hotkey('tab', self.__tab, suppress=True)
-        keyboard.add_hotkey('shift+tab', self.__shift_tab, suppress=True)
-        keyboard.add_hotkey('ctrl+z', self.__ctrl_z, suppress=True)
-        keyboard.add_hotkey('ctrl+y', self.__ctrl_y, suppress=True)
-        keyboard.add_hotkey('ctrl+c', self.__ctrl_c, suppress=True)
-        keyboard.on_press(lambda x: [self.__on_press(
-            x.name), self.__showPrompt()], suppress=True)
-        keyboard.on_release(lambda x: self.__showPrompt(), suppress=False)
-        keyboard.on_release_key(
-            'enter', lambda x: keyboard.press('esc'), suppress=True)
-        keyboard.wait('enter', suppress=True)
-        keyboard.stash_state()
+        userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
+            possibles), complete_while_typing=False)
 
-        print('\n', end="\r")
-        keyboard.unhook_all()
+        return userInput
 
-        return self.userInput
+    def inputPath(self, msg: str = "", basedir=""):
+        ''' Input:
+                msg: the message to show before the prompts.
+                basedir: the base dir from which start the tab completion.
+
+            Output:
+                A string containing the desired (typed) user input.
+        '''
+
+        userInput = prompt(ANSI(msg), completer=self.MyCustomPathCompleter(
+            basedir), complete_while_typing=True)
+
+        return userInput
+
+    def quickInput(self, msg: str = '', options=[]):
+        ''' Input:
+                msg: the message to show before the prompts.
+                options: the valid options for the input.
+
+            Output:
+                A string containing the desired (typed) user input, without waiting for an enter.
+        '''
+        bindings = KeyBindings()
+
+        @bindings.add('<any>')
+        def _(event: KeyPressEvent):
+            pass
+
+        for l in options:
+            @bindings.add(l)
+            def _(event: KeyPressEvent):
+                event.current_buffer.insert_text(event.data)
+                event.app.exit(event.data)
+
+        userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
+            options), key_bindings=bindings)
+
+        return userInput

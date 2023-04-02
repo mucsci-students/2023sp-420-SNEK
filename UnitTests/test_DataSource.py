@@ -1,6 +1,4 @@
 
-
-
 import sys
 sys.path.append('./src')
 
@@ -73,14 +71,14 @@ class test_DataSource(unittest.TestCase):
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,
                          f"the list is not the expected one, the one expected was {letterMat} and the one recieved was {actualHints.letterMatrix}")
-        
 
     def test_notInDataBase(self):
         dataSource = DataSource("test1.db")
-        self.assertFalse(dataSource.checkWord("pamplona"),"this word shouldnt be in this db")
-        self.assertTrue(dataSource.checkWord("waxworks"),"this word should be in the db")
+        self.assertFalse(dataSource.checkWord("pamplona"),
+                         "this word shouldnt be in this db")
+        self.assertTrue(dataSource.checkWord("waxworks"),
+                        "this word should be in the db")
 
 
 if __name__ == '__main__':
     unittest.main()
-

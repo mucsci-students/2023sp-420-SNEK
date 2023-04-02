@@ -7,16 +7,17 @@
 # data.  Also assures that the correct exceptions
 # are thrown for their respective cases.
 
+import sys
+sys.path.append('src/model')
+
 import unittest
 from model.Puzzle import Puzzle
 import os
 import sqlite3
 import random
-import sys
 
 
 from model.DataSource import DataSource
-sys.path.append('src/model')
 
 
 class test_Puzzle(unittest.TestCase):
@@ -45,8 +46,8 @@ class test_Puzzle(unittest.TestCase):
         tst_puzzle = Puzzle(list(set("waxworks")), myList)
         hint = dataSource.getHints(myList, list("waorsk"))
         tst_puzzle.setHint(hint)
-        self.assertEquals(hint, tst_puzzle.getHint(),
-                          f"actual: {tst_puzzle.getHint()}, original: {hint}")
+        self.assertEqual(hint, tst_puzzle.getHint(),
+                         f"actual: {tst_puzzle.getHint()}, original: {hint}")
 
     def test_createPuzzle(self):
         tst_puzzle = Puzzle(self.puzzleLetters, self.wordsList)
