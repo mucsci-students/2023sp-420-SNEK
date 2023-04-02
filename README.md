@@ -131,6 +131,42 @@ that need installation.
         * Choose the test file via the number connected to them (IE. 1, 2, 3, etc.)
         * If you do not want to choose a file:  ```quit```
 
+    
+ ### Design patterns
+    * MVC: The MVC patter can be seen in the division of responsabilities,
+    being the classes in charge of showing data in the view (UserInterface and the diferent 
+    classes that inherit from it), the classes in charge of controlling the flow of the
+    programm and responding to the user interactions in the controller part, and
+    the classes in charge of storing and handling data the model. 
+    All this classes are divided in their corresponding folders
+    
+    * Proxy: For calling the data base, we have implemented the proxy design pattern, 
+    in order to have only on class to comunicate with it. This can be useful to prevent
+    IO problems when accessing the data in the data base. The class that acts as a proxy
+    for the data base is the DataSource class, which has an interface that can be used
+    to extrac data without directly interacting with the data base.
+    
+    * Factory: For creating the different types of interfaces, we have a factory class 
+    that returns the object of on of the classes that inherit from UserInterface depending
+    on the type of interface the user has chosen to use. The class that makes the object is
+    just called factory, and its use can be seen in the main.py when creating the interface
+    for the user.
+    
+    * Iterator:
+    * Singleton: As we have made clear that we want to controll the access to the data 
+    base in order to avoid different problems that can happen due to multiple components
+    accessing it, a logical improvement to avoid this problem is to not only different 
+    classes accessing the data base but different objects, that is why, the DataSource
+    class, the proxy for the data base, is now a singleton. This can be seen in the beggining
+    of the DataSource class, as only one instance of that class can be made.
+    
+    PS:
+    
+     * Mediator: The communication between the different components is not direct, 
+    is always through the controller. If the interface wants some data about the
+    puzzle, it won't call directly to the puzzle, but it will ask to the controller
+    about that data. Even though this pattern is a consecuence of the MVC, we wanted
+    to at least mention it
         
         
             
