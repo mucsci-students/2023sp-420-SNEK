@@ -16,6 +16,9 @@ class TerminalInterface(UserInterface):
     # Initialization of styles for game title
     def __init__(self) -> None:
         super().__init__()
+        self.defaultYes = 'y'
+        self.defaultNo = 'n'
+        self.defaultCancel = 'c'
         self.myInputer: Inputer = Inputer()
         self.__CMD_PREFIX: str = Style.BRIGHT + Fore.BLUE + ">>" + Style.RESET_ALL
         self.__DONE_PROGRESS: str = Fore.YELLOW + "⬢" + Style.RESET_ALL

@@ -50,6 +50,9 @@ class BeeUI(UserInterface):
 
     def __init__(self):
         super().__init__()
+        self.defaultYes = 'Yes'
+        self.defaultNo = 'No'
+        self.defaultCancel = 'Cancel'
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
@@ -149,15 +152,26 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="yes", nokStr="no", canStr="cancel"):
+    def getConfirmation(self, inputString, okStr="", nokStr="", canStr=""):
+        choice = ""
+
+        if okStr == "":
+            okStr = self.defaultYes
+
+        if nokStr == "":
+            nokStr = self.defaultNo
+
+        if canStr == "":
+            canStr = self.defaultCancel
+
         choice = self.__messageWindow(
             "title", inputString, okStr, nokStr, canStr)
-        print(choice)
+
         return choice
 
     # Private method __messageWindow
     # Accepts a title for the window, and a message for the window.
-    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='scratch', nokStr='current', canStr='cancel'):
+    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='', nokStr='', canStr=''):
         self.textStringForCon = ""
         self.win = Toplevel()  # Popout screen
         self.win.protocol("WM_DELETE_WINDOW",
@@ -193,7 +207,7 @@ class BeeUI(UserInterface):
         # Program will wait for the selection of the user.
         self.win.wait_window()
 
-        return self.textStringForCon.lower()
+        return self.textStringForCon
 
     # Private method textHelper
     # Accepts a string text that will be one of two option ("scratch"/"current")
@@ -398,6 +412,7 @@ class BeeUI(UserInterface):
     # Updates the gamePage to have all current and up-to-date info
     # about their currently played game.
     def showPuzzle(self, puzzle):
+        self.puzzle = puzzle
         self.wordPuzzle = puzzle.getPuzzleLetters()
         self.__gamePage()
         self.showProgress(puzzle.getCurrentRank(), list(
@@ -435,9 +450,7 @@ class BeeUI(UserInterface):
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
-        if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
-            self.myController.processInput(Commands.QUIT)
-            # self.root.destroy()
+        self.myController.processInput(Commands.QUIT)
 
     # Private method __setText
     # Handles placing the letters from the buttons into the entry field
@@ -561,7 +574,7 @@ class BeeUI(UserInterface):
         self.newGameBtn = tk.Button(
             self.mainFrame, border='0', image=self.newImg, command=self.__preGamePage)
         self.loadGameBtn = tk.Button(self.mainFrame, border='0', image=self.loadImg, command=lambda: [
-                                     self.__onLoad(), self.showStatus(), self.__gamePage()])
+                                     self.__onLoad()])
         self.helpBtn = tk.Button(
             self.mainFrame, border='0', image=self.helpImg, command=self.__howToPlayPage)
         self.exitGameBtn = tk.Button(
@@ -663,6 +676,10 @@ class BeeUI(UserInterface):
             self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
 
+        if self.myController.playing:
+            self.goBackBtn.configure(
+                command=lambda: [self.showPuzzle(self.puzzle)])
+
     # Private method __gamePage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
@@ -674,8 +691,8 @@ class BeeUI(UserInterface):
         self.root.protocol("WM_DELETE_WINDOW", self.__checkTerminate)
 
         # Allows usage of some filemenu options
-        self.filemenu.entryconfig("New", command=lambda: [
-                                  self.myController.processInput(Commands.EXIT)])
+        # self.filemenu.entryconfig("New", command=lambda:
+        #                           self.myController.processInput(Commands.EXIT))
         self.filemenu.entryconfig("Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig(

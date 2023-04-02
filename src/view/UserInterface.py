@@ -7,9 +7,6 @@ class UserInterface(ABC):
     def __init__(self) -> None:
         self.myController = None
         self.quit = False
-        self.defaultYes = 'y'
-        self.defaultNo = 'n'
-        self.defaultCancel = 'c'
 
     def setController(self, myController):
         self.myController: controller.GameController.GameController = myController

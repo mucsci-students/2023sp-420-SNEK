@@ -50,7 +50,6 @@ class GameController:
 
     # A private function that asks whether the user wants to save when the program is in the process of exiting.
     def __askExitAndSave(self, explicit=False) -> bool:
-        print(explicit)
         if not explicit:
             exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
             if exitGame == self.myUserInterface.defaultYes:
@@ -215,11 +214,11 @@ class GameController:
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                print("Here")
                 exit = self.__askExitAndSave(explicit=False)
                 if exit:
                     newBaseWord = self.myDataSource.getRandomWord()
                     self.__createGame(newBaseWord)
+
             else:
                 newBaseWord = self.myDataSource.getRandomWord()
                 self.__createGame(newBaseWord)
