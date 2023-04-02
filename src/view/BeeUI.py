@@ -299,6 +299,7 @@ class BeeUI(UserInterface):
     # the user to help them progress through the game.
     def showHints(self, myPuzzle):
         self.hintsWin = Toplevel()  # popout window
+        self.hintsWin.resizable(0,0) # Forces window to stay size
         self.hintsWin.title("Hints!")
 
         # Data of hints
