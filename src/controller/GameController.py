@@ -81,10 +81,10 @@ class GameController:
     # Uses the SaveAndLoad module to handle saving a game into the json format.
 
     def __saveFile(self) -> bool:
-        scratchMode = self.myUserInterface.getConfirmation(
+        saveMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
-        if scratchMode != "cancel":
+        if saveMode != "cancel":
             fileName = self.myUserInterface.getSaveFileName()
             if fileName == "":
                 return
@@ -92,7 +92,7 @@ class GameController:
                 return True
 
             if not os.path.basename(fileName) == ".json":
-                if scratchMode:
+                if saveMode == "scratch":
                     SaveAndLoad.saveScratch(self.myPuzzle, fileName)
                 else:
                     SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
@@ -100,7 +100,7 @@ class GameController:
                 self.myUserInterface.showMessage(
                     "The file has been saved: " + fileName)
 
-        return scratchMode == "cancel"
+        return saveMode == "cancel"
 
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
