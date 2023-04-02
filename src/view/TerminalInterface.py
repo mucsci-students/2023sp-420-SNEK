@@ -257,7 +257,7 @@ Commands:
             print("\t" + word)
 
     def __getQuickInput(self, okStr, nokStr, canStr):
-        return self.myInputer.quickInput(self.__CMD_PREFIX, [okStr, nokStr, canStr])
+        return self.myInputer.quickInput(self.__CMD_PREFIX + " ", [okStr, nokStr, canStr])
 
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
@@ -280,7 +280,6 @@ Commands:
 
         self.__boldPrint(message + f" [{okStr}/{nokStr}/{canStr}]: ")
         if len(okStr) == 1 and len(nokStr) == 1 and len(canStr) == 1:
-            print(self.__CMD_PREFIX, end=" ")
             choice = self.__getQuickInput(okStr, nokStr, canStr)
         else:
             choice = str(self.__getUserInput(
