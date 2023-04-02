@@ -317,7 +317,8 @@ class BeeUI(UserInterface):
         # Configure tags for printing styles
         self.hintsTextBox.tag_configure('tag_center', justify='center')
         self.hintsTextBox.tag_configure(
-            'tag_left', justify='center', font=('Courier New', 11))
+            'tag_center', justify='center', font=('Courier New', 11))
+        self.hintsTextBox.tag_configure('tag_left', justify='left', font=('Courier New', 11))
         self.hintsTextBox.tag_configure(
             'tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
 
@@ -352,17 +353,17 @@ class BeeUI(UserInterface):
 
         separator = "-"
         for rowLetter, rowContent in hintsData.letterMatrix.items():
-            self.hintsTextBox.insert('end', "\n", 'tag_left')
-            self.hintsTextBox.insert('end', f"{rowLetter:^4}", 'tag_left')
+            self.hintsTextBox.insert('end', "\n", 'tag_center')
+            self.hintsTextBox.insert('end', f"{rowLetter:^4}", 'tag_center')
             for _, column in rowContent.items():
                 if column == 0:
                     self.hintsTextBox.insert(
-                        'end', f"{separator:^4}", 'tag_left')
+                        'end', f"{separator:^4}", 'tag_center')
                 else:
-                    self.hintsTextBox.insert('end', f"{column:^4}", 'tag_left')
+                    self.hintsTextBox.insert('end', f"{column:^4}", 'tag_center')
 
         # Spacing between Matrix and Two Letter List
-        self.hintsTextBox.insert('end', "\n\n", 'tag_left')
+        self.hintsTextBox.insert('end', "\n\n", 'tag_center')
 
         # Create Two Letter List
         self.hintsTextBox.insert('end', "Two Letter List:\n", 'tag_center')
