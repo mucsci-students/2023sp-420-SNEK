@@ -224,7 +224,7 @@ Commands:
             self.showError("The file has to have a name.", "Please try again:")
             name = self.__getUserInputPath()
 
-        name = name if name.endswith(".json") else name + ".json "
+        name = name if name.endswith(".json") else name + ".json"
 
         if not os.path.isabs(name):
             name = os.path.join(baseDir, name)

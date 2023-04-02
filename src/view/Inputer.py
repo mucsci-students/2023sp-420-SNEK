@@ -111,7 +111,7 @@ class Inputer:
         def __calcDirs(self, basedir):
             basedir = os.path.normpath(basedir)
             basedir = os.path.abspath(basedir)
-            if os.path.exists(basedir):
+            if os.path.exists(basedir) and os.path.isdir(basedir):
                 return os.listdir(basedir)
             else:
                 return []
