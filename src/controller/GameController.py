@@ -172,6 +172,9 @@ class GameController:
 
             if SaveAndLoad.isSaved(loadingFile):
                 self.myPuzzle = SaveAndLoad.load(loadingFile)
+                newHints = self.myDataSource.getHints(
+                    self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
+                self.myPuzzle.setHint(newHints)
                 self.playing = True
                 self.myUserInterface.showMessage(
                     "The file has been loaded: " + loadingFile)
