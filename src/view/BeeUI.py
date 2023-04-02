@@ -131,7 +131,6 @@ class BeeUI(UserInterface):
     # Private method __onSave
     # Notifies myController that the user intends to save
 
-
     def __onSave(self):
         self.myController.processInput(Commands.SAVE)
 
@@ -150,14 +149,19 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="yes", nokStr="no", cokStr="cancel"):
-        return self.__messageWindow("title", inputString, okStr, nokStr, cokStr)
+    def getConfirmation(self, inputString, okStr="yes", nokStr="no", canStr="cancel"):
+        choice = self.__messageWindow(
+            "title", inputString, okStr, nokStr, canStr)
+        print(choice)
+        return choice
 
     # Private method __messageWindow
     # Accepts a title for the window, and a message for the window.
-    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='Scratch', nokStr='current', cokStr='\b'):
+    def __messageWindow(self, title="title", message="Message! Close the window!", okStr='scratch', nokStr='current', canStr='cancel'):
         self.textStringForCon = ""
         self.win = Toplevel()  # Popout screen
+        self.win.protocol("WM_DELETE_WINDOW",
+                          lambda: self.__textHelper(canStr))
         self.win.title(title)
         self.win.geometry("300x75")
 
@@ -179,8 +183,8 @@ class BeeUI(UserInterface):
                                     self.__textHelper(okStr)])
         self.currentBtn = tk.Button(self.windowFrameBtns, text=nokStr, command=lambda: [
                                     self.__textHelper(nokStr)])
-        self.cancelBtn = tk.Button(self.windowFrameBtns, text=cokStr, command=lambda: [
-                                   self.__textHelper(cokStr)])
+        # self.cancelBtn = tk.Button(self.windowFrameBtns, text=cokStr, command=lambda: [
+        #                            self.__textHelper(cokStr)])
 
         self.scratchBtn.grid(row=0, column=0)
         self.currentBtn.grid(row=0, column=1)
@@ -189,7 +193,7 @@ class BeeUI(UserInterface):
         # Program will wait for the selection of the user.
         self.win.wait_window()
 
-        return self.textStringForCon.lower() == okStr
+        return self.textStringForCon.lower()
 
     # Private method textHelper
     # Accepts a string text that will be one of two option ("scratch"/"current")

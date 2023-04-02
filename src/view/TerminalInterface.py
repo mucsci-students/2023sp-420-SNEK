@@ -238,9 +238,14 @@ Commands:
         if os.path.exists(fileName):
             self.showMessage("This file already exists")
             overwrite = self.getConfirmation("Do you want to overwrite it?")
-            if not overwrite:
+
+            if overwrite == self.defaultYes:
                 name = os.path.join(os.getcwd(), ".json")
                 fileName = os.path.normpath(name)
+            elif overwrite == self.defaultNo:
+                fileName = ""
+            else:
+                fileName = None
 
         return fileName
 
@@ -266,13 +271,13 @@ Commands:
         self.choice = ""
 
         if okStr == "":
-            okStr = 'y'
+            okStr = self.defaultYes
 
         if nokStr == "":
-            nokStr = 'n'
+            nokStr = self.defaultNo
 
         if canStr == "":
-            canStr = 'c'
+            canStr = self.defaultCancel
 
         okStr = okStr.lower()
         nokStr = nokStr.lower()
@@ -290,7 +295,7 @@ Commands:
             choice = self.__getUserInput(
                 options=[okStr, nokStr, canStr]).lower().strip()
 
-        return choice == okStr
+        return choice
 
     # Prints messages in cli
     def showMessage(self, message, endStr="\n"):
