@@ -28,7 +28,7 @@ class GameController:
     # Constructor that instantiates a new GameController object.
     def __init__(self, dataSource: DataSource) -> None:
         self.myPuzzle: Puzzle = None
-        self.myUserInterface: view.UserInterface = None
+        self.myUserInterface: view.UserInterface.UserInterface = None
         self.playing: bool = False
         self.myDataSource: DataSource = dataSource
 
@@ -52,42 +52,55 @@ class GameController:
     def __askExitAndSave(self, explicit=False) -> bool:
         if not explicit:
             exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
-            if exitGame:
-                self.playing = False
+            if exitGame == self.myUserInterface.defaultYes:
                 save = self.myUserInterface.getConfirmation(
                     "Do you want to save?")
-                if save:
-                    self.__saveFile()
+                if save == self.myUserInterface.defaultYes:
+                    canceled = self.__saveFile()
+                    if canceled:
+                        exitGame = self.myUserInterface.defaultCancel
 
-                self.myUserInterface.showExit()
+                elif save == self.myUserInterface.defaultCancel:
+                    exitGame = self.myUserInterface.defaultCancel
+
         else:
-            exitGame = True
+            exitGame = self.myUserInterface.defaultYes
             save = self.myUserInterface.getConfirmation(
                 self.__EXPLICIT_EXIT_MSG)
-            if save:
-                self.__saveFile()
-            self.myUserInterface.showExit()
+            if save == self.myUserInterface.defaultYes:
+                canceled = self.__saveFile()
+                if canceled:
+                    exitGame = self.myUserInterface.defaultCancel
 
-        return exitGame
+            elif save == self.myUserInterface.defaultCancel:
+                exitGame = self.myUserInterface.defaultCancel
+
+        return exitGame == self.myUserInterface.defaultYes
 
     # A private function that handles the functionality of saving a file and all of its cases.
     # Uses the SaveAndLoad module to handle saving a game into the json format.
 
-    def __saveFile(self) -> None:
+    def __saveFile(self) -> bool:
         scratchMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
-        fileName = self.myUserInterface.getSaveFileName()
-        if (fileName == ""):
-            return
-        if not os.path.basename(fileName) == ".json":
-            if scratchMode:
-                SaveAndLoad.saveScratch(self.myPuzzle, fileName)
-            else:
-                SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
+        if scratchMode != "cancel":
+            fileName = self.myUserInterface.getSaveFileName()
+            if fileName == "":
+                return
+            elif fileName == None:
+                return True
 
-            self.myUserInterface.showMessage(
-                "The file has been saved: " + fileName)
+            if not os.path.basename(fileName) == ".json":
+                if scratchMode:
+                    SaveAndLoad.saveScratch(self.myPuzzle, fileName)
+                else:
+                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName)
+
+                self.myUserInterface.showMessage(
+                    "The file has been saved: " + fileName)
+
+        return scratchMode == "cancel"
 
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
@@ -114,6 +127,8 @@ class GameController:
             if self.playing:
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
+                    self.playing = False
+                    self.myUserInterface.showExit()
                     self.myUserInterface.quitInterface()
             else:
                 self.myUserInterface.quitInterface()
@@ -123,6 +138,7 @@ class GameController:
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.playing = False
+                    self.myUserInterface.showExit()
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("exit"))
@@ -134,12 +150,18 @@ class GameController:
             if self.playing:
                 exitGame = self.myUserInterface.getConfirmation(
                     self.__EXIT_MSG)
-                if exitGame:
-                    self.playing = False
+                if exitGame == self.myUserInterface.defaultYes:
                     save = self.myUserInterface.getConfirmation(
                         "Do you want to save the game?")
-                    if save:
-                        self.__saveFile()
+                    if save == self.myUserInterface.defaultYes:
+                        canceled = self.__saveFile()
+                        if canceled:
+                            return
+                        else:
+                            self.playing = False
+
+                elif exitGame == self.myUserInterface.defaultCancel:
+                    return
 
             loadingFile = self.myUserInterface.getLoadFileName()
             if loadingFile == ".json":
@@ -159,7 +181,9 @@ class GameController:
 
         elif command == Commands.SAVE:
             if self.playing:
-                self.__saveFile()
+                canceled = self.__saveFile()
+                if canceled:
+                    return
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save"))
@@ -190,23 +214,39 @@ class GameController:
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                self.__askExitAndSave(explicit=False)
+                exit = self.__askExitAndSave(explicit=False)
+                if exit:
+                    newBaseWord = self.myDataSource.getRandomWord()
+                    self.__createGame(newBaseWord)
 
-            newBaseWord = self.myDataSource.getRandomWord()
-            self.__createGame(newBaseWord)
+            else:
+                newBaseWord = self.myDataSource.getRandomWord()
+                self.__createGame(newBaseWord)
 
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
-                self.__askExitAndSave(explicit=False)
+                exit = self.__askExitAndSave(explicit=False)
 
-            newBaseWord = self.myUserInterface.getBaseWord()
-            if (len(set(newBaseWord)) != 7):
-                self.myUserInterface.showError(
-                    "That word does not have 7 different letters.")
-            elif (not self.myDataSource.checkWord(newBaseWord)):
-                self.myUserInterface.showError("That word is not in the DB.")
+                if exit:
+                    newBaseWord = self.myUserInterface.getBaseWord()
+                    if (len(set(newBaseWord)) != 7):
+                        self.myUserInterface.showError(
+                            "That word does not have 7 different letters.")
+                    elif (not self.myDataSource.checkWord(newBaseWord)):
+                        self.myUserInterface.showError(
+                            "That word is not in the DB.")
+                    else:
+                        self.__createGame(newBaseWord)
             else:
-                self.__createGame(newBaseWord)
+                newBaseWord = self.myUserInterface.getBaseWord()
+                if (len(set(newBaseWord)) != 7):
+                    self.myUserInterface.showError(
+                        "That word does not have 7 different letters.")
+                elif (not self.myDataSource.checkWord(newBaseWord)):
+                    self.myUserInterface.showError(
+                        "That word is not in the DB.")
+                else:
+                    self.__createGame(newBaseWord)
 
         elif command == Commands.SHOW_STATUS:
             if self.playing:
@@ -215,6 +255,7 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+
         elif command == Commands.SHOW_HINTS:
             if self.playing:
                 self.myUserInterface.showHints(
