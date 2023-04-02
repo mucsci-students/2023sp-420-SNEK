@@ -6,3 +6,4 @@ saveFiles/*
 spell/
 *.json
 spellingBee.egg-info/
+*.coverage

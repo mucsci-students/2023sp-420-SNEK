@@ -5,7 +5,10 @@ from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
 
-import os, keyboard, time
+import os
+import keyboard
+import time
+import sys
 
 
 class TerminalInterface(UserInterface):
@@ -43,7 +46,7 @@ Commands:
    -!save - Bring up the prompts for saving your current game.
    -!load - Bring up the prompts for loading a saved game.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-               the order of the letter randomly other than the 
+               the order of the letter randomly other than the
                required center letter.  You can use this to
                help you find other words.
    -!guessed - Shows all the already correctly guessed words.
@@ -56,15 +59,21 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        commandStrings = Commands.getCommandNameList()
-        while not self.quit:
-            userInput = self.__getUserInput(options=commandStrings)
-            if Commands.isCommand(userInput):
-                userInput = Commands.getCommandFromName(userInput)
+        try:
+            commandStrings = Commands.getCommandNameList()
+            while not self.quit:
+                userInput = self.__getUserInput(options=commandStrings)
+                if Commands.isCommand(userInput):
+                    userInput = Commands.getCommandFromName(userInput)
 
-            self.myController.processInput(userInput)
+                self.myController.processInput(userInput)
+        except:
+            sys.stdout.flush()
+            print()
+            exit()
 
     # Flag if the game is quit
+
     def quitInterface(self):
         self.quit = True
 
@@ -77,7 +86,8 @@ Commands:
 
     # Path in directory that the user wants to save their games
     def __getUserInputPath(self, message: str = "") -> str:
-        userInput = input(self.__CMD_PREFIX + message + " ").strip()
+        userInput = self.myInputer.inputPath(
+            self.__CMD_PREFIX + message + " ").strip()
         return userInput
 
     # Reset colorama text so that it does not
@@ -143,7 +153,7 @@ Commands:
                      ___╱ {} ╲___
                     ╱ {} ╲___╱ {} ╲
                     ╲___╱ {} ╲___╱
-                    ╱ {} ╲___╱ {} ╲ 
+                    ╱ {} ╲___╱ {} ╲
                     ╲___╱ {} ╲___╱
                         ╲___╱ '''.format(N + myLetters[1] + YB,
                                          N + myLetters[2] + YB,
@@ -203,7 +213,9 @@ Commands:
         self.__boldPrint("Good guess!")
 
     def __getPath(self) -> str:
-        self.__boldPrint("Desired save path: ")
+        baseDir = os.getcwd()
+        self.__boldPrint("Desired save path:")
+        print(f"\tDefault directory: {baseDir}")
         name = self.__getUserInputPath()
         while name == "" or name == ".json":
             self.showError("The file has to have a name.", "Please try again:")
@@ -212,7 +224,6 @@ Commands:
         name = name if name.endswith(".json") else name + ".json "
 
         if not os.path.isabs(name):
-            baseDir = os.getcwd()
             name = os.path.join(baseDir, name)
 
         fileName = os.path.normpath(name)
@@ -245,45 +256,41 @@ Commands:
         for word in guessedWords:
             print("\t" + word)
 
+    def __getQuickInput(self, okStr, nokStr, canStr):
+        return self.myInputer.quickInput(self.__CMD_PREFIX + " ", [okStr, nokStr, canStr])
+
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="Y", nokStr="N", cokStr="C"):
+    def getConfirmation(self, message, okStr="", nokStr="", canStr=""):
+        self.choice = ""
+
+        if okStr == "":
+            okStr = 'y'
+
+        if nokStr == "":
+            nokStr = 'n'
+
+        if canStr == "":
+            canStr = 'c'
+
         okStr = okStr.lower()
         nokStr = nokStr.lower()
-        cokStr = cokStr.lower()
-        self.__boldPrint(message + f" [{okStr}/{nokStr}/{cokStr}]: ")
+        canStr = canStr.lower()
 
-        while True:
-            if okStr == "scratch":
-                choice = str(self.__getUserInput(
-                  options=[okStr, nokStr])).lower().strip()
-                break
-            elif keyboard.is_pressed("Y"):
-                choice = "y"
-                keyboard.press("backspace")
-                time.sleep(0.2)
-                print("y") 
-                break
-            elif keyboard.is_pressed("N"):
-                choice = "n"
-                keyboard.press("backspace")
-                time.sleep(0.2)
-                print("n")
-                break
-            elif keyboard.is_pressed("C"):
-                keyboard.press("backspace")
-                print("c")
-                return
-                break
-        
-        while choice != okStr and choice != nokStr and choice != cokStr:
-            print(f"(Unrecognized choice) [{okStr}/{nokStr}/{cokStr}]: ")
+        self.__boldPrint(message + f" [{okStr}/{nokStr}/{canStr}]: ")
+        if len(okStr) == 1 and len(nokStr) == 1 and len(canStr) == 1:
+            choice = self.__getQuickInput(okStr, nokStr, canStr)
+        else:
+            choice = str(self.__getUserInput(
+                options=[okStr, nokStr, canStr])).lower().strip()
+
+        while choice != okStr and choice != nokStr and choice != canStr:
+            print(f"Unrecognized choice [{okStr}/{nokStr}/{canStr}]: ")
             choice = self.__getUserInput(
-                options=[okStr, nokStr]).lower().strip()
+                options=[okStr, nokStr, canStr]).lower().strip()
 
-        confirmation = choice == okStr
-        return confirmation
+        return choice == okStr
 
     # Prints messages in cli
     def showMessage(self, message, endStr="\n"):

@@ -15,6 +15,7 @@ from model.Hint import Hint
 
 class GameController:
     __EXIT_MSG = "Do you want to exit the game? (You'll be able to save it)"
+    __EXPLICIT_EXIT_MSG = "Do you want to save before exiting?"
     __SAVE_MSG = "Do you want to save the game?"
     __OVERRIDE_MSG = "Do you want to overwrite the game?"
     __STILL_LOAD_MSG = "Do you want to load another game?"
@@ -48,14 +49,23 @@ class GameController:
             self.processGuess(userInput)
 
     # A private function that asks whether the user wants to save when the program is in the process of exiting.
-    def __askExitAndSave(self) -> bool:
-        exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
-        if exitGame:
-            self.playing = False
-            save = self.myUserInterface.getConfirmation("Do you want to save?")
+    def __askExitAndSave(self, explicit=False) -> bool:
+        if not explicit:
+            exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
+            if exitGame:
+                self.playing = False
+                save = self.myUserInterface.getConfirmation(
+                    "Do you want to save?")
+                if save:
+                    self.__saveFile()
+
+                self.myUserInterface.showExit()
+        else:
+            exitGame = True
+            save = self.myUserInterface.getConfirmation(
+                self.__EXPLICIT_EXIT_MSG)
             if save:
                 self.__saveFile()
-
             self.myUserInterface.showExit()
 
         return exitGame
@@ -65,10 +75,10 @@ class GameController:
 
     def __saveFile(self) -> None:
         scratchMode = self.myUserInterface.getConfirmation(
-            "How do you want to save?", okStr="scratch", nokStr="current", cokStr="\b")
-        
+            "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
+
         fileName = self.myUserInterface.getSaveFileName()
-        if(fileName == ""):
+        if (fileName == ""):
             return
         if not os.path.basename(fileName) == ".json":
             if scratchMode:
@@ -102,7 +112,7 @@ class GameController:
     def processCommand(self, command: Commands) -> None:
         if command == Commands.QUIT:
             if self.playing:
-                exit = self.__askExitAndSave()
+                exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.myUserInterface.quitInterface()
             else:
@@ -110,7 +120,9 @@ class GameController:
 
         elif command == Commands.EXIT:
             if self.playing:
-                self.__askExitAndSave()
+                exit = self.__askExitAndSave(explicit=True)
+                if exit:
+                    self.playing = False
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("exit"))
@@ -178,14 +190,14 @@ class GameController:
 
         elif command == Commands.NEW_GAME_RND:
             if self.playing:
-                self.__askExitAndSave()
+                self.__askExitAndSave(explicit=False)
 
             newBaseWord = self.myDataSource.getRandomWord()
             self.__createGame(newBaseWord)
 
         elif command == Commands.NEW_GAME_WRD:
             if self.playing:
-                self.__askExitAndSave()
+                self.__askExitAndSave(explicit=False)
 
             newBaseWord = self.myUserInterface.getBaseWord()
             if (len(set(newBaseWord)) != 7):

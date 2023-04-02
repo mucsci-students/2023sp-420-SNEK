@@ -26,14 +26,14 @@ class SaveAndLoad:
     @classmethod
     def isSaved(cls, saveName: str) -> bool:
         return os.path.exists(saveName)
-        
 
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
+
     @staticmethod
     def saveCurrent(puzzle: Puzzle, saveName: str):
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
-                     puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints())
+                             puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints())
         # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
         # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
 
@@ -41,13 +41,13 @@ class SaveAndLoad:
     def saveScratch(puzzle: Puzzle, saveName: str):
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(),
                              puzzle.getWordList(), [], 0, puzzle.getMaxPoints())
-        
+
     @classmethod
-    def __checkJsonExt(cls, fileName:str):
+    def __checkJsonExt(cls, fileName: str):
         fileName = fileName.strip()
         if not fileName.endswith(".json"):
             fileName += ".json"
-            
+
         return fileName
 
     # Main saving function that is only called within the state class
@@ -58,7 +58,7 @@ class SaveAndLoad:
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
     @classmethod
-    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0):
+    def saveData(cls, saveName: str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0):
         saveName = cls.__checkJsonExt(saveName)
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
 
@@ -70,18 +70,18 @@ class SaveAndLoad:
 
         # dump new save data into master file and create if none is present
         dirs = os.path.dirname(saveName)
-        
+
         os.makedirs(dirs, exist_ok=True)
-        
+
         with open(saveName, "w") as f:
             json.dump(data, f, indent=2)
-        
 
     # load the save data into the class variables into the puzzle class
+
     @ classmethod
     def load(cls, loadName: str) -> Puzzle:
         loadName = cls.__checkJsonExt(loadName)
-        
+
         with open(loadName, "r") as loadFile:
             data = json.load(loadFile)
 
@@ -90,10 +90,12 @@ class SaveAndLoad:
         puzzleLetters = []
         puzzleLetters.append(requiredLetter)
         # putting the req letter in front
-        puzzleLetters = [requiredLetter] + list(puzzleLettersStr.replace(requiredLetter, ""))
+        puzzleLetters = [requiredLetter] + \
+            list(puzzleLettersStr.replace(requiredLetter, ""))
 
-        myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
-        
+        myPuzzle = Puzzle(
+            puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+
         return myPuzzle
 
     # Translate from variables into json format
