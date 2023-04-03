@@ -4,3 +4,6 @@ __pycache__/
 saveFiles/*
 .pytest_cache/
 spell/
+*.json
+spellingBee.egg-info/
+*.coverage

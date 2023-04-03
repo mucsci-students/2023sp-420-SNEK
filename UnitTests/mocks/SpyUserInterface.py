@@ -1,7 +1,7 @@
-import UserInterface
+import view.UserInterface
 
 
-class SpyUserInterface(UserInterface.UserInterface):
+class SpyUserInterface(view.UserInterface.UserInterface):
     def __init__(self) -> None:
         super().__init__()
 
@@ -71,10 +71,6 @@ class SpyUserInterface(UserInterface.UserInterface):
         count = self.spyValues.get(self.showProgress, 0)
         self.spyValues[self.showProgress] = count + 1
 
-    def getSaveFileName(self, *args):
-        count = self.spyValues.get(self.getSaveFileName, 0)
-        self.spyValues[self.getSaveFileName] = count + 1
-
     def getConfirmation(self, *args):
         count = self.spyValues.get(self.getConfirmation, 0)
         self.spyValues[self.getConfirmation] = count + 1
@@ -86,3 +82,18 @@ class SpyUserInterface(UserInterface.UserInterface):
     def showCorrectGuess(self, *args):
         count = self.spyValues.get(self.showCorrectGuess, 0)
         self.spyValues[self.showCorrectGuess] = count + 1
+        
+    def getSaveFileName(self, *args):
+        count = self.spyValues.get(self.getSaveFileName, 0)
+        self.spyValues[self.getSaveFileName] = count + 1
+
+    def getLoadFileName(self, *args):
+        count = self.spyValues.get(self.getLoadFileName, 0)
+        self.spyValues[self.getLoadFileName] = count + 1
+
+    def showExit(self, *args):
+        count = self.spyValues.get(self.showExit, 0)
+        self.spyValues[self.showExit] = count + 1
+
+    def showHints(self):
+        pass

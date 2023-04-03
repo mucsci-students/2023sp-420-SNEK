@@ -1,29 +1,28 @@
+
 import sys
+sys.path.append('./src')
 
-sys.path.append('src/controller')
-sys.path.append('src/model')
-
-import os
-import json
-
-
-from Puzzle import Puzzle
-from SaveAndLoad import SaveAndLoad
 import unittest
+from controller.SaveAndLoad import SaveAndLoad
+from model.Puzzle import Puzzle
+import json
+import os
 
 
 class test_SaveAndLoad(unittest.TestCase):
+    testFileName = os.path.join(os.getcwd(), "testFileName.json")
+
     def test_saveScratch(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        with open("testFileName.json", "r") as loadFile:
+
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['WordList'], wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['PuzzleLetters'], ''.join(puzzleLetters), "puzzle letters not saved")
         self.assertEqual(testSavedData['GuessedWords'], [
         ], "guessed words not empty")
@@ -33,7 +32,7 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], 0, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("testFileName.json")
+        os.remove(self.testFileName)
 
     def test_saveCurrent(self):
         puzzleLetters = list("volcanos")
@@ -46,14 +45,13 @@ class test_SaveAndLoad(unittest.TestCase):
         for guess in wordsToBeGuessed:
             puzzleTest.addGuessWord(guess)
 
-        
-        SaveAndLoad.saveCurrent(puzzleTest, "testFileName")
-        with open("testFileName.json", "r") as loadFile:
+        SaveAndLoad.saveCurrent(puzzleTest, self.testFileName)
+        with open(self.testFileName, "r") as loadFile:
             testSavedData = json.load(loadFile)
 
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['WordList'], wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             testSavedData['PuzzleLetters'], ''.join(puzzleLetters), "puzzle letters not saved")
         self.assertEqual(
             testSavedData['GuessedWords'], wordsToBeGuessed, "guessed words not empty")
@@ -63,29 +61,29 @@ class test_SaveAndLoad(unittest.TestCase):
             testSavedData['CurrentPoints'], expectedCurrentPoints, "current points not saved")
         self.assertEqual(
             testSavedData['MaxPoints'], puzzleTest.getMaxPoints(), "max points not saved")
-        os.remove("testFileName.json")
+        os.remove(self.testFileName)
 
     def test_isSaved(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        self.assertTrue(SaveAndLoad.isSaved("testFileName"))
-        os.remove("testFileName.json")
+
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        self.assertTrue(SaveAndLoad.isSaved(self.testFileName))
+        os.remove(self.testFileName)
 
     def test_load(self):
         puzzleLetters = ["a", "b", "c", "d"]
         wordList = ["bacalao", "bacalao", "bacalao", "bacalao",
                     "bacalao", "bacalao", "bacalao", "bacalao", "bacalao"]
         puzzleTest = Puzzle(puzzleLetters, wordList)
-        
-        SaveAndLoad.saveScratch(puzzleTest, "testFileName")
-        puzzleActual: Puzzle = SaveAndLoad.load("testFileName")
 
-        self.assertEquals(
+        SaveAndLoad.saveScratch(puzzleTest, self.testFileName)
+        puzzleActual: Puzzle = SaveAndLoad.load(self.testFileName)
+
+        self.assertEqual(
             puzzleActual.getWordList(), wordList, "word list not saved")
-        self.assertEquals(
+        self.assertEqual(
             puzzleActual.getPuzzleLetters(), puzzleLetters, "puzzle letters not saved")
         self.assertEqual(puzzleActual.getGuessedWords(), [
         ], "guessed words not empty")
