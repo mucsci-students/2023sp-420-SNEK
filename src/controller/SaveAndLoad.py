@@ -43,9 +43,9 @@ class SaveAndLoad:
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(),
                              puzzle.getWordList(), [], 0, puzzle.getMaxPoints())
         
-    @staticmethod
-    def saveImg(img: Image, imgName: str):
-        SaveAndLoad.saveData(imgName, [], [], img = img)
+    @classmethod
+    def saveImg(cls, img: Image, imgName: str):
+        img.save(f"{imgName}.png")
         
         
     @classmethod
@@ -65,9 +65,6 @@ class SaveAndLoad:
     # ^ but with type 1 will overwrite the savefile with current
     @classmethod
     def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0, img = None):
-        if(img != None):
-            img.save(f"{saveName}.png")
-            return
         
         saveName = cls.__checkJsonExt(saveName)
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
@@ -120,3 +117,4 @@ class SaveAndLoad:
         }
 
         return retData
+    
