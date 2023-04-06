@@ -68,6 +68,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
+        self.filemenu.add_command(label="Save Screenshot", command=self.saveScreenshot)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
         self.filemenu.add_separator()
@@ -448,6 +449,10 @@ class BeeUI(UserInterface):
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
+    def saveScreenshot(self):
+        return
+
+
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
@@ -555,6 +560,7 @@ class BeeUI(UserInterface):
         self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
 
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
@@ -639,6 +645,7 @@ class BeeUI(UserInterface):
 
         # Disable all unusable menus
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
@@ -696,6 +703,7 @@ class BeeUI(UserInterface):
         # self.filemenu.entryconfig("New", command=lambda:
         #                           self.myController.processInput(Commands.EXIT))
         self.filemenu.entryconfig("Save", state="normal")
+        self.filemenu.entryconfig("Save Screenshot", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig(
             "Close Program", command=self.__checkTerminate)
