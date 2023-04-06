@@ -3,6 +3,8 @@ import json
 import os
 from model.Puzzle import Puzzle
 from PIL import Image
+from cryptography.fernet import Fernet
+import base64
 # from customExcept import OverwriteSave
 
 # State class holding all save, load, and related methods
@@ -34,18 +36,40 @@ class SaveAndLoad:
     @staticmethod
     def saveCurrent(puzzle: Puzzle, saveName: str):
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
-                     puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints())
+                     puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints(), encrypt = False)
         # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
         # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
 
     @staticmethod
     def saveScratch(puzzle: Puzzle, saveName: str):
         SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(),
-                             puzzle.getWordList(), [], 0, puzzle.getMaxPoints())
+                             puzzle.getWordList(), [], 0, puzzle.getMaxPoints(), encrypt = False)
         
     @classmethod
     def saveImg(cls, img: Image, imgName: str):
         img.save(f"{imgName}.png")
+
+    @staticmethod
+    def saveSecret(puzzle: Puzzle, saveName: str, scratch: bool):
+        encrypLis = []
+        key = "Team SNEK"
+
+        for i in range(0, 32-len(key)):
+            key += "$"
+
+        key = key.encode("utf-8")
+        encrypText = base64.b64encode(key)
+        f = Fernet(encrypText)
+
+        for i in puzzle.wordList:
+            encrypLis.append(f.encrypt(bytes(i, "utf-8")).decode("utf-8"))
+
+        if not scratch:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), encrypLis,
+                        puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints(), encrypt = True)
+        else:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), encrypLis,
+                        [], 0, puzzle.getMaxPoints(), encrypt = True)
         
         
     @classmethod
@@ -64,7 +88,7 @@ class SaveAndLoad:
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
     @classmethod
-    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0, img = None):
+    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0, author = "Team SNEK", encrypt = False):
         
         saveName = cls.__checkJsonExt(saveName)
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
@@ -73,7 +97,7 @@ class SaveAndLoad:
         puzzleLettersStr = ''.join(puzzleLetters)
         requiredLetter = puzzleLetters[0]
         data = cls.saveParse(puzzleLettersStr, wordList,
-                             foundWords, currentPoints, requiredLetter, maxPoints)
+                             foundWords, currentPoints, requiredLetter, maxPoints, author, encrypt)
 
         # dump new save data into master file and create if none is present
         dirs = os.path.dirname(saveName)
@@ -105,16 +129,28 @@ class SaveAndLoad:
 
     # Translate from variables into json format
     @ staticmethod
-    def saveParse(puzzleLetters="", wordList=[], guessedWords=[], currentPoints=0, requiredLetter="", maxPoints=0):
+    def saveParse(puzzleLetters="", wordList=[], guessedWords=[], currentPoints=0, requiredLetter="", maxPoints=0, author = "Team SNEK", crypBool: bool = False):
         # Translate to json format
-        retData = {
-            "GuessedWords": guessedWords,
-            "WordList": wordList,
-            "PuzzleLetters": puzzleLetters,
-            "RequiredLetter": requiredLetter,
-            "CurrentPoints": currentPoints,
-            "MaxPoints": maxPoints
-        }
+        if not crypBool:
+            retData = {
+                "Author": author,
+                "GuessedWords": guessedWords,
+                "WordList": wordList,
+                "PuzzleLetters": puzzleLetters,
+                "RequiredLetter": requiredLetter,
+                "CurrentPoints": currentPoints,
+                "MaxPoints": maxPoints
+            }
+        else:
+            retData = {
+                "Author": author,
+                "GuessedWords": guessedWords,
+                "SecretWordList": wordList,
+                "PuzzleLetters": puzzleLetters,
+                "RequiredLetter": requiredLetter,
+                "CurrentPoints": currentPoints,
+                "MaxPoints": maxPoints
+            }
 
         return retData
     

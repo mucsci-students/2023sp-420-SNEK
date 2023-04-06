@@ -15,7 +15,8 @@ dependencies = [
     'pytest',
     'pytest-cov',
     'pillow',
-    'prompt_toolkit'
+    'prompt_toolkit',
+    'cryptography'
 ]
 
 [tool.pytest.ini_options]
