@@ -2,7 +2,6 @@
 import json
 import os
 from model.Puzzle import Puzzle
-import pyautogui
 from PIL import Image
 # from customExcept import OverwriteSave
 
