@@ -30,7 +30,7 @@ that need installation.
     * pytest
     * pytest-cov
     * pillow
-    * keyboard
+    * Prompt-Toolkit
 
 
 ### Python Version
