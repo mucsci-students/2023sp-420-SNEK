@@ -105,6 +105,13 @@ class DataSource(metaclass=SingletonMeta):
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
         return self.wordList
+
+    def getHighScores(self, requiredLetters:list):
+        return 0;
+    def getMinimumHighScore(self, requiredLetters:list):
+        return 0;
+    def setHighScore(self, requiredLetter:list,name:str,points:int):
+        return;
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
         letterMat = dict()
