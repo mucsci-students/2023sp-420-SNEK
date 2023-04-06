@@ -191,6 +191,16 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save"))
 
+        elif command == Commands.SAVE_SECRET:
+            if self.playing:
+                canceled = self.__saveSecretFile()
+                if canceled:
+                    return
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
+                )
+
         elif command == Commands.RANK:
             if self.playing:
                 self.myUserInterface.showRanking(
