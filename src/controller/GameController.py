@@ -272,6 +272,7 @@ class GameController:
                     self.myUserInterface.saveScore(self.myPuzzle.points)
                 else:
                     # Return error saying that score isn't high enough for saving to top 10
+                    self
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("")) #TODO
