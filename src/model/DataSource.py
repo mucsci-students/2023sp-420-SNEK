@@ -106,12 +106,52 @@ class DataSource(metaclass=SingletonMeta):
         self.wordList = list(self.wordList[0])
         return self.wordList
 
+
+    def hasHighScores(self, requiredLetters:list)->bool:
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        cur.execute(
+            "SELECT* FROM high_scores WHERE puzzleName like '"+puzzleName+"'")
+        output = cur.fetchall()
+        con.commit()
+        con.close()
+        return len(output) != 0
+
     def getHighScores(self, requiredLetters:list):
-        return 0;
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        scores = dict()
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        if(self.hasHighScores(requiredLetters)):
+            cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
+            output = cur.fetchall()
+            con.commit()
+                
+        con.close()
+        return scores;
+
     def getMinimumHighScore(self, requiredLetters:list):
         return 0;
-    def setHighScore(self, requiredLetter:list,name:str,points:int):
-        return;
+    def setHighScore(self, requiredLetters:list,name:str,points:int):
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        if(not self.hasHighScores(requiredLetters)):
+            con = sqlite3.connect(self.dbName)
+            cur = con.cursor()
+            cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, points INT NOT NULL);")
+            cur.execute(
+                    "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
+            con.commit()
+        
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
         letterMat = dict()

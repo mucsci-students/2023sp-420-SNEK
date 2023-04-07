@@ -25,7 +25,12 @@ class test_DataSource(unittest.TestCase):
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
             con.commit()
+            cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
+            con.commit()
             con.close()
+    def tearDown(self) -> None:
+        os.remove("test1.db")
+            
 
     def test_createWordListFromWord(self):
         dataSource = DataSource("test1.db")
@@ -78,6 +83,64 @@ class test_DataSource(unittest.TestCase):
                          "this word shouldnt be in this db")
         self.assertTrue(dataSource.checkWord("waxworks"),
                         "this word should be in the db")
+        
+    def test_notHighScoresReturnsMinimumHighScoreO(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list(set("waxworks"))
+        self.assertEqual(dataSource.getMinimumHighScore(letters),0,"should be 0 as that puzzle has no highscores")
+    
+    def test_hasHighScoresIsFalseWhenNoHighScores(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list(set("waxworks"))
+        self.assertFalse(dataSource.hasHighScores(letters),"should be false as that puzzle has no highscores")
+
+    def test_hasHighScoresIsTrueWhenAnyScore(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list(set("waworks"))
+        con = sqlite3.connect("test1.db")
+        cur = con.cursor()
+        self.assertFalse(dataSource.hasHighScores(letters),"should be false as that puzzle has no highscores")
+
+        mandatoryLetter = "x"
+        restOfLetters = letters
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, numLetter INT NOT NULL);")
+        cur.execute(
+                "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
+        con.commit()
+        output = cur.fetchall()
+        self.assertTrue(dataSource.hasHighScores(list(puzzleName)),"should be true as that puzzle has a highscore table")
+        con.close()
+
+        
+
+    def test_notHighScoresReturnsEmptyDictionaryOfHighScores(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list(set("waxworks"))
+        result = dataSource.getHighScores(letters)
+        expected = dict()
+        self.assertEqual(result,expected,"should be an empty dictionary")
+        self.assertEqual(len(result),0,"should be an empty dictionary, with length 0")
+    
+    def test_setHighScoreCreatesTableWhenNoHighScores(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list("xawrkos")
+        self.assertFalse(dataSource.hasHighScores(letters),"should be an empty list, this table should not exist")
+
+        dataSource.setHighScore(letters,"example",1000)
+        self.assertTrue(dataSource.hasHighScores(letters),"should be an empty dictionary")
+
+        mandatoryLetter = letters[0]
+        restOfLetters = letters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        con = sqlite3.connect("test1.db")
+        cur = con.cursor()
+        cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
+        con.commit()
+        con.close()
+
 
 
 if __name__ == '__main__':
