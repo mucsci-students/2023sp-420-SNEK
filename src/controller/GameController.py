@@ -266,6 +266,18 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
+        elif command == Commands.SAVE_SCORE:
+            if self.playing:
+                if # My puzzle score > lowest score from datasource:
+                    self.myUserInterface.saveScore(self.myPuzzle.points)
+                else:
+                    # Return error saying that score isn't high enough for saving to top 10
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("")) #TODO
+            
+            
+
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')

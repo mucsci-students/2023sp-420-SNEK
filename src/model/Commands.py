@@ -20,6 +20,7 @@ class Commands(Enum):
     SHOW_HINTS = auto()
     CMD_LIKE = auto()
     UNDEFINED = auto()
+    SAVE_SCORE = auto()
 
 
     class Constant:
@@ -46,7 +47,8 @@ class Commands(Enum):
             "guessed": GUESSED_WORDS,
             "rank": RANK,
             "status": SHOW_STATUS,
-            "hints": SHOW_HINTS
+            "hints": SHOW_HINTS,
+            "save score": SAVE_SCORE
         })
 
     @classmethod
