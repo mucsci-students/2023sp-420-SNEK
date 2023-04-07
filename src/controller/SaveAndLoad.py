@@ -122,9 +122,26 @@ class SaveAndLoad:
         puzzleLetters.append(requiredLetter)
         # putting the req letter in front
         puzzleLetters = [requiredLetter] + list(puzzleLettersStr.replace(requiredLetter, ""))
-
-        myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
         
+
+        if list(data)[2] == "SecretWordList":
+            decrypLis = []
+            key = data["Author"]
+
+            for i in range(0, 32-len(key)):
+                key += "$"
+
+            key = key.encode("utf-8")
+            key = base64.b64encode(key)
+            f = Fernet(key)
+            for i in data["SecretWordList"]:
+                i.encode("utf-8")
+                decrypLis.append(f.decrypt(i).decode("utf-8"))
+            
+            myPuzzle = Puzzle(puzzleLetters, decrypLis, data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+        else:
+            myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+            
         return myPuzzle
 
     # Translate from variables into json format
@@ -151,6 +168,5 @@ class SaveAndLoad:
                 "CurrentPoints": currentPoints,
                 "MaxPoints": maxPoints
             }
-
         return retData
     
