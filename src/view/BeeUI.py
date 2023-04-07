@@ -36,8 +36,8 @@ from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
 from mss import mss
-import os
-from PIL import Image, ImageTk
+import os, pyautogui
+from PIL import Image, ImageTk, ImageGrab
 
 
 from view.UserInterface import UserInterface
@@ -454,9 +454,14 @@ class BeeUI(UserInterface):
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
+    # Public method saveScreenshot
     def saveScreenshot(self):
-        with mss() as sct:
-            filename = sct.shot(output="Screenshot.png")
+        self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
+        self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
+
+        screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
+        filepath = filedialog.asksaveasfilename(defaultextension=[(".png")], initialdir=os.getcwd())
+        return screenShot.save(filepath)
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
