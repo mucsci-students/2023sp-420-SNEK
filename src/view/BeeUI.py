@@ -35,6 +35,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
+from mss import mss
 import os
 from PIL import Image, ImageTk
 
@@ -454,8 +455,8 @@ class BeeUI(UserInterface):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
     def saveScreenshot(self):
-        return
-
+        with mss() as sct:
+            filename = sct.shot(output="Screenshot.png")
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
