@@ -108,13 +108,13 @@ class test_Puzzle(unittest.TestCase):
         myList = dataSource.wordList
         tst_puzzle = Puzzle(list(set("waxworks")), myList)
 
-        tst_puzzle.setHighScores(dataSource.getHighScores(tst_puzzle.getPuzzleLetters))
-        tst_puzzle.setMiminimumHighScore(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters))
+        tst_puzzle.setHighScores(dataSource.getHighScores(tst_puzzle.getPuzzleLetters()))
+        tst_puzzle.setMiminimumHighScore(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()))
 
-        self.assertTrue(len(tst_puzzle.getHighScores()) == len(dataSource.getHighScores(tst_puzzle.getPuzzleLetters)), "insertion not correct")
-        self.assertTrue(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters) ==  tst_puzzle.getMiminimumHighScore(), "incorrect insertion")
+        self.assertTrue(len(tst_puzzle.getHighScores()) == len(dataSource.getHighScores(tst_puzzle.getPuzzleLetters())), "insertion not correct")
+        self.assertTrue(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()) ==  tst_puzzle.getMiminimumHighScore(), "incorrect insertion")
 
-        del tst_puzzle
+        del tst_puzzle      
 
     def test_addGuessWord(self):
         aWordsList = ["onee", "twoo", "three", "four",
