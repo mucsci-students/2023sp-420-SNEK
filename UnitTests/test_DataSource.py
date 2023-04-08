@@ -7,6 +7,7 @@ from model.DataSource import DataSource
 from model.Hint import Hint
 import os
 import unittest
+import numpy as np
 
 
 class test_DataSource(unittest.TestCase):
@@ -28,6 +29,7 @@ class test_DataSource(unittest.TestCase):
             cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
             con.commit()
             con.close()
+            
     def tearDown(self) -> None:
         os.remove("test1.db")
             
@@ -140,6 +142,54 @@ class test_DataSource(unittest.TestCase):
         cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
         con.commit()
         con.close()
+
+    def test_setHighScoreInsertsCorrectly(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list("xawrkos")
+        dataSource.setHighScore(letters,"example",1000)
+     
+
+        mandatoryLetter = letters[0]
+        restOfLetters = letters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        con = sqlite3.connect("test1.db")
+        cur = con.cursor()
+        cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
+        output = cur.fetchall()
+        con.commit()
+        con.close()
+        results = np.array(output)
+        self.assertEqual('1000',results[0][1],f"the insertion is not correct expected 1000, actual: {results[0][1]} ")
+        self.assertEqual('example',results[0][0],f"the insertion is not correct expected 'example', actual: {results[0][0]} ")
+
+    def test_getMinimumHighScoreFromExistingHighScoreTable(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list("xawrkos")
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",1000)
+        dataSource.setHighScore(letters,"example",999)     
+        dataSource.setHighScore(letters,"example",998) 
+
+        actual = dataSource.getMinimumHighScore(letters);
+        self.assertEqual(999,actual,f"the insertion is not correct expected 999, actual: {actual} ")
+
+    def test_getHighScoreFromExistingHighScoreTable(self):
+        dataSource:DataSource = DataSource("test1.db")
+        letters = list("xawrkos")
+        dataSource.setHighScore(letters,"example",423)
+        results = dataSource.getHighScores(letters)
+        self.assertEqual('423',results[0][1],f"the insertion is not correct expected 423, actual: {results[0][1]} ")
+        self.assertEqual('example',results[0][0],f"the insertion is not correct expected 'example', actual: {results[0][0]} ")
+     
+        
 
 
 

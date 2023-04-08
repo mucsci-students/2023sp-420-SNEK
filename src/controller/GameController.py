@@ -116,6 +116,8 @@ class GameController:
         newHints = self.myDataSource.getHints(
             self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
         self.myPuzzle.setHint(newHints)
+        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+        self.myPuzzle.setMiminimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
 
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)

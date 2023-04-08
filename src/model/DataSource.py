@@ -108,6 +108,12 @@ class DataSource(metaclass=SingletonMeta):
 
 
     def hasHighScores(self, requiredLetters:list)->bool:
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                boolean value if that puzzle has registered scores
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
         mandatoryLetter = requiredLetters[0]
@@ -122,6 +128,13 @@ class DataSource(metaclass=SingletonMeta):
         return len(output) != 0
 
     def getHighScores(self, requiredLetters:list):
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                a np.array with the top 10 scores.
+        '''
+
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
         scores = dict()
@@ -133,24 +146,54 @@ class DataSource(metaclass=SingletonMeta):
             cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
             output = cur.fetchall()
             con.commit()
-                
+            dataTreatment = np.array(output)
+            if(len(dataTreatment) >= 10):
+                length = 10
+            else:
+                length = len(dataTreatment)
+           
+            scores = dataTreatment[:length]
         con.close()
         return scores;
 
     def getMinimumHighScore(self, requiredLetters:list):
-        return 0;
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                the minimum score in the top 10 scores, if there are less than, 10 will be 0
+        '''
+        scores = self.getHighScores(requiredLetters);
+        min = 0;
+        if(len(scores) == 10):
+            min = int(scores[9][1])
+        return min
+
+
     def setHighScore(self, requiredLetters:list,name:str,points:int):
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+                name: the name of the player
+                points: the points of the player
+
+            Output:
+                boolean value if that puzzle has registered scores
+        '''
         mandatoryLetter = requiredLetters[0]
         restOfLetters = requiredLetters[1:]
         restOfLetters.sort()
         puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
         if(not self.hasHighScores(requiredLetters)):
-            con = sqlite3.connect(self.dbName)
-            cur = con.cursor()
+            
             cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, points INT NOT NULL);")
             cur.execute(
                     "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
             con.commit()
+        cur.execute("INSERT INTO "+puzzleName+" VALUES ('"+name+"','"+str(points)+"');")
+        con.commit()
+        con.close()
         
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
