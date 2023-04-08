@@ -12,6 +12,7 @@ class Commands(Enum):
     NEW_GAME_WRD = auto()
     NEW_GAME_RND = auto()
     SAVE = auto()
+    SAVE_SECRET = auto()
     LOAD = auto()
     SHUFFLE = auto()
     GUESSED_WORDS = auto()
@@ -41,6 +42,7 @@ class Commands(Enum):
             "new word": NEW_GAME_WRD,
             "new random": NEW_GAME_RND,
             "save": SAVE,
+            "save secret": SAVE_SECRET,
             "load": LOAD,
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
