@@ -120,8 +120,6 @@ class GameController:
             self.myUserInterface.showMessage(
                     "The file has been saved: " + fileName)
 
-
-
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
     # and tells the UI to display the puzzle
@@ -211,6 +209,15 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save"))
 
+        elif command == Commands.SAVE_SECRET:
+            if self.playing:
+                canceled = self.__saveSecretFile()
+                if canceled:
+                    return
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
+                )
         elif command == Commands.SAVE_IMG:
             if self.playing:
                 canceled = self.__saveImg()
@@ -220,7 +227,6 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
                 )
-
         elif command == Commands.RANK:
             if self.playing:
                 self.myUserInterface.showRanking(
