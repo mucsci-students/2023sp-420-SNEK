@@ -58,7 +58,7 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.geometry("900x600")
+        self.root.geometry("1100x700")
         self.root.title("The Spelling Bee! 🐝")
 
 # # # # # # # # # # # # # Menus # # # # # # # # # # # # #
@@ -70,7 +70,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
-        self.filemenu.add_command(label="Save Screenshot", command=self.saveScreenshot)
+        self.filemenu.add_command(label="Save Screenshot", command=self.__onSaveScreenshot)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
         self.filemenu.add_separator()
@@ -461,7 +461,9 @@ class BeeUI(UserInterface):
 
         screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
         filepath = filedialog.asksaveasfilename(defaultextension=[(".png")], initialdir=os.getcwd())
-        return screenShot.save(filepath)
+        myShot = [screenShot, filepath]
+
+        return myShot
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
