@@ -108,8 +108,7 @@ class test_DataSource(unittest.TestCase):
         restOfLetters.sort()
         puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
         cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, numLetter INT NOT NULL);")
-        cur.execute(
-                "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
+        cur.execute("INSERT INTO high_scores VALUES ('"+puzzleName+"');")
         con.commit()
         output = cur.fetchall()
         self.assertTrue(dataSource.hasHighScores(list(puzzleName)),"should be true as that puzzle has a highscore table")
@@ -175,10 +174,10 @@ class test_DataSource(unittest.TestCase):
         dataSource.setHighScore(letters,"example",1000)
         dataSource.setHighScore(letters,"example",1000)
         dataSource.setHighScore(letters,"example",1000)
-        dataSource.setHighScore(letters,"example",999)     
-        dataSource.setHighScore(letters,"example",998) 
+        dataSource.setHighScore(letters,"example",999)
+        dataSource.setHighScore(letters,"example",998)
 
-        actual = dataSource.getMinimumHighScore(letters);
+        actual = dataSource.getMinimumHighScore(letters)
         self.assertEqual(999,actual,f"the insertion is not correct expected 999, actual: {actual} ")
 
     def test_getHighScoreFromExistingHighScoreTable(self):
