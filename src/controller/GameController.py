@@ -108,15 +108,17 @@ class GameController:
 
         if saveMode != "cancel":
             fileName = self.myUserInterface.getSaveFileName()
+            print(fileName)
             if fileName == "":
                 return
             elif fileName == None:
                 return True
+
             if not os.path.basename(fileName) == ".json":
                 if saveMode == "scratch":
-                    SaveAndLoad.saveSecret(self.myPuzzle, fileName, True)
+                    SaveAndLoad.saveScratch(self.myPuzzle, fileName, True)
                 else:
-                    SaveAndLoad.saveSecret(self.myPuzzle, fileName, False)
+                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName, True)
 
                 self.myUserInterface.showMessage(
                     "The file has been saved: " + fileName)
