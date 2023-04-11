@@ -35,9 +35,8 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
-from mss import mss
 import os, pyautogui
-from PIL import Image, ImageTk, ImageGrab
+from PIL import Image, ImageTk
 
 
 from view.UserInterface import UserInterface
@@ -58,7 +57,8 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.geometry("1100x700")
+        #self.root.geometry("1100x700")
+        self.root.geometry("900x600")
         self.root.title("The Spelling Bee! 🐝")
 
 # # # # # # # # # # # # # Menus # # # # # # # # # # # # #
@@ -460,7 +460,7 @@ class BeeUI(UserInterface):
         self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
 
         screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
-        filepath = filedialog.asksaveasfilename(defaultextension=[(".png")], initialdir=os.getcwd())
+        filepath = filedialog.asksaveasfilename(filetypes=[("PNG File", "*.png")], defaultextension=[("PNG File", "*.png")], initialdir=os.getcwd())
         myShot = [screenShot, filepath]
 
         return myShot
