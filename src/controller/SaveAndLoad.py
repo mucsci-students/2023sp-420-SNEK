@@ -57,7 +57,7 @@ class SaveAndLoad:
         
     @classmethod
     def saveImg(cls, img: Image, imgName: str):
-        img.save(f"{imgName}.png")
+        img.save(imgName)
         
     @classmethod
     def __checkJsonExt(cls, fileName:str):

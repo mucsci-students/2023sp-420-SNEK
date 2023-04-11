@@ -16,7 +16,8 @@ dependencies = [
     'pytest-cov',
     'pillow',
     'prompt_toolkit',
-    'cryptography'
+    'cryptography',
+    'pyautogui'
 ]
 
 [tool.pytest.ini_options]

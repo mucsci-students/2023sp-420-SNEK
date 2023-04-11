@@ -18,6 +18,7 @@
 #   window = BeeUI()
 #   window.launch()
 #
+
 # Imports:
 #    random
 #    tkinter as tk
@@ -147,6 +148,9 @@ class BeeUI(UserInterface):
     # Notifies myController that the user intends to load
     def __onLoad(self):
         self.myController.processInput(Commands.LOAD)
+
+    def __onSaveScreenshot(self):
+        self.myController.processInput(Commands.SAVE_IMG)
 
     # Public method showExit
     # Upon exit of a game, showExit will load the preGamePage

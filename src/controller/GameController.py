@@ -102,6 +102,7 @@ class GameController:
 
         return saveMode == "cancel"
     
+
     def __saveSecretFile(self) -> bool:
         saveMode = self.myUserInterface.getConfirmation(
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
@@ -125,6 +126,25 @@ class GameController:
 
         return saveMode == "cancel"
 
+    def __saveImg(self) -> bool:
+        
+        retLis = self.myUserInterface.saveScreenshot()
+        imgFile = retLis[0]
+        fileName = retLis[1]
+
+        if fileName == "":
+            return
+        elif fileName == None:
+            return True
+        
+        if not os.path.basename(fileName) == ".png":
+
+            SaveAndLoad.saveImg(imgFile, fileName)
+
+            self.myUserInterface.showMessage(
+                    "The file has been saved: " + fileName)
+
+
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
     # and tells the UI to display the puzzle
@@ -139,6 +159,8 @@ class GameController:
         newHints = self.myDataSource.getHints(
             self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
         self.myPuzzle.setHint(newHints)
+        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+        self.myPuzzle.setMiminimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
 
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
@@ -223,7 +245,15 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
                 )
-
+        elif command == Commands.SAVE_IMG:
+            if self.playing:
+                canceled = self.__saveImg()
+                if canceled:
+                    return
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
+                )
         elif command == Commands.RANK:
             if self.playing:
                 self.myUserInterface.showRanking(
