@@ -6,8 +6,6 @@ from model.Commands import *
 from model.Hint import Hint
 
 import os
-import keyboard
-import time
 import sys
 
 
@@ -251,6 +249,10 @@ Commands:
                 fileName = None
 
         return fileName
+    
+    #temp function for GUI functionality
+    def saveScreenshot():
+        pass
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
@@ -355,4 +357,57 @@ Commands:
         print()
 
     def showHighScores(self, myPuzzle: Puzzle):
-        myHighScores: dict = myPuzzle.getHighScores()
+        B = Style.BRIGHT
+        Y = Fore.YELLOW
+        R = Style.RESET_ALL
+        G = Fore.GREEN
+        W = Fore.WHITE
+        D = Style.DIM
+        highScoreText = [f"{D+B+G}",
+ "#     #                          #####                                         " ,
+ "#     #  #   ####   #    #      #     #   ####    ####   #####   ######   #### " ,
+ "#     #  #  #    #  #    #      #        #    #  #    #  #    #  #       #     " ,
+ "#######  #  #       ######       #####   #       #    #  #    #  #####    #### " ,
+ "#     #  #  #  ###  #    #            #  #       #    #  #####   #            #" ,
+ "#     #  #  #    #  #    #      #     #  #    #  #    #  #   #   #       #    #" ,
+ "#     #  #   ####   #    #       #####    ####    ####   #    #  ######   #### " ,
+ f"{R}"]
+        middle: int = (os.get_terminal_size().columns / 2)
+        k = len(highScoreText[1])/2
+        leadingBlank = ''.join([" "] * (int)(middle - k))
+        for text in highScoreText:
+            print(leadingBlank+text)
+        myHighScores:list[list[str,int]] = myPuzzle.getHighScores()
+
+        if len(myHighScores) > 0:
+
+            k:int = 20
+            n:int = 20
+            l: int = (int)(middle - (((k + n)/2) + 7))  # 7 is the breathing room and frames
+            i: int = 2
+
+            leadingBlank = ''.join([" "] * l)
+
+            first = myHighScores[0]
+            print(f"{leadingBlank}{B+Y}╔══════╤═{''.join(['═']*k)}═╤═{''.join(['═']*n)}═╗{R}")
+            print(f"{leadingBlank}{B+Y}║ {R+Y}{'RANK':^4}{B+Y} │ {R+Y}{'NAME':^20}{B+Y} │ {R+Y}{'POINTS':^20}{B+Y} ║{R}")
+            print(f"{leadingBlank}{B+Y}╠══════╪═{''.join(['═']*k)}═╪═{''.join(['═']*n)}═╣{R}")
+            print(f"{leadingBlank}{B+Y}║ {G}{'1':^4}{B+Y} │ {G}{first[0].upper():^20}{B+Y} │ {G}{first[1]:^20}{B+Y} ║{R}")
+
+            if len(myHighScores) > 1:
+                print(f"{leadingBlank}{B+Y}╟──────┼─{''.join(['─']*k)}─┼─{''.join(['─']*n)}─╢{R}")
+                for name, score in myHighScores[1:-1]:
+                    print(f"{leadingBlank}{B+Y}║ {W}{i:^4}{B+Y} │ {W}{name.upper():^20}{B+Y} │ {W}{score:^20}{B+Y} {B+Y}║{R}")
+                    print(f"{leadingBlank}{B+Y}╟──────┼─{''.join(['─']*k)}─┼─{''.join(['─']*n)}─╢{R}")
+                    i += 1
+
+                last = myHighScores[-1]
+                print(f"{leadingBlank}{B+Y}║ {R+W+D}{len(myHighScores):^4}{B+Y} │ {R+W+D}{last[0].upper():^20}{B+Y} │ {R+W+D}{last[1]:^20}{B+Y} ║{R}")
+
+            print(f"{leadingBlank}{B+Y}╚══════╧═{''.join(['═']*k)}═╧═{''.join(['═']*n)}═╝{R}")
+
+        else:
+            msg = "No high scores!"
+            middle = (int) (middle - len(msg))
+            leadingBlank = ''.join([" "] * middle)
+            self.__boldPrint(f"{leadingBlank}{B+Y}No high scores!{R}")

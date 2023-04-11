@@ -68,6 +68,10 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
+    def saveScreenshot(self):
+        pass
+
+    @abstractmethod
     def getConfirmation(self):
         pass
 

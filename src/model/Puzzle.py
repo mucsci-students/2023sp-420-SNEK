@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 from model.Hint import Hint
 
@@ -57,7 +58,8 @@ class Puzzle:
                                      int] = self.__rankDict(self.maxPoints)
 
         self.puzzleHint: Hint
-
+        self.highScores: dict()
+        self.minimumHighScore: int
         # Current rank (beginner etc..)
         self.currentRank: str = self.__calcCurrentRank()
 
@@ -188,6 +190,18 @@ class Puzzle:
         '''
         return self.wordList
 
+    def getHighScores(self):
+        ''' Output:
+                the list of high scores
+        '''
+        return self.highScores
+
+    def getMinimumHighScore(self)->int:
+        ''' Output:
+                the hint object for the puzzle.
+        '''
+        return self.minimumHighScore
+
     def getPuzzleLetters(self) -> list[str]:
         ''' Output:
                 the list of letters that make up the game.
@@ -205,6 +219,18 @@ class Puzzle:
                 the hint object for the puzzle.
         '''
         self.puzzleHint = hint
+        
+    def setHighScores(self, scores):
+        ''' Input:
+                the list of high scores
+        '''
+        self.highScores = scores
+
+    def setMinimumHighScore(self, minimumHighScore: int):
+        ''' Input:
+                the hint object for the puzzle.
+        '''
+        self.minimumHighScore = minimumHighScore
 
     def shuffle(self):
         ''' Postcondition:
