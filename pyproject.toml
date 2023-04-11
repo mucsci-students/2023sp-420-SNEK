@@ -15,7 +15,8 @@ dependencies = [
     'pytest',
     'pytest-cov',
     'pillow',
-    'prompt_toolkit'
+    'prompt_toolkit',
+    'pyautogui'
 ]
 
 [tool.pytest.ini_options]

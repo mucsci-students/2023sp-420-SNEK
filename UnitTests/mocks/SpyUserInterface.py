@@ -97,3 +97,6 @@ class SpyUserInterface(view.UserInterface.UserInterface):
 
     def showHints(self):
         pass
+
+    def saveScreenshot(self):
+        pass
