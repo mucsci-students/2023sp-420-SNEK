@@ -18,9 +18,12 @@ cur = con.cursor()
 # create the table in the DB
 cur.execute("CREATE TABLE word_list ( numLetter INT,letter VARCHAR(10) NOT NULL,differentLetters VARCHAR(45) NOT NULL, word VARCHAR(45) NOT NULL, PRIMARY KEY (word))")
 
+cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
+
 for letter in letterArray:
     resp = requests.get('https://www.wordgamedictionary.com/word-lists/words-that-start-with/letter/' +
                         letter+'/words-that-start-with-'+letter+'.json')
+   
 
     JSONWord = resp.json()
     # Depuraitng words, first, we delete all the words with less than 4 letters and then, delete all the words with more than 7 different letters
