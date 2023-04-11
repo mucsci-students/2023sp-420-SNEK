@@ -251,6 +251,10 @@ Commands:
                 fileName = None
 
         return fileName
+    
+    #temp function for GUI functionality
+    def saveScreenshot():
+        pass
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
