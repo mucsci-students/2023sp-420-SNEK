@@ -353,3 +353,6 @@ Commands:
                 print("\n", end="\t   ")
             print(f"  {firstLetters.upper()} → {num:<4}", end="")
         print()
+
+    def showHighScores(self, myPuzzle: Puzzle):
+        myHighScores: dict = myPuzzle.getHighScores()
