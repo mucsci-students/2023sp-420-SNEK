@@ -35,7 +35,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
-import os, pyautogui
+import os, pyautogui, time
 from PIL import Image, ImageTk
 
 
@@ -456,6 +456,7 @@ class BeeUI(UserInterface):
 
     # Public method saveScreenshot
     def saveScreenshot(self):
+        time.sleep(.3)
         self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
         self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
 
