@@ -109,10 +109,10 @@ class test_Puzzle(unittest.TestCase):
         tst_puzzle = Puzzle(list(set("waxworks")), myList)
 
         tst_puzzle.setHighScores(dataSource.getHighScores(tst_puzzle.getPuzzleLetters()))
-        tst_puzzle.setMiminimumHighScore(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()))
+        tst_puzzle.setMinimumHighScore(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()))
 
         self.assertTrue(len(tst_puzzle.getHighScores()) == len(dataSource.getHighScores(tst_puzzle.getPuzzleLetters())), "insertion not correct")
-        self.assertTrue(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()) ==  tst_puzzle.getMiminimumHighScore(), "incorrect insertion")
+        self.assertTrue(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()) ==  tst_puzzle.getMinimumHighScore(), "incorrect insertion")
 
         del tst_puzzle      
 
