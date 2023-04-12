@@ -308,7 +308,9 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
 
+            print("hello 1")
         elif command == Commands.SAVE_SCORE:
+            print("hello 1")
             if self.playing:                
                 # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
                 if self.myPuzzle.points >= self.myPuzzle.getMinimumHighScore(self.myPuzzle.puzzleLetters): 
