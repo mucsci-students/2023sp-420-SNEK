@@ -90,3 +90,7 @@ class UserInterface(ABC):
     @abstractmethod
     def showExit(self):
         pass
+
+    @abstractmethod
+    def showHighScores(self):
+        pass
