@@ -307,6 +307,7 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
+
         elif command == Commands.SAVE_SCORE:
             if self.playing:
                 if # My puzzle score > lowest score from datasource:
@@ -317,8 +318,6 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("")) #TODO
-            
-            
 
         else:
             self.myUserInterface.showError(
