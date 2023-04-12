@@ -68,6 +68,10 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
+    def saveScreenshot(self):
+        pass
+
+    @abstractmethod
     def getConfirmation(self):
         pass
 
@@ -85,4 +89,8 @@ class UserInterface(ABC):
 
     @abstractmethod
     def showExit(self):
+        pass
+
+    @abstractmethod
+    def showHighScores(self):
         pass
