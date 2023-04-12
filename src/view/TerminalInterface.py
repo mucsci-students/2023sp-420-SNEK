@@ -241,8 +241,7 @@ Commands:
             overwrite = self.getConfirmation("Do you want to overwrite it?")
 
             if overwrite == self.defaultYes:
-                name = os.path.join(os.getcwd(), ".json")
-                fileName = os.path.normpath(name)
+                pass
             elif overwrite == self.defaultNo:
                 fileName = ""
             else:

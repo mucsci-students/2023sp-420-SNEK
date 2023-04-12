@@ -159,6 +159,14 @@ that need installation.
     class, the proxy for the data base, is now a singleton. This can be seen in the beginning
     of the DataSource class, as only one instance of that class can be made.
 
+    * Strategy: Saving data in both plain text and cipher text (for the wordList) is 
+    seperated into different strategies using the strategy design pattern. This seperates 
+    our save data function which originally did everything in house, into different stratgies 
+    so we can save json files in both plain text and cipher text without having the complexity
+    stored in the single saveData function. This can be seen with our new classes Context, 
+    Strategy, plainSave and encryptSave. They are first used in saveData based on if the user 
+    is encrypting their wordList or not.
+
     * Iterator:
     
     PS:

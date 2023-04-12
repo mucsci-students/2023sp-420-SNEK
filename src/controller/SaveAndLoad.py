@@ -3,6 +3,10 @@ import json
 import os
 from model.Puzzle import Puzzle
 from PIL import Image
+from cryptography.fernet import Fernet
+import base64
+from controller.Context import Context
+from controller.Strategy import plainSave, encryptSave
 # from customExcept import OverwriteSave
 
 # State class holding all save, load, and related methods
@@ -32,21 +36,28 @@ class SaveAndLoad:
     # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
     # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
     @staticmethod
-    def saveCurrent(puzzle: Puzzle, saveName: str):
-        SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
-                     puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints())
+    def saveCurrent(puzzle: Puzzle, saveName: str, encrypt: bool = False):
+        if encrypt:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
+                        puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints(), encrypt = True)
+        else:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), puzzle.getWordList(),
+                        puzzle.getGuessedWords(), puzzle.getCurrentPoints(), puzzle.getMaxPoints(), encrypt = False)
         # Save shell that allows for calling save data in 4 different ways scratch, current, overwrite scratch, and overwrite current
         # This is what is called for the user interface in the form state.save(state, "saveName", "saveType")
 
     @staticmethod
-    def saveScratch(puzzle: Puzzle, saveName: str):
-        SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(),
-                             puzzle.getWordList(), [], 0, puzzle.getMaxPoints())
+    def saveScratch(puzzle: Puzzle, saveName: str, encrypt: bool = False):
+        if encrypt:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), 
+                        puzzle.getWordList(), [], 0, puzzle.getMaxPoints(), encrypt = True)
+        else:
+            SaveAndLoad.saveData(saveName, puzzle.getPuzzleLetters(), 
+                        puzzle.getWordList(), [], 0, puzzle.getMaxPoints(), encrypt = False)
         
     @classmethod
     def saveImg(cls, img: Image, imgName: str):
         img.save(imgName)
-        
         
     @classmethod
     def __checkJsonExt(cls, fileName:str):
@@ -64,16 +75,23 @@ class SaveAndLoad:
     # full parameters without a type will save current
     # ^ but with type 1 will overwrite the savefile with current
     @classmethod
-    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0, img = None):
+    def saveData(cls, saveName:str, puzzleLetters, wordList, foundWords=[], currentPoints=0, maxPoints=0, author = "Team SNEK", encrypt = False):
         
         saveName = cls.__checkJsonExt(saveName)
         # checking if the wordListSize is None, meaning a scratch or overwrite scratch
+        save = Context()
+        if encrypt:
+            save.setStrategy(encryptSave())
+        else:
+            save.setStrategy(plainSave())
 
-        # transform data from variables into json format to dump into file
-        puzzleLettersStr = ''.join(puzzleLetters)
-        requiredLetter = puzzleLetters[0]
-        data = cls.saveParse(puzzleLettersStr, wordList,
-                             foundWords, currentPoints, requiredLetter, maxPoints)
+        retList = save.executeStrategy(puzzleLetters, wordList)
+        puzzleLettersStr = retList[0]
+        listType = retList[1]
+        wordList = retList[2]
+        requiredLetter = retList[3]
+        data = cls.saveParse(puzzleLettersStr, listType, wordList,
+                             foundWords, currentPoints, requiredLetter, maxPoints, author, encrypt)
 
         # dump new save data into master file and create if none is present
         dirs = os.path.dirname(saveName)
@@ -98,23 +116,40 @@ class SaveAndLoad:
         puzzleLetters.append(requiredLetter)
         # putting the req letter in front
         puzzleLetters = [requiredLetter] + list(puzzleLettersStr.replace(requiredLetter, ""))
-
-        myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
         
+
+        if list(data)[2] == "SecretWordList":
+            decrypLis = []
+            key = data["Author"]
+
+            for i in range(0, 32-len(key)):
+                key += "$"
+
+            key = key.encode("utf-8")
+            key = base64.b64encode(key)
+            f = Fernet(key)
+            for i in data["SecretWordList"]:
+                i.encode("utf-8")
+                decrypLis.append(f.decrypt(i).decode("utf-8"))
+            
+            myPuzzle = Puzzle(puzzleLetters, decrypLis, data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+        else:
+            myPuzzle = Puzzle(puzzleLetters, data["WordList"], data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
+            
         return myPuzzle
 
     # Translate from variables into json format
     @ staticmethod
-    def saveParse(puzzleLetters="", wordList=[], guessedWords=[], currentPoints=0, requiredLetter="", maxPoints=0):
+    def saveParse(puzzleLetters="", wordListType="WordList", wordList=[], guessedWords=[], currentPoints=0, requiredLetter="", maxPoints=0, author = "Team SNEK", crypBool: bool = False):
         # Translate to json format
         retData = {
+            "Author": author,
             "GuessedWords": guessedWords,
-            "WordList": wordList,
+            wordListType: wordList,
             "PuzzleLetters": puzzleLetters,
             "RequiredLetter": requiredLetter,
             "CurrentPoints": currentPoints,
             "MaxPoints": maxPoints
         }
-
         return retData
     
