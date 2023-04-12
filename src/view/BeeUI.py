@@ -58,7 +58,7 @@ class BeeUI(UserInterface):
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
         #self.root.geometry("1100x700")
-        self.root.geometry("900x600")
+        self.root.geometry("1100x700")
         self.root.title("The Spelling Bee! 🐝")
 
 # # # # # # # # # # # # # Menus # # # # # # # # # # # # #
