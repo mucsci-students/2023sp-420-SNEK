@@ -70,6 +70,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
+        self.filemenu.add_command(label="Secret Save", command=self.__onSecretSave)
         self.filemenu.add_command(label="Save Screenshot", command=self.__onSaveScreenshot)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
@@ -139,6 +140,11 @@ class BeeUI(UserInterface):
 
     def __onSave(self):
         self.myController.processInput(Commands.SAVE)
+
+    # Private method __onSecretSave
+    # Notifies myController that the user intends to save
+    def __onSecretSave(self):
+        self.myController.processInput(Commands.SAVE_SECRET)
 
     # Private method __onLoad
     # Notifies myController that the user intends to load
@@ -577,6 +583,7 @@ class BeeUI(UserInterface):
 
         self.filemenu.entryconfig("Save", state="disabled")
         self.filemenu.entryconfig("Save Screenshot", state="disabled")
+        self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
@@ -662,6 +669,7 @@ class BeeUI(UserInterface):
         # Disable all unusable menus
         self.filemenu.entryconfig("Save", state="disabled")
         self.filemenu.entryconfig("Save Screenshot", state="disabled")
+        self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
@@ -720,6 +728,7 @@ class BeeUI(UserInterface):
         #                           self.myController.processInput(Commands.EXIT))
         self.filemenu.entryconfig("Save", state="normal")
         self.filemenu.entryconfig("Save Screenshot", state="normal")
+        self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig(
             "Close Program", command=self.__checkTerminate)
