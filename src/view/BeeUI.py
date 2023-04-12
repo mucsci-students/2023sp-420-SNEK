@@ -455,6 +455,9 @@ class BeeUI(UserInterface):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
     # Public method saveScreenshot
+    # Get the loaction and size of the game frame and then uses the pyautogui
+    # screenshot function to get a screenshot. Opens filedialog for user to save and returns
+    # a list with the screenshot and chosen filepath
     def saveScreenshot(self):
         time.sleep(.3)
         self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
