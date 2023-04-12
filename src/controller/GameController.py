@@ -313,7 +313,7 @@ class GameController:
                 # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
                 if self.myPuzzle.points >= self.myPuzzle.getMinimumHighScore(self.myPuzzle.puzzleLetters): 
 
-                    self.myDataSource.setHighScore(self.myPuzzle.puzzleLetters, "SNEK", self.myPuzzle.getCurrentPoints())
+                    self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), "SNEK", self.myPuzzle.getCurrentPoints())
                 else:
                     # Return error saying that score isn't high enough for saving to top 10
                     self.myUserInterface.showError("Your score is not high enough to be on the top 10 leaderboard of this puzzle!")
