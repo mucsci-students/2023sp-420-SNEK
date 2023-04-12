@@ -309,11 +309,11 @@ class GameController:
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
 
         elif command == Commands.SAVE_SCORE:
-            print("hello 1")
-            if self.playing:                
+            if self.playing:           
                 # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
-                if self.myPuzzle.points >= self.myPuzzle.getMinimumHighScore(self.myPuzzle.puzzleLetters): 
-
+                #print("current points: ", self.myPuzzle.getCurrentPoints())
+                #print("minimum high score: ", self.myPuzzle.getMinimumHighScore())
+                if self.myPuzzle.getCurrentPoints() >= self.myPuzzle.getMinimumHighScore():  
                     self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), "SNEK", self.myPuzzle.getCurrentPoints())
                 else:
                     # Return error saying that score isn't high enough for saving to top 10
