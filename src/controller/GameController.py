@@ -310,7 +310,7 @@ class GameController:
 
         elif command == Commands.SAVE_SCORE:
             if self.playing:
-                if # My puzzle score > lowest score from datasource:
+                if True: # My puzzle score > lowest score from datasource
                     self.myUserInterface.saveScore(self.myPuzzle.points)
                 else:
                     # Return error saying that score isn't high enough for saving to top 10
