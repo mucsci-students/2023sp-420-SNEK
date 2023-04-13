@@ -33,6 +33,17 @@ class test_DataSource(unittest.TestCase):
     def tearDown(self) -> None:
         os.remove("test1.db")
             
+    
+    def test_constructorForDataSource(self):
+        dataSource = DataSource("test1.db")
+        
+        self.assertEqual(dataSource.dbName,'test1.db',
+                        f"the database name is not test1.db, it's {dataSource.dbName}")
+        
+        self.assertTrue(dataSource.numberOfLetters == 0, f"the number of letters should be 0, but it's {dataSource.numberOfLetters}")
+        self.assertTrue(len(dataSource.wordList) == 0, f"the number of wrods in the list should be 0, but it's {len(dataSource.wordList)}")
+
+        
 
     def test_createWordListFromWord(self):
         dataSource = DataSource("test1.db")

@@ -35,7 +35,13 @@ class DataSource(metaclass=SingletonMeta):
 
     # checks if a word is in the db
 
-    def checkWord(self, searchedWord):
+    def checkWord(self, searchedWord)->bool:
+        ''' Inputs:
+                searchedWord: the word to check in the db.
+
+            Output:
+                if the word is in the db
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -47,6 +53,10 @@ class DataSource(metaclass=SingletonMeta):
         return len(output) > 0
 
     def getRandomWord(self):
+        ''' 
+            Output:
+                a random word from the db that can be used as the base word for the puzzle.
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -75,6 +85,13 @@ class DataSource(metaclass=SingletonMeta):
 
     # returns a  dataSource object built with the word and the mandatory letter
     def grabWordsFor(self, word, mandatoryLetter):
+        ''' Inputs:
+                word: the base word for the puzzle.
+                mandatoryLetter: the required letter for the puzzle
+
+            Output:
+                the list of the words that are possible gusses for the puzzle.
+        '''
         optionalLetters = list(set(word))
         if mandatoryLetter == None or optionalLetters == None:
             return
@@ -197,6 +214,14 @@ class DataSource(metaclass=SingletonMeta):
         
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
+         
+        ''' Inputs:
+                inputWordList: a list of the words of the puzzle.
+                inputOptionalLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                hint object with all the data for the hints
+        '''
         letterMat = dict()
         maximum = 0
         beginDict = dict()
