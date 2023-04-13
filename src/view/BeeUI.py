@@ -88,6 +88,7 @@ class BeeUI(UserInterface):
             label="Show Rankings", command=lambda: self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
+        self.viewmenu.add_command(label="Save Score", command=lambda: self)
         # self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SHOW_SCORES))
         self.viewmenu.add_command(label="Show High Scores", command=lambda: self.showHighScores(self.myController.myPuzzle))
         self.viewmenu.add_separator()
@@ -407,12 +408,13 @@ class BeeUI(UserInterface):
         # Grab scores data for the puzzle
         highScores = myPuzzle.getHighScores()
         minScore = myPuzzle.getMinimumHighScore()
-        print('here1')
-        print(highScores)
-        print(minScore)
-        for i in highScores:
-            print('here2')
-            print(highScores[i])
+
+        # print('here1')
+        # print(highScores)
+        # print(minScore)
+        # for i in highScores:
+        #     print('here2')
+        #     print(highScores[i])
         
         self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
         self.scoresTextBox.pack()
@@ -642,6 +644,7 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -729,6 +732,7 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -788,6 +792,7 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
+        self.viewmenu.entryconfig("Save Score", state="normal")
         self.viewmenu.entryconfig("Show High Scores", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
