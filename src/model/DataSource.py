@@ -93,8 +93,7 @@ class DataSource(metaclass=SingletonMeta):
                 the list of the words that are possible gusses for the puzzle.
         '''
         optionalLetters = list(set(word))
-        if mandatoryLetter == None or optionalLetters == None:
-            return
+       
         if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
             mandatoryLetter = mandatoryLetter[0]
         con = sqlite3.connect(self.dbName)

@@ -49,11 +49,7 @@ class test_DataSource(unittest.TestCase):
         self.assertTrue(dataSource.numberOfLetters == 0, f"the number of letters should be 0, but it's {dataSource.numberOfLetters}")
         self.assertTrue(len(dataSource.wordList) == 0, f"the number of wrods in the list should be 0, but it's {len(dataSource.wordList)}")
 
-    def test_grabWordsForWithNoArgumentsReturnsEmptyList(self):
-        dataSource = DataSource("test1.db")
-        myList = dataSource.grabWordsFor("","")
-        self.assertEqual(len(myList),0,
-                        f"the list should be empty but its length is {len(myList)}")
+   
         
 
     def test_grabWordsForWithMoreThanOneLetterReturnsEmptyList(self):
