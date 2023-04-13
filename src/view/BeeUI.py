@@ -391,6 +391,9 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
+    def showHighScores(self):
+        pass
+
     # Public method showProgress
     # Params:
     #   rank - current rank of the user
