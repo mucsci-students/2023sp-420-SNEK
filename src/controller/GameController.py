@@ -292,13 +292,12 @@ class GameController:
                 else:
                     self.__createGame(newBaseWord)
 
-        elif command == Commands.SHOW_STATUS:
+        elif command == Commands.SCORES:
             if self.playing:
-                self.myUserInterface.showStatus(
-                    self.myPuzzle.getCurrentRank(), self.myPuzzle.getCurrentPoints())
+                self.myUserInterface.showHighScores(self.myPuzzle)
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show the scores of a game of"))
 
         elif command == Commands.SHOW_HINTS:
             if self.playing:

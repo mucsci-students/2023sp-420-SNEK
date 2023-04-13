@@ -43,7 +43,8 @@ Commands:
    -!new word - Generate a new puzzle with a user given
                word.  Console will prompt for the word after
                command is given.
-   -!status - Display you status for the current puzzle.
+   -!scores - Displays both the high scores for the puzzle and 
+              the current score for the player.
    -!save - Bring up the prompts for saving your current game.
    -!load - Bring up the prompts for loading a saved game.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
@@ -60,21 +61,20 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        try:
-            commandStrings = Commands.getCommandNameList()
-            while not self.quit:
-                userInput = self.__getUserInput(options=commandStrings)
-                if Commands.isCommand(userInput):
-                    userInput = Commands.getCommandFromName(userInput)
+        # try:
+        commandStrings = Commands.getCommandNameList()
+        while not self.quit:
+            userInput = self.__getUserInput(options=commandStrings)
+            if Commands.isCommand(userInput):
+                userInput = Commands.getCommandFromName(userInput)
 
-                self.myController.processInput(userInput)
-        except:
-            sys.stdout.flush()
-            print()
-            exit()
+            self.myController.processInput(userInput)
+        # except:
+        #     sys.stdout.flush()
+        #     print()
+        #     exit()
 
     # Flag if the game is quit
-
     def quitInterface(self):
         self.quit = True
 
@@ -109,17 +109,13 @@ Commands:
         baseWord = input().lower().strip()
         return baseWord
 
-    # If user wants to see their points and rank status
-    # when they enter the !status command, then it will print
-    # users status on the screen and display rank and current points
-    def showStatus(self, rank: str, currentPoints: int) -> None:
-        self.__boldPrint(rank + ": " + str(currentPoints))
 
     # Progress bar that shows users current rank and and displays it
     # in a nice progress bar that shows how many ranks in you are and
     # how many ranks are left to get to top rank
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
-        print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
+        rankAndPoints = f"{rank} ({currentPoints})"
+        print(Style.BRIGHT + f"\n  {rankAndPoints:16s} ", end=Style.RESET_ALL)
         print(" 🍯  ", end="")
         if currentPoints == 0:
             print(self.__LEFT_PROGRESS + "╶──", end="")
@@ -373,13 +369,13 @@ Commands:
  "#     #  #   ####   #    #       #####    ####    ####   #    #  ######   #### " ,
  f"{R}"]
         middle: int = (os.get_terminal_size().columns / 2)
-        k = len(highScoreText[1])/2
-        leadingBlank = ''.join([" "] * (int)(middle - k))
-        for text in highScoreText:
-            print(leadingBlank+text)
         myHighScores:list[list[str,int]] = myPuzzle.getHighScores()
 
         if len(myHighScores) > 0:
+            k = len(highScoreText[1])/2
+            leadingBlank = ''.join([" "] * (int)(middle - k))
+            for text in highScoreText:
+                print(leadingBlank+text)
 
             k:int = 20
             n:int = 20
@@ -405,6 +401,14 @@ Commands:
                 print(f"{leadingBlank}{B+Y}║ {R+W+D}{len(myHighScores):^4}{B+Y} │ {R+W+D}{last[0].upper():^20}{B+Y} │ {R+W+D}{last[1]:^20}{B+Y} ║{R}")
 
             print(f"{leadingBlank}{B+Y}╚══════╧═{''.join(['═']*k)}═╧═{''.join(['═']*n)}═╝{R}")
+
+            currentPoints = myPuzzle.getCurrentPoints()
+            difference = myPuzzle.getMinimumHighScore() - currentPoints
+            self.__boldPrint(f"You have {currentPoints} points:")
+            if difference > 0:
+                print(f"\tYou are {difference} points away form entering the leader board.")
+            else:
+                print(f"\tCongratulations! you can already enter the leader board!")
 
         else:
             msg = "No high scores!"
