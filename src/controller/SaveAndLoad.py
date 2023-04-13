@@ -128,9 +128,10 @@ class SaveAndLoad:
             key = key.encode("utf-8")
             key = base64.b64encode(key)
             f = Fernet(key)
-            for i in data["SecretWordList"]:
-                i.encode("utf-8")
-                decrypLis.append(f.decrypt(i).decode("utf-8"))
+
+            temp = data["SecretWordList"].encode("utf-8")
+            decrypLis = f.decrypt(temp).decode("utf-8").split(",")
+            decrypLis.remove("")
             
             myPuzzle = Puzzle(puzzleLetters, decrypLis, data["GuessedWords"], data["MaxPoints"], data["CurrentPoints"])
         else:
