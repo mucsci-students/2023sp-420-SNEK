@@ -49,7 +49,7 @@ Commands:
    -!save score - Bring up prompts for saving your score into
                   High Scores if applicable.
    -!load - Bring up the prompts for loading a saved game.
-   -!status - Display you status for the current puzzle.
+   -!scores - Display you status for the current puzzle.
    -!rank - Display available ranks and point thresholds per rank.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
                the order of the letter randomly other than the
