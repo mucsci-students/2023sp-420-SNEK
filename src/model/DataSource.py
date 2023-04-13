@@ -84,7 +84,7 @@ class DataSource(metaclass=SingletonMeta):
         return auxList[0]
 
     # returns a  dataSource object built with the word and the mandatory letter
-    def grabWordsFor(self, word, mandatoryLetter):
+    def grabWordsFor(self, word:str, mandatoryLetter:str)->list:
         ''' Inputs:
                 word: the base word for the puzzle.
                 mandatoryLetter: the required letter for the puzzle
@@ -98,7 +98,7 @@ class DataSource(metaclass=SingletonMeta):
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
         if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
-            return
+            return self.wordList
         cur.execute(
             "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()

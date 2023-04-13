@@ -26,6 +26,10 @@ class test_DataSource(unittest.TestCase):
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
             con.commit()
+            
+            cur.execute(
+                "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('x','xenon', 'xeno', '5');")
+            con.commit()
             cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
             con.commit()
             con.close()
@@ -52,7 +56,23 @@ class test_DataSource(unittest.TestCase):
                         f"the word waxwork is not in {dataSource.wordList}")
         self.assertTrue("waxworks" in dataSource.wordList,
                         f"the word waxworks is not in {dataSource.wordList}")
+        
+    
+        
 
+    def test_grabWordsForWithNoArgumentsReturnsEmptyList(self):
+        dataSource = DataSource("test1.db")
+        myList = dataSource.grabWordsFor("","")
+        self.assertEqual(len(myList),0,
+                        f"the list should be empty but its length is {len(myList)}")
+        
+
+    def test_grabWordsForWithMoreThanOneLetterReturnsEmptyList(self):
+        dataSource = DataSource("test1.db")
+        myList:list = dataSource.grabWordsFor("afsdfas","dfsfd")
+        self.assertEqual(len(myList),0,
+                        f"the list should be empty but its length is {len(myList)}")
+   
     def test_getRandomWord(self):
         dataSource = DataSource("test1.db")
         actualWord = dataSource.getRandomWord()
