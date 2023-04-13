@@ -35,7 +35,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
-import os
+import os, pyautogui, time
 from PIL import Image, ImageTk
 
 
@@ -57,7 +57,8 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.geometry("900x600")
+        #self.root.geometry("1100x700")
+        self.root.geometry("1100x700")
         self.root.title("The Spelling Bee! 🐝")
 
 # # # # # # # # # # # # # Menus # # # # # # # # # # # # #
@@ -70,6 +71,7 @@ class BeeUI(UserInterface):
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
         self.filemenu.add_command(label="Secret Save", command=self.__onSecretSave)
+        self.filemenu.add_command(label="Save Screenshot", command=self.__onSaveScreenshot)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
         self.filemenu.add_separator()
@@ -513,6 +515,21 @@ class BeeUI(UserInterface):
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
 
+    # Public method saveScreenshot
+    # Get the loaction and size of the game frame and then uses the pyautogui
+    # screenshot function to get a screenshot. Opens filedialog for user to save and returns
+    # a list with the screenshot and chosen filepath
+    def saveScreenshot(self):
+        time.sleep(.3)
+        self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
+        self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
+
+        screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
+        filepath = filedialog.asksaveasfilename(filetypes=[("PNG File", "*.png")], defaultextension=[("PNG File", "*.png")], initialdir=os.getcwd())
+        myShot = [screenShot, filepath]
+
+        return myShot
+
     # Private method __onClosing
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
@@ -620,6 +637,7 @@ class BeeUI(UserInterface):
         self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
 
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
         self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
@@ -706,6 +724,7 @@ class BeeUI(UserInterface):
 
         # Disable all unusable menus
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
         self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
@@ -765,6 +784,7 @@ class BeeUI(UserInterface):
         # self.filemenu.entryconfig("New", command=lambda:
         #                           self.myController.processInput(Commands.EXIT))
         self.filemenu.entryconfig("Save", state="normal")
+        self.filemenu.entryconfig("Save Screenshot", state="normal")
         self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)

@@ -41,11 +41,16 @@ Commands:
 
    -!new random - Generate a new random puzzle
    -!new word - Generate a new puzzle with a user given
-               word.  Console will prompt for the word after
-               command is given.
-   -!status - Display you status for the current puzzle.
+                word.  Console will prompt for the word after
+                command is given.
    -!save - Bring up the prompts for saving your current game.
+   -!save secret - Bring up the prompts for saving your current 
+                   game with encryption.
+   -!save score - Bring up prompts for saving your score into
+                  High Scores if applicable.
    -!load - Bring up the prompts for loading a saved game.
+   -!scores - Display the scoreboard for the current game and current points.
+   -!rank - Display available ranks and point thresholds per rank.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
                the order of the letter randomly other than the
                required center letter.  You can use this to
