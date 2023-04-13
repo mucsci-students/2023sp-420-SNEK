@@ -31,6 +31,7 @@ that need installation.
     * pytest-cov
     * pillow
     * Prompt-Toolkit
+    * Cryptography
 
 
 ### Python Version
@@ -90,22 +91,27 @@ that need installation.
     Call commands with a preceeding '!'. Commands may be
     called at anytime.
 
-            -!new rnd - Generate a new random puzzle
-            -!new wrd - Genereate a new puzzle with a user given
-                        word.  Console will prompt for the word after
-                        command is given.
-            -!status - Display you status for the current puzzle.
-            -!save - Bring up the prompts for saving your current game.
-            -!load - Bring up the prompts for loading a saved game.
-            -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-                        the order of the letter randomly other than the 
+             -!new random - Generate a new random puzzle
+             -!new word - Generate a new puzzle with a user given
+               word.  Console will prompt for the word after
+               command is given.
+             -!save - Bring up the prompts for saving your current game.
+             -!save secret - Bring up the prompts for saving your current 
+                            game with encryption.
+             -!save score - Bring up prompts for saving your score into
+                            High Scores if applicable.
+             -!load - Bring up the prompts for loading a saved game.
+             -!status - Display you status for the current puzzle.
+             -!rank - Display available ranks and point thresholds per rank.
+             -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
+                        the order of the letter randomly other than the
                         required center letter.  You can use this to
                         help you find other words.
-            -!guessed - Shows all the already correctly guessed words.
-            -!hints - prints out all the hints for the given puzzle
-            -!help - Prints out the help menu.
-            -!exit - Exits the game. Will prompt to save.
-            -!quit - Exits the entire program. Will prompt to save.'''
+             -!guessed - Shows all the already correctly guessed words.
+             -!hints - prints out all the hints for the given puzzle
+             -!help - Prints out the help menu.
+             -!exit - Exits the game. Will prompt to save.
+             -!quit - Exits the entire program. Will prompt to save.
    
 ### GUI Instructions
 
