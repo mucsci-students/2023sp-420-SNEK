@@ -87,7 +87,7 @@ class BeeUI(UserInterface):
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
         # self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SHOW_SCORES))
-        self.viewmenu.add_command(label="Show High Scores", command=self.showHighScores)
+        self.viewmenu.add_command(label="Show High Scores", command=lambda: self.showHighScores(self.myController.myPuzzle))
         self.viewmenu.add_separator()
         self.viewmenu.add_command(
             label="Show Hints", command=lambda: self.myController.processInput(Commands.SHOW_HINTS))
@@ -397,10 +397,20 @@ class BeeUI(UserInterface):
 
     # Public method showHighScores
     #
-    def showHighScores(self):
+    def showHighScores(self, myPuzzle):
         self.scoresWin = Toplevel() # popout window
         self.scoresWin.resizable(0,0) # forces window to stay same size
         self.scoresWin.title("High Scores!")
+
+        # Grab scores data for the puzzle
+        highScores = myPuzzle.getHighScores()
+        minScore = myPuzzle.getMinimumHighScore()
+        print('here1')
+        print(highScores)
+        print(minScore)
+        for i in highScores:
+            print('here2')
+            print(highScores[i])
         
         self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
         self.scoresTextBox.pack()
@@ -417,12 +427,17 @@ class BeeUI(UserInterface):
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
         self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
-        points = 992
+        points = 15000
+        strin = "EXAMPLE"
         for i in range(10):
-            self.scoresTextBox.insert('end', f"|   {i+1}    |          EXAMPLE          |         {points}         |\n", 'tag_center')
-            points -= 7
+            self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{strin : ^27}|{points: ^22}|\n", 'tag_center')
+            points -= 1423
 
-        self.scoresTextBox.insert('end', "\n\nYou are X points away from getting on the leaderboard!\n", 'tag_center_title')
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+
+        diff = (points + 1423) - myPuzzle.currentPoints
+        self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
+        self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
         self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
 
         # Disable textbox so that data can not be edited by user.
