@@ -411,3 +411,9 @@ Commands:
             middle = (int) (middle - len(msg))
             leadingBlank = ''.join([" "] * middle)
             self.__boldPrint(f"{leadingBlank}{B+Y}No high scores!{R}")
+
+    def getScoreName(self):
+        print("\nPlease provide a name: ")
+        name = input()
+        name = name[:20]
+        return name  
