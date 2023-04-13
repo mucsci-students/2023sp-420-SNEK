@@ -26,7 +26,9 @@ class test_DataSource(unittest.TestCase):
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
             con.commit()
-            
+            cur.execute(
+                "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxorks', 'waxorks', '7');")
+            con.commit()
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('x','xenon', 'xeno', '5');")
             con.commit()
@@ -56,10 +58,12 @@ class test_DataSource(unittest.TestCase):
 
     def test_grabWordsForWithMoreThanOneLetterReturnsEmptyList(self):
         dataSource = DataSource("test1.db")
-        myList:list = dataSource.grabWordsFor("afsdfas","dfsfd")
-        self.assertEqual(len(myList),0,
-                        f"the list should be empty but its length is {len(myList)}")
-      
+        myList:list = dataSource.grabWordsFor("waxworks","xdfsfd")
+        self.assertTrue("waxwork" in dataSource.wordList,
+                        f"the word waxwork is not in {dataSource.wordList}")
+        self.assertTrue("waxworks" in dataSource.wordList,
+                        f"the word waxworks is not in {dataSource.wordList}")
+        
 
     def test_createWordListFromWord(self):
         dataSource = DataSource("test1.db")
@@ -82,6 +86,8 @@ class test_DataSource(unittest.TestCase):
 
     def test_getHints(self):
         dataSource = DataSource("test1.db")
+        
+        
         dataSource.grabWordsFor("waxworks", "x")
         actualHints:Hint = dataSource.getHints(
             dataSource.wordList, list(set("waxworks")))
@@ -98,13 +104,13 @@ class test_DataSource(unittest.TestCase):
             letterMat['Σ'][str(number)] = 0
         
         letterMat['W']['8'] = 1
-        letterMat['W']['7'] = 1
-        letterMat['W']['Σ'] = 2
+        letterMat['W']['7'] = 2
+        letterMat['W']['Σ'] = 3
         letterMat['Σ']['8'] = 1
-        letterMat['Σ']['7'] = 1
-        letterMat['Σ']['Σ'] = 2
+        letterMat['Σ']['7'] = 2
+        letterMat['Σ']['Σ'] = 3
         beginning = dict()
-        beginning['wa'] = 2
+        beginning['wa'] = 3
         self.assertEqual(actualHints.beginningList, beginning,
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,

@@ -95,10 +95,11 @@ class DataSource(metaclass=SingletonMeta):
         optionalLetters = list(set(word))
         if mandatoryLetter == None or optionalLetters == None:
             return
+        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
+            mandatoryLetter = mandatoryLetter[0]
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
-        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
-            return self.wordList
+        
         cur.execute(
             "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
@@ -253,13 +254,7 @@ class DataSource(metaclass=SingletonMeta):
                 pangram += 1
                 if (len(word) == 7):
                     perfectPangram += 1
-            if (letterMat.get(word[0].upper()) == None):
-                letterMat[word[0].upper()][str(len(word))] = 1
-            else:
-                if (letterMat[word[0].upper()].get(str(len(word))) == None):
-                    letterMat[word[0].upper()][str(len(word))] = 1
-                else:
-                    letterMat[word[0].upper()][str(len(word))] += 1
+            letterMat[word[0].upper()][str(len(word))] += 1
 
             if (beginDict.get(word[:2]) == None):
                 beginDict[word[:2]] = 1
