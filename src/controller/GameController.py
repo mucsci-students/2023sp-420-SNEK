@@ -232,9 +232,12 @@ class GameController:
 
                 if exit:
                     newBaseWord = self.myUserInterface.getBaseWord()
-                    if (len(set(newBaseWord)) != 7):
+                    if (len(set(newBaseWord)) < 7):
                         self.myUserInterface.showError(
                             "That word does not have 7 different letters.")
+                    elif (len(set(newBaseWord)) > 7):
+                        self.myUserInterface.showError(
+                            "That word has more then 7 different letters.")
                     elif (not self.myDataSource.checkWord(newBaseWord)):
                         self.myUserInterface.showError(
                             "That word is not in the DB.")
