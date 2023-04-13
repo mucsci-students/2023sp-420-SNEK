@@ -30,8 +30,8 @@ that need installation.
     * pytest
     * pytest-cov
     * pillow
-    * Prompt-Toolkit
-    * Cryptography
+    * prompt-toolkit
+    * cryptography
 
 
 ### Python Version
@@ -39,7 +39,7 @@ that need installation.
     Tested on Python 3.10.9 and Python 3.11.1
 
 
-### Instructions for Building using Setup
+### Instructions for Building Program
 
 0. when using windows, execution policy for scripts must be changed
     from default to allow scripts to run like the activate script for the
