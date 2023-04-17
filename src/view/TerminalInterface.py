@@ -413,7 +413,11 @@ Commands:
             self.__boldPrint(f"{leadingBlank}{B+Y}No high scores!{R}")
 
     def getScoreName(self):
-        print("\nPlease provide a name: ")
-        name = input()
+        name = ""
+
+        while name == "":
+            print(self.__CMD_PREFIX, "Please provide a name: ")
+            name = input()
         name = name[:20]
-        return name  
+        print("hello")
+        return name
