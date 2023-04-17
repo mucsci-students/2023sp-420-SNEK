@@ -30,7 +30,8 @@ that need installation.
     * pytest
     * pytest-cov
     * pillow
-    * Prompt-Toolkit
+    * prompt-toolkit
+    * cryptography
 
 
 ### Python Version
@@ -38,7 +39,7 @@ that need installation.
     Tested on Python 3.10.9 and Python 3.11.1
 
 
-### Instructions for Building using Setup
+### Instructions for Building Program
 
 0. when using windows, execution policy for scripts must be changed
     from default to allow scripts to run like the activate script for the
@@ -90,22 +91,27 @@ that need installation.
     Call commands with a preceeding '!'. Commands may be
     called at anytime.
 
-            -!new rnd - Generate a new random puzzle
-            -!new wrd - Genereate a new puzzle with a user given
-                        word.  Console will prompt for the word after
-                        command is given.
-            -!status - Display you status for the current puzzle.
-            -!save - Bring up the prompts for saving your current game.
-            -!load - Bring up the prompts for loading a saved game.
-            -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-                        the order of the letter randomly other than the 
+             -!new random - Generate a new random puzzle
+             -!new word - Generate a new puzzle with a user given
+               word.  Console will prompt for the word after
+               command is given.
+             -!save - Bring up the prompts for saving your current game.
+             -!save secret - Bring up the prompts for saving your current 
+                            game with encryption.
+             -!save score - Bring up prompts for saving your score into
+                            High Scores if applicable.
+             -!load - Bring up the prompts for loading a saved game.
+             -!scores - Display the scoreboard for the current game and your current points.
+             -!rank - Display available ranks and point thresholds per rank.
+             -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
+                        the order of the letter randomly other than the
                         required center letter.  You can use this to
                         help you find other words.
-            -!guessed - Shows all the already correctly guessed words.
-            -!hints - prints out all the hints for the given puzzle
-            -!help - Prints out the help menu.
-            -!exit - Exits the game. Will prompt to save.
-            -!quit - Exits the entire program. Will prompt to save.'''
+             -!guessed - Shows all the already correctly guessed words.
+             -!hints - prints out all the hints for the given puzzle
+             -!help - Prints out the help menu.
+             -!exit - Exits the game. Will prompt to save.
+             -!quit - Exits the entire program. Will prompt to save.
    
 ### GUI Instructions
 
@@ -158,6 +164,14 @@ that need installation.
     classes accessing the data base but have different objects, that is why the DataSource
     class, the proxy for the data base, is now a singleton. This can be seen in the beginning
     of the DataSource class, as only one instance of that class can be made.
+
+    * Strategy: Saving data in both plain text and cipher text (for the wordList) is 
+    seperated into different strategies using the strategy design pattern. This seperates 
+    our save data function which originally did everything in house, into different stratgies 
+    so we can save json files in both plain text and cipher text without having the complexity
+    stored in the single saveData function. This can be seen with our new classes Context, 
+    Strategy, plainSave and encryptSave. They are first used in saveData based on if the user 
+    is encrypting their wordList or not.
 
     * Iterator:
     

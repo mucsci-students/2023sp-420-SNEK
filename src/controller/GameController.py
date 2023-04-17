@@ -102,6 +102,30 @@ class GameController:
 
         return saveMode == "cancel"
     
+
+    def __saveSecretFile(self) -> bool:
+        saveMode = self.myUserInterface.getConfirmation(
+            "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
+
+        if saveMode != "cancel":
+            fileName = self.myUserInterface.getSaveFileName()
+            print(fileName)
+            if fileName == "":
+                return
+            elif fileName == None:
+                return True
+
+            if not os.path.basename(fileName) == ".json":
+                if saveMode == "scratch":
+                    SaveAndLoad.saveScratch(self.myPuzzle, fileName, True)
+                else:
+                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName, True)
+
+                self.myUserInterface.showMessage(
+                    "The file has been saved: " + fileName)
+
+        return saveMode == "cancel"
+
     def __saveImg(self) -> bool:
         
         retLis = self.myUserInterface.saveScreenshot()
@@ -119,6 +143,7 @@ class GameController:
 
             self.myUserInterface.showMessage(
                     "The file has been saved: " + fileName)
+
 
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
@@ -196,7 +221,7 @@ class GameController:
                     self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
                 self.myPuzzle.setHint(newHints)
                 self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myPuzzle.setMiminimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
+                self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
                 self.playing = True
                 self.myUserInterface.showMessage(
                     "The file has been loaded: " + loadingFile)
