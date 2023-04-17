@@ -35,7 +35,13 @@ class DataSource(metaclass=SingletonMeta):
 
     # checks if a word is in the db
 
-    def checkWord(self, searchedWord):
+    def checkWord(self, searchedWord)->bool:
+        ''' Inputs:
+                searchedWord: the word to check in the db.
+
+            Output:
+                if the word is in the db
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -47,6 +53,10 @@ class DataSource(metaclass=SingletonMeta):
         return len(output) > 0
 
     def getRandomWord(self):
+        ''' 
+            Output:
+                a random word from the db that can be used as the base word for the puzzle.
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -74,14 +84,21 @@ class DataSource(metaclass=SingletonMeta):
         return auxList[0]
 
     # returns a  dataSource object built with the word and the mandatory letter
-    def grabWordsFor(self, word, mandatoryLetter):
+    def grabWordsFor(self, word:str, mandatoryLetter:str)->list:
+        ''' Inputs:
+                word: the base word for the puzzle.
+                mandatoryLetter: the required letter for the puzzle
+
+            Output:
+                the list of the words that are possible gusses for the puzzle.
+        '''
         optionalLetters = list(set(word))
-        if mandatoryLetter == None or optionalLetters == None:
-            return
+       
+        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
+            mandatoryLetter = mandatoryLetter[0]
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
-        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
-            return
+        
         cur.execute(
             "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
@@ -197,6 +214,14 @@ class DataSource(metaclass=SingletonMeta):
         
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
+         
+        ''' Inputs:
+                inputWordList: a list of the words of the puzzle.
+                inputOptionalLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                hint object with all the data for the hints
+        '''
         letterMat = dict()
         maximum = 0
         beginDict = dict()
@@ -228,13 +253,7 @@ class DataSource(metaclass=SingletonMeta):
                 pangram += 1
                 if (len(word) == 7):
                     perfectPangram += 1
-            if (letterMat.get(word[0].upper()) == None):
-                letterMat[word[0].upper()][str(len(word))] = 1
-            else:
-                if (letterMat[word[0].upper()].get(str(len(word))) == None):
-                    letterMat[word[0].upper()][str(len(word))] = 1
-                else:
-                    letterMat[word[0].upper()][str(len(word))] += 1
+            letterMat[word[0].upper()][str(len(word))] += 1
 
             if (beginDict.get(word[:2]) == None):
                 beginDict[word[:2]] = 1
