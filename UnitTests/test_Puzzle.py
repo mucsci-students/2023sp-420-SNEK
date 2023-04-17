@@ -66,7 +66,8 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getWordList()
         self.assertEqual(actual, expected,
                          f"actual: {actual}\nexpected: {expected}")
-
+        
+        actual = tst_puzzle.getRanks()
         expected = 0
         actual = tst_puzzle.getCurrentPoints()
         self.assertEqual(actual, expected,
