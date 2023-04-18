@@ -431,15 +431,13 @@ class BeeUI(UserInterface):
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
         self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
-        points = 15000
-        strin = "EXAMPLE"
-        for i in range(10):
-            self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{strin : ^27}|{points: ^22}|\n", 'tag_center')
-            points -= 1423
+        for x in highScores:
+            for y in x:
+                self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{y[0] : ^27}|{y[1]: ^22}|\n", 'tag_center')
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
-        diff = (points + 1423) - myPuzzle.currentPoints
+        diff = minScore - myPuzzle.currentPoints
         self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
         self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
         self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
