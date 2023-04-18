@@ -168,6 +168,7 @@ class GameController:
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
+
         if command == Commands.QUIT:
             if self.playing:
                 exit = self.__askExitAndSave(explicit=True)
@@ -317,13 +318,12 @@ class GameController:
                 else:
                     self.__createGame(newBaseWord)
 
-        elif command == Commands.SHOW_STATUS:
+        elif command == Commands.SCORES:
             if self.playing:
-                self.myUserInterface.showStatus(
-                    self.myPuzzle.getCurrentRank(), self.myPuzzle.getCurrentPoints())
+                self.myUserInterface.showHighScores(self.myPuzzle)
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show the scores of a game of"))
 
         elif command == Commands.SHOW_HINTS:
             if self.playing:
