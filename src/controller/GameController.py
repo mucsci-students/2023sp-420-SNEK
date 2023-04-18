@@ -143,6 +143,7 @@ class GameController:
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
+
         if command == Commands.QUIT:
             if self.playing:
                 exit = self.__askExitAndSave(explicit=True)
@@ -196,7 +197,7 @@ class GameController:
                     self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
                 self.myPuzzle.setHint(newHints)
                 self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myPuzzle.setMiminimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
+                self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
                 self.playing = True
                 self.myUserInterface.showMessage(
                     "The file has been loaded: " + loadingFile)
