@@ -23,7 +23,8 @@ class encryptSave(Strategy):
         # transform data from variables into json format to dump into file
         puzzleLettersStr = ''.join(puzzleLetters)
         requiredLetter = puzzleLetters[0]
-        encrypLis = []
+        tempLis = ""
+        encrypLis = ""
         key = "Team SNEK"
 
         for i in range(0, 32-len(key)):
@@ -34,6 +35,8 @@ class encryptSave(Strategy):
         f = Fernet(encrypText)
 
         for i in wordList:
-            encrypLis.append(f.encrypt(bytes(i, "utf-8")).decode("utf-8"))
+            tempLis += i + ","
+
+        encrypLis = f.encrypt(bytes(tempLis, "utf-8")).decode("utf-8")
 
         return [puzzleLettersStr, "SecretWordList", encrypLis, requiredLetter]
