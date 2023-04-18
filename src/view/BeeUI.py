@@ -90,7 +90,6 @@ class BeeUI(UserInterface):
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
         self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
         self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
-        # self.viewmenu.add_command(label="Show High Scores", command=lambda: self.showHighScores(self.myController.myPuzzle))
         self.viewmenu.add_separator()
         self.viewmenu.add_command(
             label="Show Hints", command=lambda: self.myController.processInput(Commands.SHOW_HINTS))
@@ -924,13 +923,6 @@ class BeeUI(UserInterface):
         self.goBackBtn = tk.Button(
             self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
-
-
-    def saveScreenshot(self):
-        pass
-
-    def showHighScores(self):
-        pass
 
 # End class
 # ASSURE YOU REMOVE THIS OR COMMENT IT OUT AFTER IMPLEMENTATION INTO MAIN:
