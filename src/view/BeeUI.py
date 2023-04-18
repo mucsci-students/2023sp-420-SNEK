@@ -483,7 +483,8 @@ class BeeUI(UserInterface):
         self.__gamePage()
         self.showProgress(puzzle.getCurrentRank(), list(
             puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
-        self.myController.processInput(Commands.SHOW_STATUS)
+        self.rank.configure(text=puzzle.getCurrentRank())
+        self.pointVal.configure(text=puzzle.getCurrentPoints())
 
     # Public method showRanking
     # Params:
@@ -852,7 +853,7 @@ class BeeUI(UserInterface):
 
         # Submit guess button creation and display
         self.sub = tk.Button(self.mainFrame, border='0', image=self.submitButtonSized, command=lambda: [
-                             self.__submitGuess(), self.myController.processInput(Commands.SHOW_STATUS)])
+                             self.__submitGuess()])
         self.sub.pack()
 
         # Creation of frame for the honeycomb
@@ -923,6 +924,13 @@ class BeeUI(UserInterface):
         self.goBackBtn = tk.Button(
             self.mainFrame, border='0', image=self.goBackImg, command=self.__mainMenuPage)
         self.goBackBtn.pack(pady=25)
+
+
+    def saveScreenshot(self):
+        pass
+
+    def showHighScores(self):
+        pass
 
 # End class
 # ASSURE YOU REMOVE THIS OR COMMENT IT OUT AFTER IMPLEMENTATION INTO MAIN:
