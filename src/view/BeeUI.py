@@ -395,9 +395,6 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
-    def saveScreenshot(self):
-        pass
-
     # Public method showHighScores
     #
     def showHighScores(self, myPuzzle):
