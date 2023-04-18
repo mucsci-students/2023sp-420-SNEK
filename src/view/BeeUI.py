@@ -813,7 +813,7 @@ class BeeUI(UserInterface):
         # Defining each of the 7 buttons.  btn4 is the required letter.
         self.btn1 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[1].upper(
         ), font=('Arial', 18), image=self.comb, command=lambda: self.__setText(self.wordPuzzle[1]))
-        self.btn1.place(y=8, x=150)
+        self.btn1.place(y=0, x=150)
 
         self.btn2 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[2].upper(
         ), font=('Arial', 18), image=self.comb, command=lambda: self.__setText(self.wordPuzzle[2]))
@@ -837,7 +837,7 @@ class BeeUI(UserInterface):
 
         self.btn7 = tk.Button(self.buttonframe, border='0', compound=tk.CENTER, text=self.wordPuzzle[6].upper(
         ), font=('Arial', 18), image=self.comb, command=lambda: self.__setText(self.wordPuzzle[6]))
-        self.btn7.place(x=150, y=210)
+        self.btn7.place(x=150, y=220)
 
         # Display the honeycomb frame to window
         self.buttonframe.pack(ipadx=200, ipady=155)
