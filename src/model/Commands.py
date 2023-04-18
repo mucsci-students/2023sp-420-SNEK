@@ -33,8 +33,7 @@ class Commands(Enum):
         def __get__(self, *args):
             return self.value
 
-        def __repr__(self):
-            return '%s(%r)' % (self.__class__.__name__, self.value)
+       
 
     __CMD_MARK = Constant("!")
     __CMD_DIC = Constant(
@@ -79,7 +78,7 @@ class Commands(Enum):
         if type(cmd) == str:
             cmdName = cmd.strip().lower()
             cmd = cls.getCommandFromName(cmdName)
-            return cmd != Commands.UNDEFINED
+            return cmd != Commands.UNDEFINED 
         
         else:
             return type(cmd) == Commands
