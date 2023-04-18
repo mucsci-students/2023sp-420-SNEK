@@ -89,8 +89,8 @@ class BeeUI(UserInterface):
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
         self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
-        # self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SHOW_SCORES))
-        self.viewmenu.add_command(label="Show High Scores", command=lambda: self.showHighScores(self.myController.myPuzzle))
+        self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
+        # self.viewmenu.add_command(label="Show High Scores", command=lambda: self.showHighScores(self.myController.myPuzzle))
         self.viewmenu.add_separator()
         self.viewmenu.add_command(
             label="Show Hints", command=lambda: self.myController.processInput(Commands.SHOW_HINTS))
