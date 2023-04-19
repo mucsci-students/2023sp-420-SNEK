@@ -31,10 +31,11 @@ class test_Commands(unittest.TestCase):
         self.assertEqual(Commands.getCommandFromName("!rank"),Commands.RANK,"command should be the rank command")
         self.assertEqual(Commands.getCommandFromName("!scores"),Commands.SCORES,"command should be the scores command")
         self.assertEqual(Commands.getCommandFromName("!hints"),Commands.SHOW_HINTS,"command should be the hints command")
+        self.assertEqual(Commands.getCommandFromName("!save score"),Commands.SAVE_SCORE,"command should be the hints command")
         self.assertEqual(Commands.getCommandFromName("!empty"),Commands.CMD_LIKE,"command should be the empty command")
 
     def test_getCommandList(self):
-        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!scores', '!hints']
+        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!save score', '!scores', '!hints']
         list = Commands.getCommandNameList()
         self.assertEquals(expected,list,'the command list is incorrect')
     
