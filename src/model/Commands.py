@@ -19,10 +19,11 @@ class Commands(Enum):
     SHUFFLE = auto()
     GUESSED_WORDS = auto()
     RANK = auto()
-    SHOW_STATUS = auto()
+    SCORES = auto()
     SHOW_HINTS = auto()
     CMD_LIKE = auto()
     UNDEFINED = auto()
+    SAVE_SCORE = auto()
 
 
     class Constant:
@@ -32,8 +33,7 @@ class Commands(Enum):
         def __get__(self, *args):
             return self.value
 
-        def __repr__(self):
-            return '%s(%r)' % (self.__class__.__name__, self.value)
+       
 
     __CMD_MARK = Constant("!")
     __CMD_DIC = Constant(
@@ -50,7 +50,8 @@ class Commands(Enum):
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
             "rank": RANK,
-            "status": SHOW_STATUS,
+            "save score": SAVE_SCORE,
+            "scores": SCORES,
             "hints": SHOW_HINTS
         })
 
@@ -77,7 +78,7 @@ class Commands(Enum):
         if type(cmd) == str:
             cmdName = cmd.strip().lower()
             cmd = cls.getCommandFromName(cmdName)
-            return cmd != Commands.UNDEFINED
+            return cmd != Commands.UNDEFINED 
         
         else:
             return type(cmd) == Commands

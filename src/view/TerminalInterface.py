@@ -6,8 +6,6 @@ from model.Commands import *
 from model.Hint import Hint
 
 import os
-import keyboard
-import time
 import sys
 
 
@@ -45,9 +43,16 @@ Commands:
    -!new word - Generate a new puzzle with a user given
                word.  Console will prompt for the word after
                command is given.
-   -!status - Display you status for the current puzzle.
+   -!scores - Displays both the high scores for the puzzle and 
+              the current score for the player.
    -!save - Bring up the prompts for saving your current game.
+   -!save secret - Bring up the prompts for saving your current 
+                   game with encryption.
+   -!save score - Bring up prompts for saving your score into
+                  High Scores if applicable.
    -!load - Bring up the prompts for loading a saved game.
+   -!scores - Display the scoreboard for the current game and current points.
+   -!rank - Display available ranks and point thresholds per rank.
    -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
                the order of the letter randomly other than the
                required center letter.  You can use this to
@@ -62,21 +67,20 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        try:
-            commandStrings = Commands.getCommandNameList()
-            while not self.quit:
-                userInput = self.__getUserInput(options=commandStrings)
-                if Commands.isCommand(userInput):
-                    userInput = Commands.getCommandFromName(userInput)
+        # try:
+        commandStrings = Commands.getCommandNameList()
+        while not self.quit:
+            userInput = self.__getUserInput(options=commandStrings)
+            if Commands.isCommand(userInput):
+                userInput = Commands.getCommandFromName(userInput)
 
-                self.myController.processInput(userInput)
-        except:
-            sys.stdout.flush()
-            print()
-            exit()
+            self.myController.processInput(userInput)
+        # except:
+        #     sys.stdout.flush()
+        #     print()
+        #     exit()
 
     # Flag if the game is quit
-
     def quitInterface(self):
         self.quit = True
 
@@ -111,17 +115,13 @@ Commands:
         baseWord = input().lower().strip()
         return baseWord
 
-    # If user wants to see their points and rank status
-    # when they enter the !status command, then it will print
-    # users status on the screen and display rank and current points
-    def showStatus(self, rank: str, currentPoints: int) -> None:
-        self.__boldPrint(rank + ": " + str(currentPoints))
 
     # Progress bar that shows users current rank and and displays it
     # in a nice progress bar that shows how many ranks in you are and
     # how many ranks are left to get to top rank
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
-        print(Style.BRIGHT + f"\n  {rank:12s} ", end=Style.RESET_ALL)
+        rankAndPoints = f"{rank} ({currentPoints})"
+        print(Style.BRIGHT + f"\n  {rankAndPoints:16s} ", end=Style.RESET_ALL)
         print(" 🍯  ", end="")
         if currentPoints == 0:
             print(self.__LEFT_PROGRESS + "╶──", end="")
@@ -243,8 +243,7 @@ Commands:
             overwrite = self.getConfirmation("Do you want to overwrite it?")
 
             if overwrite == self.defaultYes:
-                name = os.path.join(os.getcwd(), ".json")
-                fileName = os.path.normpath(name)
+                pass
             elif overwrite == self.defaultNo:
                 fileName = ""
             else:
@@ -253,8 +252,8 @@ Commands:
         return fileName
     
     #temp function for GUI functionality
-    def saveScreenshot():
-        pass
+    def saveScreenshot(self):
+        self.showError("Functionality not supported in 'cli' mode:", "Please, try launching in the GUI.\n")
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
@@ -357,3 +356,77 @@ Commands:
                 print("\n", end="\t   ")
             print(f"  {firstLetters.upper()} → {num:<4}", end="")
         print()
+
+    def showHighScores(self, myPuzzle: Puzzle):
+        B = Style.BRIGHT
+        Y = Fore.YELLOW
+        R = Style.RESET_ALL
+        G = Fore.GREEN
+        W = Fore.WHITE
+        D = Style.DIM
+        highScoreText = [f"{D+B+G}",
+ "#     #                          #####                                         " ,
+ "#     #  #   ####   #    #      #     #   ####    ####   #####   ######   #### " ,
+ "#     #  #  #    #  #    #      #        #    #  #    #  #    #  #       #     " ,
+ "#######  #  #       ######       #####   #       #    #  #    #  #####    #### " ,
+ "#     #  #  #  ###  #    #            #  #       #    #  #####   #            #" ,
+ "#     #  #  #    #  #    #      #     #  #    #  #    #  #   #   #       #    #" ,
+ "#     #  #   ####   #    #       #####    ####    ####   #    #  ######   #### " ,
+ f"{R}"]
+        middle: int = (os.get_terminal_size().columns / 2)
+        myHighScores:list[list[str,int]] = myPuzzle.getHighScores()
+
+        if len(myHighScores) > 0:
+            k = len(highScoreText[1])/2
+            leadingBlank = ''.join([" "] * (int)(middle - k))
+            for text in highScoreText:
+                print(leadingBlank+text)
+
+            k:int = 20
+            n:int = 20
+            l: int = (int)(middle - (((k + n)/2) + 7))  # 7 is the breathing room and frames
+            i: int = 2
+
+            leadingBlank = ''.join([" "] * l)
+
+            first = myHighScores[0]
+            print(f"{leadingBlank}{B+Y}╔══════╤═{''.join(['═']*k)}═╤═{''.join(['═']*n)}═╗{R}")
+            print(f"{leadingBlank}{B+Y}║ {R+Y}{'RANK':^4}{B+Y} │ {R+Y}{'NAME':^20}{B+Y} │ {R+Y}{'POINTS':^20}{B+Y} ║{R}")
+            print(f"{leadingBlank}{B+Y}╠══════╪═{''.join(['═']*k)}═╪═{''.join(['═']*n)}═╣{R}")
+            print(f"{leadingBlank}{B+Y}║ {G}{'1':^4}{B+Y} │ {G}{first[0].upper():^20}{B+Y} │ {G}{first[1]:^20}{B+Y} ║{R}")
+
+            if len(myHighScores) > 1:
+                print(f"{leadingBlank}{B+Y}╟──────┼─{''.join(['─']*k)}─┼─{''.join(['─']*n)}─╢{R}")
+                for name, score in myHighScores[1:-1]:
+                    print(f"{leadingBlank}{B+Y}║ {W}{i:^4}{B+Y} │ {W}{name.upper():^20}{B+Y} │ {W}{score:^20}{B+Y} {B+Y}║{R}")
+                    print(f"{leadingBlank}{B+Y}╟──────┼─{''.join(['─']*k)}─┼─{''.join(['─']*n)}─╢{R}")
+                    i += 1
+
+                last = myHighScores[-1]
+                print(f"{leadingBlank}{B+Y}║ {R+W+D}{len(myHighScores):^4}{B+Y} │ {R+W+D}{last[0].upper():^20}{B+Y} │ {R+W+D}{last[1]:^20}{B+Y} ║{R}")
+
+            print(f"{leadingBlank}{B+Y}╚══════╧═{''.join(['═']*k)}═╧═{''.join(['═']*n)}═╝{R}")
+
+            currentPoints = myPuzzle.getCurrentPoints()
+            difference = myPuzzle.getMinimumHighScore() - currentPoints
+            self.__boldPrint(f"You have {currentPoints} points:")
+            if difference > 0:
+                print(f"\tYou are {difference} points away form entering the leader board.")
+            else:
+                print(f"\tCongratulations! you can already enter the leader board!")
+
+        else:
+            msg = "No high scores!"
+            middle = (int) (middle - len(msg))
+            leadingBlank = ''.join([" "] * middle)
+            self.__boldPrint(f"{leadingBlank}{B+Y}No high scores!{R}")
+
+    def getScoreName(self):
+        name = ""
+
+        while name == "":
+            print("Please provide a name: ")
+            name = input(self.__CMD_PREFIX + ' ')
+        name = name[:20]
+        
+        return name

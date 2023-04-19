@@ -26,6 +26,12 @@ class test_DataSource(unittest.TestCase):
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
             con.commit()
+            cur.execute(
+                "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxorks', 'waxorks', '7');")
+            con.commit()
+            cur.execute(
+                "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('x','xenon', 'xeno', '5');")
+            con.commit()
             cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
             con.commit()
             con.close()
@@ -33,6 +39,27 @@ class test_DataSource(unittest.TestCase):
     def tearDown(self) -> None:
         os.remove("test1.db")
             
+    
+    def test_constructorForDataSource(self):
+        dataSource = DataSource("test1.db")
+        
+        self.assertEqual(dataSource.dbName,'test1.db',
+                        f"the database name is not test1.db, it's {dataSource.dbName}")
+        
+        self.assertTrue(dataSource.numberOfLetters == 0, f"the number of letters should be 0, but it's {dataSource.numberOfLetters}")
+        self.assertTrue(len(dataSource.wordList) == 0, f"the number of wrods in the list should be 0, but it's {len(dataSource.wordList)}")
+
+   
+        
+
+    def test_grabWordsForWithMoreThanOneLetterReturnsEmptyList(self):
+        dataSource = DataSource("test1.db")
+        myList:list = dataSource.grabWordsFor("waxworks","xdfsfd")
+        self.assertTrue("waxwork" in dataSource.wordList,
+                        f"the word waxwork is not in {dataSource.wordList}")
+        self.assertTrue("waxworks" in dataSource.wordList,
+                        f"the word waxworks is not in {dataSource.wordList}")
+        
 
     def test_createWordListFromWord(self):
         dataSource = DataSource("test1.db")
@@ -41,16 +68,22 @@ class test_DataSource(unittest.TestCase):
                         f"the word waxwork is not in {dataSource.wordList}")
         self.assertTrue("waxworks" in dataSource.wordList,
                         f"the word waxworks is not in {dataSource.wordList}")
+        
+    
+        
 
+    
     def test_getRandomWord(self):
         dataSource = DataSource("test1.db")
         actualWord = dataSource.getRandomWord()
         expectedWord = "waxworks"
-        self.assertEqual(actualWord, expectedWord,
+        self.assertTrue(actualWord=="waxworks" or actualWord=="waxorks",
                          f"the word is not the expected one, the one expected was {expectedWord} and the one recieved was {actualWord}")
 
     def test_getHints(self):
         dataSource = DataSource("test1.db")
+        
+        
         dataSource.grabWordsFor("waxworks", "x")
         actualHints:Hint = dataSource.getHints(
             dataSource.wordList, list(set("waxworks")))
@@ -67,13 +100,13 @@ class test_DataSource(unittest.TestCase):
             letterMat['Σ'][str(number)] = 0
         
         letterMat['W']['8'] = 1
-        letterMat['W']['7'] = 1
-        letterMat['W']['Σ'] = 2
+        letterMat['W']['7'] = 2
+        letterMat['W']['Σ'] = 3
         letterMat['Σ']['8'] = 1
-        letterMat['Σ']['7'] = 1
-        letterMat['Σ']['Σ'] = 2
+        letterMat['Σ']['7'] = 2
+        letterMat['Σ']['Σ'] = 3
         beginning = dict()
-        beginning['wa'] = 2
+        beginning['wa'] = 3
         self.assertEqual(actualHints.beginningList, beginning,
                          f"the list is not the expected one, the one expected was {beginning} and the one recieved was {actualHints.beginningList}")
         self.assertEqual(actualHints.letterMatrix, letterMat,
@@ -108,8 +141,7 @@ class test_DataSource(unittest.TestCase):
         restOfLetters.sort()
         puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
         cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, numLetter INT NOT NULL);")
-        cur.execute(
-                "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
+        cur.execute("INSERT INTO high_scores VALUES ('"+puzzleName+"');")
         con.commit()
         output = cur.fetchall()
         self.assertTrue(dataSource.hasHighScores(list(puzzleName)),"should be true as that puzzle has a highscore table")
@@ -175,10 +207,10 @@ class test_DataSource(unittest.TestCase):
         dataSource.setHighScore(letters,"example",1000)
         dataSource.setHighScore(letters,"example",1000)
         dataSource.setHighScore(letters,"example",1000)
-        dataSource.setHighScore(letters,"example",999)     
-        dataSource.setHighScore(letters,"example",998) 
+        dataSource.setHighScore(letters,"example",999)
+        dataSource.setHighScore(letters,"example",998)
 
-        actual = dataSource.getMinimumHighScore(letters);
+        actual = dataSource.getMinimumHighScore(letters)
         self.assertEqual(999,actual,f"the insertion is not correct expected 999, actual: {actual} ")
 
     def test_getHighScoreFromExistingHighScoreTable(self):

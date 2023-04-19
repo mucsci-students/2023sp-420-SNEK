@@ -196,9 +196,9 @@ class Puzzle:
         '''
         return self.highScores
 
-    def getMiminimumHighScore(self)->int:
+    def getMinimumHighScore(self)->int:
         ''' Output:
-                the hint object for the puzzle.
+                the number of points that represent the minimum high score for the puzzle.
         '''
         return self.minimumHighScore
 
@@ -226,9 +226,9 @@ class Puzzle:
         '''
         self.highScores = scores
 
-    def setMiminimumHighScore(self, minimumHighScore: int):
+    def setMinimumHighScore(self, minimumHighScore: int):
         ''' Input:
-                the hint object for the puzzle.
+                the number of points that represent the minimum high score for the puzzle.
         '''
         self.minimumHighScore = minimumHighScore
 

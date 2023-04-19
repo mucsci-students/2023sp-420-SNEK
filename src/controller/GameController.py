@@ -102,14 +102,41 @@ class GameController:
 
         return saveMode == "cancel"
     
+
+    def __saveSecretFile(self) -> bool:
+        saveMode = self.myUserInterface.getConfirmation(
+            "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
+
+        if saveMode != "cancel":
+            fileName = self.myUserInterface.getSaveFileName()
+            print(fileName)
+            if fileName == "":
+                return
+            elif fileName == None:
+                return True
+
+            if not os.path.basename(fileName) == ".json":
+                if saveMode == "scratch":
+                    SaveAndLoad.saveScratch(self.myPuzzle, fileName, True)
+                else:
+                    SaveAndLoad.saveCurrent(self.myPuzzle, fileName, True)
+
+                self.myUserInterface.showMessage(
+                    "The file has been saved: " + fileName)
+
+        return saveMode == "cancel"
+
     def __saveImg(self) -> bool:
         
         retLis = self.myUserInterface.saveScreenshot()
+        if retLis == None:
+            return False
+
         imgFile = retLis[0]
         fileName = retLis[1]
 
         if fileName == "":
-            return
+            return False
         elif fileName == None:
             return True
         
@@ -119,6 +146,7 @@ class GameController:
 
             self.myUserInterface.showMessage(
                     "The file has been saved: " + fileName)
+
 
     # Private function to create a new game from a newBaseWord
     # Sets the puzzle attributes accordingly, sets the GameController to playing,
@@ -135,7 +163,7 @@ class GameController:
             self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
         self.myPuzzle.setHint(newHints)
         self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-        self.myPuzzle.setMiminimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
+        self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
 
         self.playing = True
         self.myUserInterface.showPuzzle(self.myPuzzle)
@@ -143,6 +171,7 @@ class GameController:
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
+
         if command == Commands.QUIT:
             if self.playing:
                 exit = self.__askExitAndSave(explicit=True)
@@ -195,10 +224,13 @@ class GameController:
                 newHints = self.myDataSource.getHints(
                     self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
                 self.myPuzzle.setHint(newHints)
+                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
                 self.playing = True
                 self.myUserInterface.showMessage(
                     "The file has been loaded: " + loadingFile)
                 self.myUserInterface.showPuzzle(self.myPuzzle)
+
             else:
                 self.myUserInterface.showError("That file does not exist.")
 
@@ -227,7 +259,7 @@ class GameController:
                     return
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save an image")
                 )
         elif command == Commands.RANK:
             if self.playing:
@@ -292,13 +324,12 @@ class GameController:
                 else:
                     self.__createGame(newBaseWord)
 
-        elif command == Commands.SHOW_STATUS:
+        elif command == Commands.SCORES:
             if self.playing:
-                self.myUserInterface.showStatus(
-                    self.myPuzzle.getCurrentRank(), self.myPuzzle.getCurrentPoints())
+                self.myUserInterface.showHighScores(self.myPuzzle)
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show status of"))
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show the scores of a game of"))
 
         elif command == Commands.SHOW_HINTS:
             if self.playing:
@@ -307,6 +338,22 @@ class GameController:
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
+
+        elif command == Commands.SAVE_SCORE:
+            if self.playing:           
+                # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
+                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore():  
+                    self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                    self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                    self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
+                    self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
+                else:
+                    # Return error saying that score isn't high enough for saving to top 10
+                    self.myUserInterface.showError("Your score is not high enough to be on the top 10 leaderboard of this puzzle!\n")
+            else:
+                self.myUserInterface.showError(
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save the high scores of"))
+
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')
