@@ -106,3 +106,6 @@ class SpyUserInterface(view.UserInterface.UserInterface):
     def showHighScores(self, *args):
         count = self.spyValues.get(self.showHighScores, 0)
         self.spyValues[self.showHighScores] = count + 1
+
+    def getScoreName(self):
+        pass

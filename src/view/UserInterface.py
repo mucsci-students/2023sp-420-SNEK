@@ -90,3 +90,7 @@ class UserInterface(ABC):
     @abstractmethod
     def showHighScores(self):
         pass
+
+    @abstractmethod
+    def getScoreName(self):
+        pass  
