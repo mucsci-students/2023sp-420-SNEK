@@ -50,7 +50,7 @@ class Commands(Enum):
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
             "rank": RANK,
-            "save score": SAVE_SCORE
+            "save score": SAVE_SCORE,
             "scores": SCORES,
             "hints": SHOW_HINTS
         })
