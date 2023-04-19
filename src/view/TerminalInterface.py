@@ -252,8 +252,8 @@ Commands:
         return fileName
     
     #temp function for GUI functionality
-    def saveScreenshot():
-        pass
+    def saveScreenshot(self):
+        self.showError("Functionality not supported in 'cli' mode:", "Please, try launching in the GUI.\n")
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
@@ -425,8 +425,8 @@ Commands:
         name = ""
 
         while name == "":
-            print(self.__CMD_PREFIX, "Please provide a name: ")
-            name = input()
+            print("Please provide a name: ")
+            name = input(self.__CMD_PREFIX + ' ')
         name = name[:20]
-        print("hello")
+        
         return name
