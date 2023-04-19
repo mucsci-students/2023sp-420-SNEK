@@ -35,7 +35,7 @@ class test_Commands(unittest.TestCase):
         self.assertEqual(Commands.getCommandFromName("!empty"),Commands.CMD_LIKE,"command should be the empty command")
 
     def test_getCommandList(self):
-        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!save scores', '!scores', '!hints']
+        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!save score', '!scores', '!hints']
         list = Commands.getCommandNameList()
         self.assertEquals(expected,list,'the command list is incorrect')
     
