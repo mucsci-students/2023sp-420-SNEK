@@ -16,7 +16,7 @@ class test_Commands(unittest.TestCase):
     
         self.assertEqual(Commands.getCommandFromName("tortilla"),Commands.UNDEFINED,"command should not exist")
 
-    def test_nomalCommands(self):
+    def test_normalCommands(self):
         self.assertEqual(Commands.getCommandFromName("!help"),Commands.HELP,"command should be help command")
         self.assertEqual(Commands.getCommandFromName("!quit"),Commands.QUIT,"command should be the quit command")
         self.assertEqual(Commands.getCommandFromName("!exit"),Commands.EXIT,"command should be the exit command")
@@ -29,12 +29,12 @@ class test_Commands(unittest.TestCase):
         self.assertEqual(Commands.getCommandFromName("!shuffle"),Commands.SHUFFLE,"command should be the shuffle command")
         self.assertEqual(Commands.getCommandFromName("!guessed"),Commands.GUESSED_WORDS,"command should be the guessed command")
         self.assertEqual(Commands.getCommandFromName("!rank"),Commands.RANK,"command should be the rank command")
-        self.assertEqual(Commands.getCommandFromName("!status"),Commands.SHOW_STATUS,"command should be the status command")
+        self.assertEqual(Commands.getCommandFromName("!scores"),Commands.SCORES,"command should be the scores command")
         self.assertEqual(Commands.getCommandFromName("!hints"),Commands.SHOW_HINTS,"command should be the hints command")
         self.assertEqual(Commands.getCommandFromName("!empty"),Commands.CMD_LIKE,"command should be the empty command")
 
     def test_getCommandList(self):
-        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!status', '!hints']
+        expected = ['!exit', '!quit', '!help', '!new word', '!new random', '!save', '!save secret', '!save image', '!load', '!shuffle', '!guessed', '!rank', '!scores', '!hints']
         list = Commands.getCommandNameList()
         self.assertEquals(expected,list,'the command list is incorrect')
     

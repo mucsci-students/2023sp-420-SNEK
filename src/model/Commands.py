@@ -19,7 +19,7 @@ class Commands(Enum):
     SHUFFLE = auto()
     GUESSED_WORDS = auto()
     RANK = auto()
-    SHOW_STATUS = auto()
+    SCORES = auto()
     SHOW_HINTS = auto()
     CMD_LIKE = auto()
     UNDEFINED = auto()
@@ -50,9 +50,9 @@ class Commands(Enum):
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
             "rank": RANK,
-            "status": SHOW_STATUS,
-            "hints": SHOW_HINTS,
             "save score": SAVE_SCORE
+            "scores": SCORES,
+            "hints": SHOW_HINTS
         })
 
     @classmethod

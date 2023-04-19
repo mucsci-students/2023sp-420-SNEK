@@ -24,10 +24,6 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def showStatus(self):
-        pass
-
-    @abstractmethod
     def showRanking(self):
         pass
 
