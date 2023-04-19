@@ -88,6 +88,9 @@ class BeeUI(UserInterface):
             label="Show Rankings", command=lambda: self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
+        self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
+        self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
+        self.viewmenu.add_separator()
         self.viewmenu.add_command(
             label="Show Hints", command=lambda: self.myController.processInput(Commands.SHOW_HINTS))
         self.viewmenu.add_command(label="Show Help", command=self.showHelp)
@@ -391,8 +394,53 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
-    def showHighScores(self):
-        pass
+    # Public method showHighScores
+    #
+    def showHighScores(self, myPuzzle):
+        self.scoresWin = Toplevel() # popout window
+        self.scoresWin.resizable(0,0) # forces window to stay same size
+        self.scoresWin.title("High Scores!")
+
+        # Grab scores data for the puzzle
+        highScores = myPuzzle.getHighScores()
+        minScore = myPuzzle.getMinimumHighScore()
+
+        # print('here1')
+        # print(highScores)
+        # print(minScore)
+        # for i in highScores:
+        #     print('here2')
+        #     print(highScores[i])
+        
+        self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
+        self.scoresTextBox.pack()
+
+        # Configure tags for printing styles
+        self.scoresTextBox.tag_configure('tag_center_title', justify='center', font=('Arial', 18))
+        self.scoresTextBox.tag_configure('tag_center', justify='center', font=('Courier New', 14))
+        self.scoresTextBox.tag_configure('tag_left', justify='left', font=('Courier New', 11))
+        self.scoresTextBox.tag_configure('tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
+
+        self.scoresTextBox.insert('end', "🐝 🍯 High Scores! 🍯 🐝\n\n", 'tag_center_title')
+
+        # self.scoresTextBox.insert('end', f"|        |                           |                      |\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+        for x in highScores:
+            for y in x:
+                self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{y[0] : ^27}|{y[1]: ^22}|\n", 'tag_center')
+
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+
+        diff = minScore - myPuzzle.currentPoints
+        self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
+        self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+        self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
+
+        # Disable textbox so that data can not be edited by user.
+        self.scoresTextBox.configure(state="disabled")
+
 
     # Public method showProgress
     # Params:
@@ -434,7 +482,8 @@ class BeeUI(UserInterface):
         self.__gamePage()
         self.showProgress(puzzle.getCurrentRank(), list(
             puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
-        self.myController.processInput(Commands.SHOW_STATUS)
+        self.rank.configure(text=puzzle.getCurrentRank())
+        self.pointVal.configure(text=puzzle.getCurrentPoints())
 
     # Public method showRanking
     # Params:
@@ -590,6 +639,8 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Save Score", state="disabled")
+        self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
@@ -676,6 +727,8 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Save Score", state="disabled")
+        self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
@@ -733,9 +786,9 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Save Screenshot", state="normal")
         self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
-        self.filemenu.entryconfig(
-            "Close Program", command=self.__checkTerminate)
-
+        self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
+        self.viewmenu.entryconfig("Save Score", state="normal")
+        self.viewmenu.entryconfig("Show High Scores", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
         self.viewmenu.entryconfig("Show Hints", state="normal")
@@ -799,7 +852,7 @@ class BeeUI(UserInterface):
 
         # Submit guess button creation and display
         self.sub = tk.Button(self.mainFrame, border='0', image=self.submitButtonSized, command=lambda: [
-                             self.__submitGuess(), self.myController.processInput(Commands.SHOW_STATUS)])
+                             self.__submitGuess()])
         self.sub.pack()
 
         # Creation of frame for the honeycomb
