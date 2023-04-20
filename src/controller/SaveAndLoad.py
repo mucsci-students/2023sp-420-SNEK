@@ -2,7 +2,7 @@
 import json
 import os
 from model.Puzzle import Puzzle
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 from cryptography.fernet import Fernet
 import base64
 from controller.Context import Context
@@ -57,6 +57,16 @@ class SaveAndLoad:
         
     @classmethod
     def saveImg(cls, img: Image, imgName: str):
+        if type(img) == str :
+            fnt = font = ImageFont.load_default()
+
+            image = Image.new(mode = "RGB", size = (200,160), color = "black")
+            draw = ImageDraw.Draw(image)
+            
+            draw.text((10,10), img, font=fnt, fill=(255,255,0))
+
+            image = image.resize((900, 700), resample=Image.NEAREST)
+            img = image.copy()
         img.save(imgName)
         
     @classmethod

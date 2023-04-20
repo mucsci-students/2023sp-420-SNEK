@@ -128,7 +128,7 @@ class GameController:
 
     def __saveImg(self) -> bool:
         
-        retLis = self.myUserInterface.saveScreenshot()
+        retLis = self.myUserInterface.saveScreenshot(self.myPuzzle)
         if retLis == None:
             return False
 
