@@ -416,7 +416,6 @@ class BeeUI(UserInterface):
             self.scoreNameWin.destroy()
         name = self.var.get()
         name = name[:20]
-        print(name)
         return name
 
     # Public method showHighScores
@@ -452,9 +451,9 @@ class BeeUI(UserInterface):
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
         self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
-        for x in highScores:
-            for y in x:
-                self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{y[0] : ^27}|{y[1]: ^22}|\n", 'tag_center')
+        
+        for i, (name, points) in enumerate(highScores):
+            self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{name : ^27}|{points: ^22}|\n", 'tag_center')
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
