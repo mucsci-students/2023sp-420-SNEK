@@ -32,6 +32,7 @@ that need installation.
     * pillow
     * prompt-toolkit
     * cryptography
+    * pyautogui
 
 
 ### Python Version
