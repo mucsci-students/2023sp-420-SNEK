@@ -198,6 +198,8 @@ that need installation.
 ### And Remember
     
 #  ***`No Step On Snek`*** 
-
+<p align="center">
+    <img src="ratSpin.gif">
+</p>
         
 
