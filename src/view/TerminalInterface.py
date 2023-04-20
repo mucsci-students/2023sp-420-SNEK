@@ -441,7 +441,7 @@ Commands:
             if difference > 0:
                 print(f"\tYou are {difference} points away form entering the leader board.")
             else:
-                print(f"\tCongratulations! you can already enter the leader board!")
+                print(f"\tCongratulations! You can already enter the leader board!")
 
         else:
             msg = "No high scores!"

@@ -7,3 +7,4 @@ spell/
 *.json
 spellingBee.egg-info/
 *.coverage
+/*.png
