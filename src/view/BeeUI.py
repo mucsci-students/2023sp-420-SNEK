@@ -35,7 +35,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
-import os, pyautogui, time
+import os
 from PIL import Image, ImageTk
 
 
@@ -546,13 +546,33 @@ class BeeUI(UserInterface):
     # screenshot function to get a screenshot. Opens filedialog for user to save and returns
     # a list with the screenshot and chosen filepath
     def saveScreenshot(self, myPuzzle):
-        time.sleep(.3)
-        self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
-        self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
+        myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
+        rank = myPuzzle.getCurrentRank()
+        score = myPuzzle.getCurrentPoints()
+        prog = "Rank: " + rank + "   " + "Score: " + str(score)
 
-        screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
+
+        
+        img =     '''  {}
+<---------------------------->
+|             ___            |
+|         ___/ {} \___        |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|            \___/           |
+<---------------------------->'''.format(prog,
+                            myLetters[1],
+                            myLetters[2],
+                            myLetters[3],
+                            myLetters[0],
+                            myLetters[4],
+                            myLetters[5],
+                            myLetters[6])
+
         filepath = filedialog.asksaveasfilename(filetypes=[("PNG File", "*.png")], defaultextension=[("PNG File", "*.png")], initialdir=os.getcwd())
-        myShot = [screenShot, filepath]
+        myShot = [img, filepath]
 
         return myShot
 
