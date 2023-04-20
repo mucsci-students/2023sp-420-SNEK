@@ -93,4 +93,4 @@ class UserInterface(ABC):
 
     @abstractmethod
     def getScoreName(self):
-        pass  
+        pass
