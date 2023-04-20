@@ -173,7 +173,11 @@ that need installation.
     Strategy, plainSave and encryptSave. They are first used in saveData based on if the user 
     is encrypting their wordList or not.
 
-    * Iterator:
+    * Iterator: We need to study the data of different sets of elements, it might be a list of
+    strings or all the letters of a word. The iterator becomes useful to make this tasks, so just 
+    by using this utility in the loops we can accomplish the study of elements we desire. 
+    This pattern can be found in the getHints method used to study the beginning of the words to 
+    make the hint matrix.
     
     PS:
     
