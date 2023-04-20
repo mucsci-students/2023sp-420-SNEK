@@ -129,12 +129,14 @@ class GameController:
     def __saveImg(self) -> bool:
         
         retLis = self.myUserInterface.saveScreenshot(self.myPuzzle)
+        if retLis == None:
+            return False
 
         imgFile = retLis[0]
         fileName = retLis[1]
 
         if fileName == "":
-            return
+            return False
         elif fileName == None:
             return True
         
@@ -257,7 +259,7 @@ class GameController:
                     return
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save")
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save an image")
                 )
         elif command == Commands.RANK:
             if self.playing:
@@ -300,9 +302,12 @@ class GameController:
 
                 if exit:
                     newBaseWord = self.myUserInterface.getBaseWord()
-                    if (len(set(newBaseWord)) != 7):
+                    if (len(set(newBaseWord)) < 7):
                         self.myUserInterface.showError(
                             "That word does not have 7 different letters.")
+                    elif (len(set(newBaseWord)) > 7):
+                        self.myUserInterface.showError(
+                            "That word has more then 7 different letters.")
                     elif (not self.myDataSource.checkWord(newBaseWord)):
                         self.myUserInterface.showError(
                             "That word is not in the DB.")
@@ -337,18 +342,17 @@ class GameController:
         elif command == Commands.SAVE_SCORE:
             if self.playing:           
                 # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
-                #print("current points: ", self.myPuzzle.getCurrentPoints())
-                #print("minimum high score: ", self.myPuzzle.getMinimumHighScore())
                 if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore():  
                     self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                    self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!")
+                    self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                    self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
                     self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
                 else:
                     # Return error saying that score isn't high enough for saving to top 10
-                    self.myUserInterface.showError("Your score is not high enough to be on the top 10 leaderboard of this puzzle!")
+                    self.myUserInterface.showError("Your score is not high enough to be on the top 10 leaderboard of this puzzle!\n")
             else:
                 self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show high scores of"))
+                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save the high scores of"))
 
         else:
             self.myUserInterface.showError(

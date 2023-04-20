@@ -252,8 +252,7 @@ Commands:
                 fileName = None
 
         return fileName
-    
-    #temp function for GUI functionality
+ 
     def saveScreenshot(self, myPuzzle: Puzzle):
             myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
             rank = myPuzzle.getCurrentRank()
@@ -451,8 +450,8 @@ Commands:
         name = ""
 
         while name == "":
-            print(self.__CMD_PREFIX, "Please provide a name: ")
-            name = input()
+            print("Please provide a name: ")
+            name = input(self.__CMD_PREFIX + ' ')
         name = name[:20]
-        print("hello")
+        
         return name
