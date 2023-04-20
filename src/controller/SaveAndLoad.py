@@ -66,7 +66,8 @@ class SaveAndLoad:
             draw.text((10,10), img, font=fnt, fill=(255,255,0))
 
             image = image.resize((900, 700), resample=Image.NEAREST)
-        image.save(imgName)
+            img = image.copy()
+        img.save(imgName)
         
     @classmethod
     def __checkJsonExt(cls, fileName:str):
