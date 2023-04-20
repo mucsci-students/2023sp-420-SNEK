@@ -394,8 +394,30 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
+    # Prompts the user for a name to save high score
     def getScoreName(self):
-        pass
+        self.var = tk.StringVar()
+        while self.var.get() == '':
+            self.scoreNameWin = Toplevel() # popout window
+            self.scoreNameWin.title("Save High Score!")
+
+            self.x = self.root.winfo_x()
+            self.y = self.root.winfo_y()
+            self.scoreNameWin.geometry("+%d+%d" % (self.x+300, self.y+300))
+
+            self.enterNameLabel = tk.Label(self.scoreNameWin, text="Enter your name: ", font=('Arial', 12))
+            self.enterNameEntry = tk.Entry(self.scoreNameWin, font=('Arial', 12))
+            self.enterNameLabel.grid(row=0, column=0)
+            self.enterNameEntry.grid(row=0, column=1)
+
+            self.enterNameButton = tk.Button(self.scoreNameWin, text="Submit", font=('Arial', 12), command=lambda: self.var.set(self.enterNameEntry.get()))
+            self.enterNameButton.grid(row=1, column=0, columnspan=2)
+            self.enterNameButton.wait_variable(self.var)
+            self.scoreNameWin.destroy()
+        name = self.var.get()
+        name = name[:20]
+        print(name)
+        return name
 
     # Public method showHighScores
     #
