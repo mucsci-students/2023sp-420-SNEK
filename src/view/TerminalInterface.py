@@ -52,6 +52,7 @@ Commands:
                    game with encryption.
    -!save score - Bring up prompts for saving your score into
                   High Scores if applicable.
+   -!save image - Saves image of the CLI honeycomb.
    -!load - Bring up the prompts for loading a saved game.
    -!scores - Display the scoreboard for the current game and current points.
    -!rank - Display available ranks and point thresholds per rank.
