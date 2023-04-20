@@ -4,6 +4,8 @@ from view.Inputer import Inputer
 from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
+from contextlib import redirect_stdout
+
 
 import os
 import sys
@@ -252,8 +254,32 @@ Commands:
         return fileName
     
     #temp function for GUI functionality
-    def saveScreenshot():
-        pass
+    def saveScreenshot(self, myPuzzle: Puzzle):
+            myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
+            rank = myPuzzle.getCurrentRank()
+            score = myPuzzle.getCurrentPoints()
+            prog = "Rank: " + rank + "   " + "Score: " + str(score)
+            fileName = self.getSaveFileName()
+            fileName = os.path.splitext(fileName)[0]
+            fileName = fileName + ".png"
+
+            
+            return     ['''{}
+             ___
+         ___/ {} \___
+        / {} \___/ {} \\
+        \___/ {} \___/
+        / {} \___/ {} \\
+        \___/ {} \___/
+            \___/ '''.format(prog,
+                            myLetters[1],
+                            myLetters[2],
+                            myLetters[3],
+                            myLetters[0],
+                            myLetters[4],
+                            myLetters[5],
+                            myLetters[6]), fileName]
+        
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open

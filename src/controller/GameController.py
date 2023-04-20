@@ -128,7 +128,8 @@ class GameController:
 
     def __saveImg(self) -> bool:
         
-        retLis = self.myUserInterface.saveScreenshot()
+        retLis = self.myUserInterface.saveScreenshot(self.myPuzzle)
+
         imgFile = retLis[0]
         fileName = retLis[1]
 
