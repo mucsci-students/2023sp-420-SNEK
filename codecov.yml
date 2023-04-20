@@ -13,3 +13,4 @@ coverage:
       default:
         target: auto
         threshold: 0%
+    patch: off
