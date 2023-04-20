@@ -69,18 +69,18 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        # try:
-        commandStrings = Commands.getCommandNameList()
-        while not self.quit:
-            userInput = self.__getUserInput(options=commandStrings)
-            if Commands.isCommand(userInput):
-                userInput = Commands.getCommandFromName(userInput)
+        try:
+            commandStrings = Commands.getCommandNameList()
+            while not self.quit:
+                userInput = self.__getUserInput(options=commandStrings)
+                if Commands.isCommand(userInput):
+                    userInput = Commands.getCommandFromName(userInput)
 
-            self.myController.processInput(userInput)
-        # except:
-        #     sys.stdout.flush()
-        #     print()
-        #     exit()
+                self.myController.processInput(userInput)
+        except:
+            sys.stdout.flush()
+            print()
+            exit()
 
     # Flag if the game is quit
     def quitInterface(self):
@@ -263,14 +263,16 @@ Commands:
             fileName = fileName + ".png"
 
             
-            return     ['''{}
-             ___
-         ___/ {} \___
-        / {} \___/ {} \\
-        \___/ {} \___/
-        / {} \___/ {} \\
-        \___/ {} \___/
-            \___/ '''.format(prog,
+            return     ['''  {}
+<---------------------------->
+|             ___            |
+|         ___/ {} \___        |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|            \___/           |
+<---------------------------->'''.format(prog,
                             myLetters[1],
                             myLetters[2],
                             myLetters[3],
