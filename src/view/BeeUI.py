@@ -88,6 +88,7 @@ class BeeUI(UserInterface):
             label="Show Rankings", command=lambda: self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
+        self.viewmenu.add_separator()
         self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
         self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
         self.viewmenu.add_separator()
@@ -407,6 +408,7 @@ class BeeUI(UserInterface):
 
             self.enterNameLabel = tk.Label(self.scoreNameWin, text="Enter your name: ", font=('Arial', 12))
             self.enterNameEntry = tk.Entry(self.scoreNameWin, font=('Arial', 12))
+            self.enterNameEntry.focus()
             self.enterNameLabel.grid(row=0, column=0)
             self.enterNameEntry.grid(row=0, column=1)
 
@@ -457,9 +459,13 @@ class BeeUI(UserInterface):
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
+        print(minScore)
         diff = minScore - myPuzzle.currentPoints
         self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
-        self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+        if diff < 0:
+            self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+        else:
+            self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
         self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
 
         # Disable textbox so that data can not be edited by user.
