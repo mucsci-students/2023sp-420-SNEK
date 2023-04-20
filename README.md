@@ -200,7 +200,9 @@ make the hint matrix.
 
 ### And Remember
     
-#  ***`No Step On Snek`*** 
+<p align=center>
+    <img src="src/img/SNEK.png">
+<p>
 
         
 
