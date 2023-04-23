@@ -399,7 +399,7 @@ class GameController:
         self.myUserInterface.showCorrectGuess()
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
-            confirm = self.myUserInterface.getConfirmation("You are in the top 10 players for this puzzle! Do you want to save your score?")
+            confirm = self.myUserInterface.getConfirmation("You are in the top 10 players for this puzzle!\nDo you want to save your score?")
             if confirm == "y" or confirm == "Yes":
                 self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
                 self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
