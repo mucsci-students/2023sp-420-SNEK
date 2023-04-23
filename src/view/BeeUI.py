@@ -89,7 +89,6 @@ class BeeUI(UserInterface):
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
         self.viewmenu.add_separator()
-        self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
         self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
         self.viewmenu.add_separator()
         self.viewmenu.add_command(
@@ -688,7 +687,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
-        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -776,7 +774,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
-        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -836,7 +833,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
-        self.viewmenu.entryconfig("Save Score", state="normal")
         self.viewmenu.entryconfig("Show High Scores", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
