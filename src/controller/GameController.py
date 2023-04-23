@@ -220,7 +220,11 @@ class GameController:
                 return
 
             if SaveAndLoad.isSaved(loadingFile):
-                self.myPuzzle = SaveAndLoad.load(loadingFile)
+                try:
+                    self.myPuzzle = SaveAndLoad.load(loadingFile)
+                except:
+                    self.myUserInterface.showError("Load Failed")
+                    return
                 newHints = self.myDataSource.getHints(
                     self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
                 self.myPuzzle.setHint(newHints)
