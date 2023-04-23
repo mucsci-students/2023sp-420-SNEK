@@ -204,5 +204,8 @@ make the hint matrix.
     <img src="src/img/SNEK.png">
 <p>
 
+<p align="center">
+    <img src="ratSpin.gif">
+</p>
         
 
