@@ -128,7 +128,7 @@ class GameController:
 
     def __saveImg(self) -> bool:
         
-        retLis = self.myUserInterface.saveScreenshot()
+        retLis = self.myUserInterface.saveScreenshot(self.myPuzzle)
         if retLis == None:
             return False
 
@@ -174,6 +174,17 @@ class GameController:
 
         if command == Commands.QUIT:
             if self.playing:
+                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
+                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
+                    if confirm == "y" or confirm == "Yes":
+                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
+                        self.playing = False
+                        self.myUserInterface.showExit()
+                        self.myUserInterface.quitInterface()
+                        return
+                        
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.playing = False
@@ -184,6 +195,16 @@ class GameController:
 
         elif command == Commands.EXIT:
             if self.playing:
+                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
+                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
+                    if confirm == "y" or confirm == "Yes":
+                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
+                        self.playing = False
+                        self.myUserInterface.showExit()
+                        return
+
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.playing = False
@@ -220,12 +241,16 @@ class GameController:
                 return
 
             if SaveAndLoad.isSaved(loadingFile):
-                self.myPuzzle = SaveAndLoad.load(loadingFile)
+                try:
+                    self.myPuzzle = SaveAndLoad.load(loadingFile)
+                except:
+                    self.myUserInterface.showError("Load Failed")
+                    return
                 newHints = self.myDataSource.getHints(
                     self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
                 self.myPuzzle.setHint(newHints)
                 self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
+                self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
                 self.playing = True
                 self.myUserInterface.showMessage(
                     "The file has been loaded: " + loadingFile)
@@ -339,21 +364,6 @@ class GameController:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("show hints of"))
 
-        elif command == Commands.SAVE_SCORE:
-            if self.playing:           
-                # If this current puzzle is greater than or equal to the minumum high score of this particular puzzle
-                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore():  
-                    self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                    self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                    self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
-                    self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
-                else:
-                    # Return error saying that score isn't high enough for saving to top 10
-                    self.myUserInterface.showError("Your score is not high enough to be on the top 10 leaderboard of this puzzle!\n")
-            else:
-                self.myUserInterface.showError(
-                    self.__NO_GAME_TITLE, self.__NO_GAME_DESC("save the high scores of"))
-
         else:
             self.myUserInterface.showError(
                 "Not a valid command:", 'Type "!help" to show all possibilities')
@@ -389,4 +399,9 @@ class GameController:
         self.myUserInterface.showCorrectGuess()
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()
+            confirm = self.myUserInterface.getConfirmation("You are in the top 10 players for this puzzle!\nDo you want to save your score?")
+            if confirm == "y" or confirm == "Yes":
+                self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
             self.playing = False

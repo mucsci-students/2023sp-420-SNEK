@@ -2,7 +2,7 @@
 import json
 import os
 from model.Puzzle import Puzzle
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 from cryptography.fernet import Fernet
 import base64
 from controller.Context import Context
@@ -56,8 +56,17 @@ class SaveAndLoad:
                         puzzle.getWordList(), [], 0, puzzle.getMaxPoints(), encrypt = False)
         
     @classmethod
-    def saveImg(cls, img: Image, imgName: str):
-        img.save(imgName)
+    def saveImg(cls, img: str, imgName: str):
+        
+        fnt = font = ImageFont.load_default()
+
+        image = Image.new(mode = "RGB", size = (200,160), color = "black")
+        draw = ImageDraw.Draw(image)
+        
+        draw.text((10,10), img, font=fnt, fill=(255,255,0))
+
+        image = image.resize((900, 700), resample=Image.NEAREST)
+        image.save(imgName)
         
     @classmethod
     def __checkJsonExt(cls, fileName:str):

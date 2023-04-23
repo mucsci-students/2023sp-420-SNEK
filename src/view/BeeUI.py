@@ -35,7 +35,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from tkinter import filedialog
 from tkinter import *
-import os, pyautogui, time
+import os
 from PIL import Image, ImageTk
 
 
@@ -88,7 +88,7 @@ class BeeUI(UserInterface):
             label="Show Rankings", command=lambda: self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
-        self.viewmenu.add_command(label="Save Score", command=lambda: self.myController.processInput(Commands.SAVE_SCORE))
+        self.viewmenu.add_separator()
         self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
         self.viewmenu.add_separator()
         self.viewmenu.add_command(
@@ -394,8 +394,30 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
+    # Prompts the user for a name to save high score
     def getScoreName(self):
-        pass
+        self.var = tk.StringVar()
+        while self.var.get() == '':
+            self.scoreNameWin = Toplevel() # popout window
+            self.scoreNameWin.title("Save High Score!")
+
+            self.x = self.root.winfo_x()
+            self.y = self.root.winfo_y()
+            self.scoreNameWin.geometry("+%d+%d" % (self.x+300, self.y+300))
+
+            self.enterNameLabel = tk.Label(self.scoreNameWin, text="Enter your name: ", font=('Arial', 12))
+            self.enterNameEntry = tk.Entry(self.scoreNameWin, font=('Arial', 12))
+            self.enterNameEntry.focus()
+            self.enterNameLabel.grid(row=0, column=0)
+            self.enterNameEntry.grid(row=0, column=1)
+
+            self.enterNameButton = tk.Button(self.scoreNameWin, text="Submit", font=('Arial', 12), command=lambda: self.var.set(self.enterNameEntry.get()))
+            self.enterNameButton.grid(row=1, column=0, columnspan=2)
+            self.enterNameButton.wait_variable(self.var)
+            self.scoreNameWin.destroy()
+        name = self.var.get()
+        name = name[:20]
+        return name
 
     # Public method showHighScores
     #
@@ -430,15 +452,19 @@ class BeeUI(UserInterface):
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
         self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
-        for x in highScores:
-            for y in x:
-                self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{y[0] : ^27}|{y[1]: ^22}|\n", 'tag_center')
+        
+        for i, (name, points) in enumerate(highScores):
+            self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{name : ^27}|{points: ^22}|\n", 'tag_center')
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
+        print(minScore)
         diff = minScore - myPuzzle.currentPoints
         self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
-        self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+        if diff < 0:
+            self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+        else:
+            self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
         self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
 
         # Disable textbox so that data can not be edited by user.
@@ -518,14 +544,34 @@ class BeeUI(UserInterface):
     # Get the loaction and size of the game frame and then uses the pyautogui
     # screenshot function to get a screenshot. Opens filedialog for user to save and returns
     # a list with the screenshot and chosen filepath
-    def saveScreenshot(self):
-        time.sleep(.3)
-        self.x, self.y = self.root.winfo_rootx(), self.root.winfo_rooty()
-        self.w, self.h = self.root.winfo_width(), self.root.winfo_height()
+    def saveScreenshot(self, myPuzzle):
+        myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
+        rank = myPuzzle.getCurrentRank()
+        score = myPuzzle.getCurrentPoints()
+        prog = "Rank: " + rank + "   " + "Score: " + str(score)
 
-        screenShot = pyautogui.screenshot(region=(self.x, self.y, self.w, self.h))
+
+        
+        img =     '''  {}
+<---------------------------->
+|             ___            |
+|         ___/ {} \___        |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|            \___/           |
+<---------------------------->'''.format(prog,
+                            myLetters[1],
+                            myLetters[2],
+                            myLetters[3],
+                            myLetters[0],
+                            myLetters[4],
+                            myLetters[5],
+                            myLetters[6])
+
         filepath = filedialog.asksaveasfilename(filetypes=[("PNG File", "*.png")], defaultextension=[("PNG File", "*.png")], initialdir=os.getcwd())
-        myShot = [screenShot, filepath]
+        myShot = [img, filepath]
 
         return myShot
 
@@ -641,7 +687,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
-        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -729,7 +774,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
-        self.viewmenu.entryconfig("Save Score", state="disabled")
         self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
@@ -789,7 +833,6 @@ class BeeUI(UserInterface):
         self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
         self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
-        self.viewmenu.entryconfig("Save Score", state="normal")
         self.viewmenu.entryconfig("Show High Scores", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")

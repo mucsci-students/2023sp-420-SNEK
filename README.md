@@ -1,10 +1,12 @@
 
-## 2023sp-420-SNEK
-## Spelling Bee - SNEK
+<h2 align="center" font-size:20px><b><i>
+    2023sp-420-SNEK<br>
+    Spelling Bee - SNEK
+</i></b></h2>
 
-## Description
-
-    -A Spelling Bee game, implemented in Python with an SQLite database
+<h2 align="center" font-size:20px><b><i>
+    A Spelling Bee game, implemented in Python with an SQLite database
+</i></b></h2>
 
 
 <p align="center">
@@ -32,12 +34,13 @@ that need installation.
     * pillow
     * prompt-toolkit
     * cryptography
+    * pyautogui
 
 
 ### Python Version
-
-    Tested on Python 3.10.9 and Python 3.11.1
-
+* Tested Versions:
+    * Python 3.10.9
+    * Python 3.11.1
 
 ### Instructions for Building Program
 
@@ -76,8 +79,9 @@ that need installation.
 
 ### CLI Instructions
 
-    How to play:
-    You are given a word puzzle with a bunch of letters
+* How to play:
+
+    * You are given a word puzzle with a bunch of letters
     and a required letter.  The Required letter is in the
     center of the honeycomb.  Every word that you guess
     requires that the center letter be used, otherwise you
@@ -87,31 +91,32 @@ that need installation.
     pangram that it is generated from.  The pangram will
     include every letter in the honeycomb.
 
-    Commands:
+    * Commands:
     Call commands with a preceeding '!'. Commands may be
     called at anytime.
 
-             -!new random - Generate a new random puzzle
-             -!new word - Generate a new puzzle with a user given
-               word.  Console will prompt for the word after
-               command is given.
-             -!save - Bring up the prompts for saving your current game.
-             -!save secret - Bring up the prompts for saving your current 
-                            game with encryption.
-             -!save score - Bring up prompts for saving your score into
-                            High Scores if applicable.
-             -!load - Bring up the prompts for loading a saved game.
-             -!scores - Display the scoreboard for the current game and your current points.
-             -!rank - Display available ranks and point thresholds per rank.
-             -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-                        the order of the letter randomly other than the
-                        required center letter.  You can use this to
-                        help you find other words.
-             -!guessed - Shows all the already correctly guessed words.
-             -!hints - prints out all the hints for the given puzzle
-             -!help - Prints out the help menu.
-             -!exit - Exits the game. Will prompt to save.
-             -!quit - Exits the entire program. Will prompt to save.
+        * -!new random - Generate a new random puzzle
+        * -!new word - Generate a new puzzle with a user given
+                       word.  Console will prompt for the word after
+                       command is given.
+        * -!save - Bring up the prompts for saving your current game.
+        * -!save secret - Bring up the prompts for saving your current 
+                          game with encryption.
+        * -!save score - Bring up prompts for saving your score into
+                         High Scores if applicable.
+        * -!save image - Saves image of the CLI honeycomb.
+        * -!load - Bring up the prompts for loading a saved game.
+        * -!scores - Display the scoreboard for the current game and your current points.
+        * -!rank - Display available ranks and point thresholds per rank.
+        * -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
+                      the order of the letter randomly other than the
+                      required center letter.  You can use this to
+                      help you find other words.
+        * -!guessed - Shows all the already correctly guessed words.
+        * -!hints - prints out all the hints for the given puzzle
+        * -!help - Prints out the help menu.
+        * -!exit - Exits the game. Will prompt to save.
+        * -!quit - Exits the entire program. Will prompt to save.
    
 ### GUI Instructions
 
@@ -139,45 +144,49 @@ that need installation.
 
     
  ### Design patterns
-    * MVC: The MVC pattern can be seen in the division of responsabilities,
-    being the classes in charge of showing data in the view (UserInterface and the different 
-    classes that inherit from it), the classes in charge of controlling the flow of the
-    program and responding to the user interactions in the controller part, and
-    the classes in charge of storing and handling data in the model. 
-    All these classes are divided into their corresponding folders
-    
-    * Proxy: For calling the data base, we have implemented the proxy design pattern, 
-    in order to have only one class to communicate with it. This can be useful to prevent
-    IO problems when accessing the data in the data base. The class that acts as a proxy
-    for the data base is the DataSource class, which has an interface that can be used
-    to extract data without directly interacting with the data base.
-    
-    * Factory: For creating the different types of interfaces, we have a factory class 
-    that returns the object of one of the classes that inherit from UserInterface, depending
-    on the type of interface the user has chosen to use. The class that makes the object is
-    just called factory, and its use can be seen in the main.py when creating the interface
-    for the user.
-    
-    * Singleton: As we have made clear that we want to control the access to the data 
-    base in order to avoid different problems that can happen due to multiple components
-    accessing it, a logical improvement to avoid this problem is to, not only have different
-    classes accessing the data base but have different objects, that is why the DataSource
-    class, the proxy for the data base, is now a singleton. This can be seen in the beginning
-    of the DataSource class, as only one instance of that class can be made.
+* MVC: The MVC pattern can be seen in the division of responsabilities,
+being the classes in charge of showing data in the view (UserInterface and the different 
+classes that inherit from it), the classes in charge of controlling the flow of the
+program and responding to the user interactions in the controller part, and
+the classes in charge of storing and handling data in the model. 
+All these classes are divided into their corresponding folders
 
-    * Strategy: Saving data in both plain text and cipher text (for the wordList) is 
-    seperated into different strategies using the strategy design pattern. This seperates 
-    our save data function which originally did everything in house, into different stratgies 
-    so we can save json files in both plain text and cipher text without having the complexity
-    stored in the single saveData function. This can be seen with our new classes Context, 
-    Strategy, plainSave and encryptSave. They are first used in saveData based on if the user 
-    is encrypting their wordList or not.
+* Proxy: For calling the data base, we have implemented the proxy design pattern, 
+in order to have only one class to communicate with it. This can be useful to prevent
+IO problems when accessing the data in the data base. The class that acts as a proxy
+for the data base is the DataSource class, which has an interface that can be used
+to extract data without directly interacting with the data base.
 
-    * Iterator:
-    
-    PS:
-    
-     * Mediator: The communication between the different components is not direct, 
+* Factory: For creating the different types of interfaces, we have a factory class 
+that returns the object of one of the classes that inherit from UserInterface, depending
+on the type of interface the user has chosen to use. The class that makes the object is
+just called factory, and its use can be seen in the main.py when creating the interface
+for the user.
+
+* Singleton: As we have made clear that we want to control the access to the data 
+base in order to avoid different problems that can happen due to multiple components
+accessing it, a logical improvement to avoid this problem is to, not only have different
+classes accessing the data base but have different objects, that is why the DataSource
+class, the proxy for the data base, is now a singleton. This can be seen in the beginning
+of the DataSource class, as only one instance of that class can be made.
+
+* Strategy: Saving data in both plain text and cipher text (for the wordList) is 
+seperated into different strategies using the strategy design pattern. This seperates 
+our save data function which originally did everything in house, into different stratgies 
+so we can save json files in both plain text and cipher text without having the complexity
+stored in the single saveData function. This can be seen with our new classes Context, 
+Strategy, plainSave and encryptSave. They are first used in saveData based on if the user 
+is encrypting their wordList or not.
+
+* Iterator: We need to study the data of different sets of elements, it might be a list of
+strings or all the letters of a word. The iterator becomes useful to make this tasks, so just 
+by using this utility in the loops we can accomplish the study of elements we desire. 
+This pattern can be found in the getHints method used to study the beginning of the words to 
+make the hint matrix.
+
+* PS:
+
+    * Mediator: The communication between the different components is not direct, 
     it is always through the controller. If the interface wants some data about the
     puzzle, it won't call directly to the puzzle, but it will ask to the controller
     about that data. Even though this pattern is a consequence of the MVC, we wanted
@@ -191,7 +200,12 @@ that need installation.
 
 ### And Remember
     
-#  ***`No Step On Snek`*** 
+<p align=center>
+    <img src="src/img/SNEK.png">
+<p>
 
+<p align="center">
+    <img src="ratSpin.gif">
+</p>
         
 

@@ -4,6 +4,8 @@ from view.Inputer import Inputer
 from model.Puzzle import Puzzle
 from model.Commands import *
 from model.Hint import Hint
+from contextlib import redirect_stdout
+
 
 import os
 import sys
@@ -50,6 +52,7 @@ Commands:
                    game with encryption.
    -!save score - Bring up prompts for saving your score into
                   High Scores if applicable.
+   -!save image - Saves image of the CLI honeycomb.
    -!load - Bring up the prompts for loading a saved game.
    -!scores - Display the scoreboard for the current game and current points.
    -!rank - Display available ranks and point thresholds per rank.
@@ -67,18 +70,18 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
-        # try:
-        commandStrings = Commands.getCommandNameList()
-        while not self.quit:
-            userInput = self.__getUserInput(options=commandStrings)
-            if Commands.isCommand(userInput):
-                userInput = Commands.getCommandFromName(userInput)
+        try:
+            commandStrings = Commands.getCommandNameList()
+            while not self.quit:
+                userInput = self.__getUserInput(options=commandStrings)
+                if Commands.isCommand(userInput):
+                    userInput = Commands.getCommandFromName(userInput)
 
-            self.myController.processInput(userInput)
-        # except:
-        #     sys.stdout.flush()
-        #     print()
-        #     exit()
+                self.myController.processInput(userInput)
+        except:
+            sys.stdout.flush()
+            print()
+            exit()
 
     # Flag if the game is quit
     def quitInterface(self):
@@ -250,10 +253,35 @@ Commands:
                 fileName = None
 
         return fileName
-    
-    #temp function for GUI functionality
-    def saveScreenshot(self):
-        self.showError("Functionality not supported in 'cli' mode:", "Please, try launching in the GUI.\n")
+ 
+    def saveScreenshot(self, myPuzzle: Puzzle):
+            myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
+            rank = myPuzzle.getCurrentRank()
+            score = myPuzzle.getCurrentPoints()
+            prog = "Rank: " + rank + "   " + "Score: " + str(score)
+            fileName = self.getSaveFileName()
+            fileName = os.path.splitext(fileName)[0]
+            fileName = fileName + ".png"
+
+            
+            return     ['''  {}
+<---------------------------->
+|             ___            |
+|         ___/ {} \___        |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|            \___/           |
+<---------------------------->'''.format(prog,
+                            myLetters[1],
+                            myLetters[2],
+                            myLetters[3],
+                            myLetters[0],
+                            myLetters[4],
+                            myLetters[5],
+                            myLetters[6]), fileName]
+        
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
@@ -413,7 +441,7 @@ Commands:
             if difference > 0:
                 print(f"\tYou are {difference} points away form entering the leader board.")
             else:
-                print(f"\tCongratulations! you can already enter the leader board!")
+                print(f"\tCongratulations! You can already enter the leader board!")
 
         else:
             msg = "No high scores!"
