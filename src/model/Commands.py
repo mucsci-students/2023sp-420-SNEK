@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 
+
 class Commands(Enum):
 
     def _generate_next_value_(name, start, count, last_values):
@@ -12,11 +13,13 @@ class Commands(Enum):
     NEW_GAME_WRD = auto()
     NEW_GAME_RND = auto()
     SAVE = auto()
+    SAVE_SECRET = auto()
+    SAVE_IMG = auto()
     LOAD = auto()
     SHUFFLE = auto()
     GUESSED_WORDS = auto()
     RANK = auto()
-    SHOW_STATUS = auto()
+    SCORES = auto()
     SHOW_HINTS = auto()
     CMD_LIKE = auto()
     UNDEFINED = auto()
@@ -29,8 +32,7 @@ class Commands(Enum):
         def __get__(self, *args):
             return self.value
 
-        def __repr__(self):
-            return '%s(%r)' % (self.__class__.__name__, self.value)
+       
 
     __CMD_MARK = Constant("!")
     __CMD_DIC = Constant(
@@ -41,11 +43,13 @@ class Commands(Enum):
             "new word": NEW_GAME_WRD,
             "new random": NEW_GAME_RND,
             "save": SAVE,
+            "save secret": SAVE_SECRET,
+            "save image": SAVE_IMG,
             "load": LOAD,
             "shuffle": SHUFFLE,
             "guessed": GUESSED_WORDS,
             "rank": RANK,
-            "status": SHOW_STATUS,
+            "scores": SCORES,
             "hints": SHOW_HINTS
         })
 
@@ -72,7 +76,7 @@ class Commands(Enum):
         if type(cmd) == str:
             cmdName = cmd.strip().lower()
             cmd = cls.getCommandFromName(cmdName)
-            return cmd != Commands.UNDEFINED
+            return cmd != Commands.UNDEFINED 
         
         else:
             return type(cmd) == Commands

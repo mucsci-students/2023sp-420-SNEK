@@ -18,6 +18,7 @@
 #   window = BeeUI()
 #   window.launch()
 #
+
 # Imports:
 #    random
 #    tkinter as tk
@@ -56,7 +57,8 @@ class BeeUI(UserInterface):
         # Define the window itself
         self.root = tk.Tk()
         # Determine what the window will look like and what it does on close.
-        self.root.geometry("900x600")
+        #self.root.geometry("1100x700")
+        self.root.geometry("1100x700")
         self.root.title("The Spelling Bee! 🐝")
 
 # # # # # # # # # # # # # Menus # # # # # # # # # # # # #
@@ -68,6 +70,8 @@ class BeeUI(UserInterface):
         self.filemenu.add_command(label="New", command=self.__preGamePage)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Save", command=self.__onSave)
+        self.filemenu.add_command(label="Secret Save", command=self.__onSecretSave)
+        self.filemenu.add_command(label="Save Screenshot", command=self.__onSaveScreenshot)
         self.filemenu.add_separator()
         self.filemenu.add_command(label="Load Game", command=self.__onLoad)
         self.filemenu.add_separator()
@@ -84,6 +88,9 @@ class BeeUI(UserInterface):
             label="Show Rankings", command=lambda: self.myController.processInput(Commands.RANK))
         self.viewmenu.add_command(
             label="Show Guessed Words", command=lambda: self.myController.processInput(Commands.GUESSED_WORDS))
+        self.viewmenu.add_separator()
+        self.viewmenu.add_command(label="Show High Scores", command=lambda: self.myController.processInput(Commands.SCORES))
+        self.viewmenu.add_separator()
         self.viewmenu.add_command(
             label="Show Hints", command=lambda: self.myController.processInput(Commands.SHOW_HINTS))
         self.viewmenu.add_command(label="Show Help", command=self.showHelp)
@@ -137,10 +144,18 @@ class BeeUI(UserInterface):
     def __onSave(self):
         self.myController.processInput(Commands.SAVE)
 
+    # Private method __onSecretSave
+    # Notifies myController that the user intends to save
+    def __onSecretSave(self):
+        self.myController.processInput(Commands.SAVE_SECRET)
+
     # Private method __onLoad
     # Notifies myController that the user intends to load
     def __onLoad(self):
         self.myController.processInput(Commands.LOAD)
+
+    def __onSaveScreenshot(self):
+        self.myController.processInput(Commands.SAVE_IMG)
 
     # Public method showExit
     # Upon exit of a game, showExit will load the preGamePage
@@ -379,6 +394,82 @@ class BeeUI(UserInterface):
         # Disable textbox so that data can not be edited by user.
         self.hintsTextBox.configure(state="disabled")
 
+    # Prompts the user for a name to save high score
+    def getScoreName(self):
+        self.var = tk.StringVar()
+        while self.var.get() == '':
+            self.scoreNameWin = Toplevel() # popout window
+            self.scoreNameWin.title("Save High Score!")
+
+            self.x = self.root.winfo_x()
+            self.y = self.root.winfo_y()
+            self.scoreNameWin.geometry("+%d+%d" % (self.x+300, self.y+300))
+
+            self.enterNameLabel = tk.Label(self.scoreNameWin, text="Enter your name: ", font=('Arial', 12))
+            self.enterNameEntry = tk.Entry(self.scoreNameWin, font=('Arial', 12))
+            self.enterNameEntry.focus()
+            self.enterNameLabel.grid(row=0, column=0)
+            self.enterNameEntry.grid(row=0, column=1)
+
+            self.enterNameButton = tk.Button(self.scoreNameWin, text="Submit", font=('Arial', 12), command=lambda: self.var.set(self.enterNameEntry.get()))
+            self.enterNameButton.grid(row=1, column=0, columnspan=2)
+            self.enterNameButton.wait_variable(self.var)
+            self.scoreNameWin.destroy()
+        name = self.var.get()
+        name = name[:20]
+        return name
+
+    # Public method showHighScores
+    #
+    def showHighScores(self, myPuzzle):
+        self.scoresWin = Toplevel() # popout window
+        self.scoresWin.resizable(0,0) # forces window to stay same size
+        self.scoresWin.title("High Scores!")
+
+        # Grab scores data for the puzzle
+        highScores = myPuzzle.getHighScores()
+        minScore = myPuzzle.getMinimumHighScore()
+
+        # print('here1')
+        # print(highScores)
+        # print(minScore)
+        # for i in highScores:
+        #     print('here2')
+        #     print(highScores[i])
+        
+        self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
+        self.scoresTextBox.pack()
+
+        # Configure tags for printing styles
+        self.scoresTextBox.tag_configure('tag_center_title', justify='center', font=('Arial', 18))
+        self.scoresTextBox.tag_configure('tag_center', justify='center', font=('Courier New', 14))
+        self.scoresTextBox.tag_configure('tag_left', justify='left', font=('Courier New', 11))
+        self.scoresTextBox.tag_configure('tag_left_bold', justify='center', font=('Courier New', 11, 'bold'))
+
+        self.scoresTextBox.insert('end', "🐝 🍯 High Scores! 🍯 🐝\n\n", 'tag_center_title')
+
+        # self.scoresTextBox.insert('end', f"|        |                           |                      |\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"|  RANK  |           NAME            |        POINTS        |\n", 'tag_center')
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+        
+        for i, (name, points) in enumerate(highScores):
+            self.scoresTextBox.insert('end', f"|{i+1 : ^8}|{name : ^27}|{points: ^22}|\n", 'tag_center')
+
+        self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
+
+        print(minScore)
+        diff = minScore - myPuzzle.currentPoints
+        self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
+        if diff < 0:
+            self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+        else:
+            self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+        self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
+
+        # Disable textbox so that data can not be edited by user.
+        self.scoresTextBox.configure(state="disabled")
+
     # Public method showProgress
     # Params:
     #   rank - current rank of the user
@@ -419,7 +510,8 @@ class BeeUI(UserInterface):
         self.__gamePage()
         self.showProgress(puzzle.getCurrentRank(), list(
             puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
-        self.myController.processInput(Commands.SHOW_STATUS)
+        self.rank.configure(text=puzzle.getCurrentRank())
+        self.pointVal.configure(text=puzzle.getCurrentPoints())
 
     # Public method showRanking
     # Params:
@@ -447,6 +539,41 @@ class BeeUI(UserInterface):
     # Shows the user why their guess is incorrect
     def showWrongGuess(self, str):
         self.correctLabel.configure(text=str, font=('Arial', 25))
+
+    # Public method saveScreenshot
+    # Get the loaction and size of the game frame and then uses the pyautogui
+    # screenshot function to get a screenshot. Opens filedialog for user to save and returns
+    # a list with the screenshot and chosen filepath
+    def saveScreenshot(self, myPuzzle):
+        myLetters = ''.join(myPuzzle.getPuzzleLetters()).upper()
+        rank = myPuzzle.getCurrentRank()
+        score = myPuzzle.getCurrentPoints()
+        prog = "Rank: " + rank + "   " + "Score: " + str(score)
+
+
+        
+        img =     '''  {}
+<---------------------------->
+|             ___            |
+|         ___/ {} \___        |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|        / {} \___/ {} \\       |
+|        \___/ {} \___/       |
+|            \___/           |
+<---------------------------->'''.format(prog,
+                            myLetters[1],
+                            myLetters[2],
+                            myLetters[3],
+                            myLetters[0],
+                            myLetters[4],
+                            myLetters[5],
+                            myLetters[6])
+
+        filepath = filedialog.asksaveasfilename(filetypes=[("PNG File", "*.png")], defaultextension=[("PNG File", "*.png")], initialdir=os.getcwd())
+        myShot = [img, filepath]
+
+        return myShot
 
     # Private method __onClosing
     # Displays a message box when the user closes the window
@@ -555,9 +682,12 @@ class BeeUI(UserInterface):
         self.root.protocol("WM_DELETE_WINDOW", self.__onClosing)
 
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
+        self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
@@ -639,9 +769,12 @@ class BeeUI(UserInterface):
 
         # Disable all unusable menus
         self.filemenu.entryconfig("Save", state="disabled")
+        self.filemenu.entryconfig("Save Screenshot", state="disabled")
+        self.filemenu.entryconfig("Secret Save", state="disabled")
         self.filemenu.entryconfig("Exit Current Game", state="disabled")
         self.viewmenu.entryconfig("Show Rankings", state="disabled")
         self.viewmenu.entryconfig("Show Guessed Words", state="disabled")
+        self.viewmenu.entryconfig("Show High Scores", state="disabled")
         self.viewmenu.entryconfig("Show Hints", state="disabled")
         self.filemenu.entryconfig("Close Program", command=self.__onClosing)
 
@@ -696,10 +829,11 @@ class BeeUI(UserInterface):
         # self.filemenu.entryconfig("New", command=lambda:
         #                           self.myController.processInput(Commands.EXIT))
         self.filemenu.entryconfig("Save", state="normal")
+        self.filemenu.entryconfig("Save Screenshot", state="normal")
+        self.filemenu.entryconfig("Secret Save", state="normal")
         self.filemenu.entryconfig("Exit Current Game", state="normal")
-        self.filemenu.entryconfig(
-            "Close Program", command=self.__checkTerminate)
-
+        self.filemenu.entryconfig("Close Program", command=self.__checkTerminate)
+        self.viewmenu.entryconfig("Show High Scores", state="normal")
         self.viewmenu.entryconfig("Show Rankings", state="normal")
         self.viewmenu.entryconfig("Show Guessed Words", state="normal")
         self.viewmenu.entryconfig("Show Hints", state="normal")
@@ -763,7 +897,7 @@ class BeeUI(UserInterface):
 
         # Submit guess button creation and display
         self.sub = tk.Button(self.mainFrame, border='0', image=self.submitButtonSized, command=lambda: [
-                             self.__submitGuess(), self.myController.processInput(Commands.SHOW_STATUS)])
+                             self.__submitGuess()])
         self.sub.pack()
 
         # Creation of frame for the honeycomb

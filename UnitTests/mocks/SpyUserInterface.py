@@ -95,5 +95,17 @@ class SpyUserInterface(view.UserInterface.UserInterface):
         count = self.spyValues.get(self.showExit, 0)
         self.spyValues[self.showExit] = count + 1
 
-    def showHints(self):
+    def showHints(self, *args):
+        count = self.spyValues.get(self.showHints, 0)
+        self.spyValues[self.showHints] = count + 1
+
+    def saveScreenshot(self, *args):
+        count = self.spyValues.get(self.saveScreenshot, 0)
+        self.spyValues[self.saveScreenshot] = count + 1
+    
+    def showHighScores(self, *args):
+        count = self.spyValues.get(self.showHighScores, 0)
+        self.spyValues[self.showHighScores] = count + 1
+
+    def getScoreName(self):
         pass

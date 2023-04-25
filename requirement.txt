@@ -6,3 +6,5 @@ pandas
 pytest
 pytest-cov
 pillow
+cryptography
+pyautogui

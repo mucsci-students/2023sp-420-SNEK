@@ -24,10 +24,6 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
-    def showStatus(self):
-        pass
-
-    @abstractmethod
     def showRanking(self):
         pass
 
@@ -68,6 +64,10 @@ class UserInterface(ABC):
         pass
 
     @abstractmethod
+    def saveScreenshot(self):
+        pass
+
+    @abstractmethod
     def getConfirmation(self):
         pass
 
@@ -85,4 +85,12 @@ class UserInterface(ABC):
 
     @abstractmethod
     def showExit(self):
+        pass
+
+    @abstractmethod
+    def showHighScores(self):
+        pass
+
+    @abstractmethod
+    def getScoreName(self):
         pass

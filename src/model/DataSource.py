@@ -35,7 +35,13 @@ class DataSource(metaclass=SingletonMeta):
 
     # checks if a word is in the db
 
-    def checkWord(self, searchedWord):
+    def checkWord(self, searchedWord)->bool:
+        ''' Inputs:
+                searchedWord: the word to check in the db.
+
+            Output:
+                if the word is in the db
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -47,6 +53,10 @@ class DataSource(metaclass=SingletonMeta):
         return len(output) > 0
 
     def getRandomWord(self):
+        ''' 
+            Output:
+                a random word from the db that can be used as the base word for the puzzle.
+        '''
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
 
@@ -74,14 +84,21 @@ class DataSource(metaclass=SingletonMeta):
         return auxList[0]
 
     # returns a  dataSource object built with the word and the mandatory letter
-    def grabWordsFor(self, word, mandatoryLetter):
+    def grabWordsFor(self, word:str, mandatoryLetter:str)->list:
+        ''' Inputs:
+                word: the base word for the puzzle.
+                mandatoryLetter: the required letter for the puzzle
+
+            Output:
+                the list of the words that are possible gusses for the puzzle.
+        '''
         optionalLetters = list(set(word))
-        if mandatoryLetter == None or optionalLetters == None:
-            return
+       
+        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
+            mandatoryLetter = mandatoryLetter[0]
         con = sqlite3.connect(self.dbName)
         cur = con.cursor()
-        if len(mandatoryLetter) > 1:  # to avoid the user makes an injection
-            return
+        
         cur.execute(
             "SELECT word FROM word_list WHERE word like '%"+mandatoryLetter+"%'")
         output = cur.fetchall()
@@ -105,8 +122,106 @@ class DataSource(metaclass=SingletonMeta):
         self.numberOfLetters = sum(numberLettersList)
         self.wordList = list(self.wordList[0])
         return self.wordList
+
+
+    def hasHighScores(self, requiredLetters:list)->bool:
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                boolean value if that puzzle has registered scores
+        '''
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        cur.execute(
+            "SELECT* FROM high_scores WHERE puzzleName like '"+puzzleName+"'")
+        output = cur.fetchall()
+        con.commit()
+        con.close()
+        return len(output) != 0
+
+    def getHighScores(self, requiredLetters:list):
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                a np.array with the top 10 scores.
+        '''
+
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        scores = dict()
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        if(self.hasHighScores(requiredLetters)):
+            cur.execute("SELECT* FROM '"+puzzleName+"' ORDER BY points DESC, playerName DESC ")
+            output = cur.fetchall()
+            con.commit()
+            dataTreatment = np.array(output)
+            if(len(dataTreatment) >= 10):
+                length = 10
+            else:
+                length = len(dataTreatment)
+           
+            scores = dataTreatment[:length]
+        con.close()
+        return scores;
+
+    def getMinimumHighScore(self, requiredLetters:list):
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                the minimum score in the top 10 scores, if there are less than, 10 will be 0
+        '''
+        scores = self.getHighScores(requiredLetters);
+        min = 0;
+        if(len(scores) == 10):
+            min = int(scores[9][1])
+        return min
+
+
+    def setHighScore(self, requiredLetters:list,name:str,points:int):
+        ''' Inputs:
+                requiredLetters: a list of the letters of the puzzle with the required letter at postion 0.
+                name: the name of the player
+                points: the points of the player
+
+            Output:
+                boolean value if that puzzle has registered scores
+        '''
+        mandatoryLetter = requiredLetters[0]
+        restOfLetters = requiredLetters[1:]
+        restOfLetters.sort()
+        puzzleName = ''.join(mandatoryLetter)+''.join(restOfLetters)
+        con = sqlite3.connect(self.dbName)
+        cur = con.cursor()
+        if(not self.hasHighScores(requiredLetters)):
+            
+            cur.execute("CREATE TABLE "+puzzleName+" (playerName VARCHAR(50) NOT NULL, points INT NOT NULL);")
+            cur.execute(
+                    "INSERT INTO high_scores VALUES ('"+puzzleName+"');")
+            con.commit()
+        cur.execute("INSERT INTO "+puzzleName+" VALUES ('"+name+"','"+str(points)+"');")
+        con.commit()
+        con.close()
+        
         
     def getHints(self, inputWordList:list,inputOptionalLetters:list)->Hint:
+         
+        ''' Inputs:
+                inputWordList: a list of the words of the puzzle.
+                inputOptionalLetters: a list of the letters of the puzzle with the required letter at postion 0.
+
+            Output:
+                hint object with all the data for the hints
+        '''
         letterMat = dict()
         maximum = 0
         beginDict = dict()
@@ -138,13 +253,7 @@ class DataSource(metaclass=SingletonMeta):
                 pangram += 1
                 if (len(word) == 7):
                     perfectPangram += 1
-            if (letterMat.get(word[0].upper()) == None):
-                letterMat[word[0].upper()][str(len(word))] = 1
-            else:
-                if (letterMat[word[0].upper()].get(str(len(word))) == None):
-                    letterMat[word[0].upper()][str(len(word))] = 1
-                else:
-                    letterMat[word[0].upper()][str(len(word))] += 1
+            letterMat[word[0].upper()][str(len(word))] += 1
 
             if (beginDict.get(word[:2]) == None):
                 beginDict[word[:2]] = 1

@@ -37,7 +37,12 @@ class test_Puzzle(unittest.TestCase):
             cur.execute(
                 "INSERT INTO word_list (letter, word,differentLetters,numLetter) VALUES ('w','waxworks', 'waxorks', '8');")
             con.commit()
+            cur.execute("CREATE TABLE high_scores (puzzleName VARCHAR(10) NOT NULL, PRIMARY KEY (puzzleName));")
+            con.commit()
             con.close()
+
+    def tearDown(self) -> None:
+        os.remove("test1.db")
 
     def test_puzzleHint(self):
         dataSource = DataSource("test1.db")
@@ -61,7 +66,8 @@ class test_Puzzle(unittest.TestCase):
         actual = tst_puzzle.getWordList()
         self.assertEqual(actual, expected,
                          f"actual: {actual}\nexpected: {expected}")
-
+        
+        actual = tst_puzzle.getRanks()
         expected = 0
         actual = tst_puzzle.getCurrentPoints()
         self.assertEqual(actual, expected,
@@ -95,6 +101,21 @@ class test_Puzzle(unittest.TestCase):
                          f"actual: {actual}\noriginal: {original}")
 
         del tst_puzzle
+
+    def test_settingHighScores(self):
+       
+        dataSource = DataSource("test1.db")
+        dataSource.grabWordsFor("waxworks", "x")
+        myList = dataSource.wordList
+        tst_puzzle = Puzzle(list(set("waxworks")), myList)
+
+        tst_puzzle.setHighScores(dataSource.getHighScores(tst_puzzle.getPuzzleLetters()))
+        tst_puzzle.setMinimumHighScore(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()))
+
+        self.assertTrue(len(tst_puzzle.getHighScores()) == len(dataSource.getHighScores(tst_puzzle.getPuzzleLetters())), "insertion not correct")
+        self.assertTrue(dataSource.getMinimumHighScore(tst_puzzle.getPuzzleLetters()) ==  tst_puzzle.getMinimumHighScore(), "incorrect insertion")
+
+        del tst_puzzle      
 
     def test_addGuessWord(self):
         aWordsList = ["onee", "twoo", "three", "four",
