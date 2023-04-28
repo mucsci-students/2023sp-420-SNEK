@@ -51,6 +51,7 @@ class BeeUI(UserInterface):
 
     def __init__(self):
         super().__init__()
+        self.first = True
         self.defaultYes = 'Yes'
         self.defaultNo = 'No'
         self.defaultCancel = 'Cancel'
@@ -275,7 +276,7 @@ class BeeUI(UserInterface):
     # Public method showCorrectGuess
     # If the controller signals that the given guess was correct,
     # then the label at the top of the game page will be changed.
-    def showCorrectGuess(self):
+    def showCorrectGuess(self, word):
         self.correctLabel.configure(
             text=f"Your guess was correct!", font=('Arial', 25))
 
@@ -507,7 +508,9 @@ class BeeUI(UserInterface):
     def showPuzzle(self, puzzle):
         self.puzzle = puzzle
         self.wordPuzzle = puzzle.getPuzzleLetters()
-        self.__gamePage()
+        if self.first:
+            self.__gamePage()
+            self.first = False
         self.showProgress(puzzle.getCurrentRank(), list(
             puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
         self.rank.configure(text=puzzle.getCurrentRank())
@@ -579,6 +582,7 @@ class BeeUI(UserInterface):
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
+        self.first = True
         self.myController.processInput(Commands.QUIT)
 
     # Private method __setText
@@ -644,6 +648,7 @@ class BeeUI(UserInterface):
     # Private method __checkQuit
     # Tells the controller we are ready to exit the game.
     def __checkQuit(self):
+        self.first = True
         self.myController.processInput(Commands.EXIT)
         if not self.myController.playing:
             self.__mainMenuPage()
@@ -652,6 +657,7 @@ class BeeUI(UserInterface):
     # Tells the controller we wish to quit and
     # terminates the program.
     def __checkTerminate(self):
+        self.first = True
         self.myController.processInput(Commands.EXIT)
         if not self.myController.playing:
             self.root.destroy()
@@ -660,12 +666,14 @@ class BeeUI(UserInterface):
     # Shuffles the honeycomb on screen during gameplay.
     # Modifies the word puzzle.
     def __shuffleText(self):
+        self.first = True
         self.myController.processInput(Commands.SHUFFLE)
 
     # Private method __startGame
     # Notifies the controller that the user wants a new
     # random game.
     def __startGame(self):
+        self.first = True
         self.myController.processInput(Commands.NEW_GAME_RND)
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # #
@@ -759,6 +767,10 @@ class BeeUI(UserInterface):
             self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
         self.goBack.pack()
 
+
+    def __setFirst(self):
+        self.first = True
+
     # Private method __preGamePage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
@@ -786,7 +798,7 @@ class BeeUI(UserInterface):
         # New Game Random
         self.randBtnImg = PhotoImage(file='src/img/newRand.png')
         self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg,
-                                 command=lambda: self.myController.processInput(Commands.NEW_GAME_RND))
+                                 command=lambda: [self.__setFirst(), self.myController.processInput(Commands.NEW_GAME_RND)])
         self.randBtn.pack(pady=25)
 
         # New Game Custom
@@ -802,7 +814,7 @@ class BeeUI(UserInterface):
 
         self.customBtnImg = PhotoImage(file='src/img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg,
-                                   command=lambda: self.myController.processInput(Commands.NEW_GAME_WRD))
+                                   command=lambda: [self.__setFirst(), self.myController.processInput(Commands.NEW_GAME_WRD)])
         self.customBtn.grid(row=1, columnspan=2)
         self.newWordGrid.pack(pady=25)
 
