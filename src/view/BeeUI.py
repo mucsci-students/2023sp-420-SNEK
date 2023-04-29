@@ -422,7 +422,7 @@ class BeeUI(UserInterface):
 
     # Public method showHighScores
     #
-    def showHighScores(self, myPuzzle):
+    def showHighScores(self, myPuzzle, isEnd = False):
         self.scoresWin = Toplevel() # popout window
         self.scoresWin.resizable(0,0) # forces window to stay same size
         self.scoresWin.title("High Scores!")
@@ -430,13 +430,6 @@ class BeeUI(UserInterface):
         # Grab scores data for the puzzle
         highScores = myPuzzle.getHighScores()
         minScore = myPuzzle.getMinimumHighScore()
-
-        # print('here1')
-        # print(highScores)
-        # print(minScore)
-        # for i in highScores:
-        #     print('here2')
-        #     print(highScores[i])
         
         self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
         self.scoresTextBox.pack()
@@ -459,14 +452,21 @@ class BeeUI(UserInterface):
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
-        print(minScore)
         diff = minScore - myPuzzle.currentPoints
-        self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
-        if diff < 0:
-            self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+        if isEnd:
+            if diff < 0:
+                self.scoresTextBox.insert('end', "\nCongrats! :)\n", 'tag_center_title')
+                self.scoresTextBox.insert('end', "\tYour score is now entered into the top 10 leaderboard for this puzzle!\n", 'tag_center_title')
+            else:
+                self.scoresTextBox.insert('end', "\nSorry! :(\n", 'tag_center_title')
+                self.scoresTextBox.insert('end', "\tYour score is NOT high enough to enter into the top 10 leaderboard for this puzzle.\n", 'tag_center_title')
         else:
-            self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
-        self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
+            self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
+            if diff < 0:
+                self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+            else:
+                self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+            self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
 
         # Disable textbox so that data can not be edited by user.
         self.scoresTextBox.configure(state="disabled")
@@ -681,7 +681,7 @@ class BeeUI(UserInterface):
     # Private method __mainMenuPage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
-    # add all usefull information for the main menu
+    # add all useful information for the main menu
     # to the mainFrame to be seen on screen, and will then display.
     def __mainMenuPage(self):
         self.__clearFrame()

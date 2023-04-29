@@ -13,7 +13,7 @@ from controller.SaveAndLoad import SaveAndLoad
 
 
 class GameController:
-    __EXIT_MSG = "Do you want to exit the game? (You'll be able to save it)"
+    __EXIT_MSG = "WARNING:\n\tYou are implicitly exiting this game,\n\tbut you'll be able to save it later.\n\nDo you want to exit the game? "
     __EXPLICIT_EXIT_MSG = "Do you want to save before exiting?"
     __SAVE_MSG = "Do you want to save the game?"
     __OVERRIDE_MSG = "Do you want to overwrite the game?"
@@ -55,9 +55,26 @@ class GameController:
     def __askExitAndSave(self, explicit=False) -> bool:
         if not explicit:
             exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
+
             if exitGame == self.myUserInterface.defaultYes:
+                choice = self.__handleHighScores()
+                if choice != self.myUserInterface.defaultYes:
+                    save = self.myUserInterface.getConfirmation(
+                        "Do you want to save?")
+                    if save == self.myUserInterface.defaultYes:
+                        canceled = self.__saveFile()
+                        if canceled:
+                            exitGame = self.myUserInterface.defaultCancel
+
+                    elif save == self.myUserInterface.defaultCancel:
+                        exitGame = self.myUserInterface.defaultCancel
+
+        else:
+            choice = self.__handleHighScores()
+            if choice != self.myUserInterface.defaultYes:
+                exitGame = self.myUserInterface.defaultYes
                 save = self.myUserInterface.getConfirmation(
-                    "Do you want to save?")
+                    self.__EXPLICIT_EXIT_MSG)
                 if save == self.myUserInterface.defaultYes:
                     canceled = self.__saveFile()
                     if canceled:
@@ -65,18 +82,6 @@ class GameController:
 
                 elif save == self.myUserInterface.defaultCancel:
                     exitGame = self.myUserInterface.defaultCancel
-
-        else:
-            exitGame = self.myUserInterface.defaultYes
-            save = self.myUserInterface.getConfirmation(
-                self.__EXPLICIT_EXIT_MSG)
-            if save == self.myUserInterface.defaultYes:
-                canceled = self.__saveFile()
-                if canceled:
-                    exitGame = self.myUserInterface.defaultCancel
-
-            elif save == self.myUserInterface.defaultCancel:
-                exitGame = self.myUserInterface.defaultCancel
 
         return exitGame == self.myUserInterface.defaultYes
 
@@ -171,23 +176,28 @@ class GameController:
         self.playing = True
         # self.myUserInterface.showPuzzle(self.myPuzzle)
 
+    def __handleHighScores(self) -> bool:
+        if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
+            confirm = self.myUserInterface.getConfirmation("WARNING:\n\t You won't be able to save the puzzle if you save your score!\n\nSave your score?")
+            if confirm == self.myUserInterface.defaultYes:
+                self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                # self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
+                self.playing = False
+                self.myUserInterface.showHighScores(self.myPuzzle, isEnd = True)
+                
+            return confirm
+        else:
+            # self.myUserInterface.showMessage("Sorry! Your score is NOT high enough to enter into the top 10 leaderboard for this puzzle :(\n")
+            self.myUserInterface.showHighScores(self.myPuzzle, isEnd = True)
+            return self.myUserInterface.defaultNo
+
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
 
         if command == Commands.QUIT:
-            if self.playing:
-                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
-                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
-                    if confirm == "y" or confirm == "Yes":
-                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
-                        self.playing = False
-                        self.myUserInterface.showExit()
-                        self.myUserInterface.quitInterface()
-                        return
-                        
+            if self.playing:                        
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.playing = False
@@ -198,15 +208,6 @@ class GameController:
 
         elif command == Commands.EXIT:
             if self.playing:
-                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
-                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
-                    if confirm == "y" or confirm == "Yes":
-                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
-                        self.playing = False
-                        self.myUserInterface.showExit()
-                        return
 
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
@@ -371,6 +372,13 @@ class GameController:
     # (not a word, or not in the database), and more specifically when the guess isn't longer than 3 letters,
     # if the guess doesn't have the required letter, and the word was already guessed.
     def processGuess(self, userGuess: str):
+        userLetters = list(userGuess)
+        puzzleLetters = self.myPuzzle.getPuzzleLetters()
+        for letter in userLetters:
+            if letter not in puzzleLetters:
+                self.myUserInterface.showWrongGuess(f"The letter {letter.upper()} is not valid.")
+                return
+
         if len(userGuess) < Puzzle.MIN_WRD_LEN:
             self.myUserInterface.showWrongGuess(
                 f"The word {userGuess.upper()} doesn't have {Puzzle.MIN_WRD_LEN} letters.")
@@ -394,7 +402,7 @@ class GameController:
         self.myPuzzle.addGuessWord(userGuess)
         currentPoints = self.myPuzzle.getCurrentPoints()
         maxPoints = self.myPuzzle.getMaxPoints()
-        self.myUserInterface.showPuzzle(self.myPuzzle)
+        # self.myUserInterface.showPuzzle(self.myPuzzle)
         self.myUserInterface.showCorrectGuess(userGuess.upper())
         if currentPoints == maxPoints:
             self.myUserInterface.showEnd()

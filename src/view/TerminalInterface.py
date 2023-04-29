@@ -224,7 +224,7 @@ Commands:
     # many points the user needs to achieve the next rank status
     def showRanking(self, rankingsAndPoints: dict[str, int]) -> None:
         print("\nThe ranking points change based on the specific game you are playing.")
-        self.__boldPrint("Ranking for this game:\n")
+        self.__boldPrint("\nRanking for this game:\n")
         ranks = list(rankingsAndPoints.items())
         ranks.reverse()
         for label, points in ranks:
@@ -243,9 +243,8 @@ Commands:
 
     # Prints Exiting when a user wants to exit a puzzle
     def showExit(self) -> None:
-        self.__boldPrint("Game exited.")
-        self.__boldPrint("You are at the main program (not playing).")
-        print()
+        self.__boldPrint(Fore.BLUE + "Game exited." + Fore.RESET)
+        self.__boldPrint("You are at the main program", endStr=Fore.LIGHTWHITE_EX + " (not playing).\n\n" + Fore.RESET)
 
     # If a user does not make a right guess, then it will
     # print that they did not make a right guess
@@ -362,7 +361,7 @@ Commands:
     # Confirmation for save and load for games and if it is not
     # yes or no, then it will tell the user that their input
     # is not recognized and will wait for the right input
-    def getConfirmation(self, message, okStr="", nokStr="", canStr=""):
+    def getConfirmation(self, message:str, okStr="", nokStr="", canStr=""):
         self.choice = ""
 
         if okStr == "":
@@ -377,6 +376,10 @@ Commands:
         okStr = okStr.lower()
         nokStr = nokStr.lower()
         canStr = canStr.lower()
+
+        if "WARNING:" in message:
+            pieces = message.split("WARNING:", 1)
+            message = pieces[0] + f"{Fore.MAGENTA}WARNING:{Fore.RESET}" + pieces[1]
 
         self.__boldPrint(message + f" [{okStr}/{nokStr}/{canStr}]: ")
         if len(okStr) == 1 and len(nokStr) == 1 and len(canStr) == 1:
@@ -454,7 +457,7 @@ Commands:
         input()
         self.__clear()
 
-    def showHighScores(self, myPuzzle: Puzzle):
+    def showHighScores(self, myPuzzle: Puzzle, isEnd = False):
         B = Style.BRIGHT
         Y = Fore.YELLOW
         R = Style.RESET_ALL
@@ -506,19 +509,29 @@ Commands:
 
             currentPoints = myPuzzle.getCurrentPoints()
             difference = myPuzzle.getMinimumHighScore() - currentPoints
-            self.__boldPrint(f"You have {currentPoints} points:")
-            if difference > 0:
-                print(f"\tYou are {difference} points away form entering the leader board.")
+            if isEnd:
+                if difference < 0:
+                    self.__boldPrint("Congrats! :)")
+                    print("\tYour score is now entered into the top 10 leaderboard for this puzzle!\n")
+                else:
+                    self.__boldPrint("Sorry! :(")
+                    print("\tYour score is NOT high enough to enter into the top 10 leaderboard for this puzzle.\n")
             else:
-                print(f"\tCongratulations! You can already enter the leader board!")
+                self.__boldPrint(f"You have {currentPoints} points:")
+                if difference == 0:
+                    print(f"\tJust one more guess and you'll be able to enter the leaderboard.")
+                elif difference > 0:
+                    print(f"\tYou are {difference} points away form entering the leaderboard.")
+                else:
+                    print(f"\tCongratulations! You can already enter the leader board!")
+
+            self.__hold()
 
         else:
-            msg = "No high scores!"
-            middle = (int) (middle - len(msg))
-            leadingBlank = ''.join([" "] * middle)
-            self.__boldPrint(f"{leadingBlank}{B+Y}No high scores!{R}")
+            print(f"{B+Y}There are no high scores! {R} :(")
+            self.__boldPrint("\tTry to exit the game to save your's and be part of the leaderboard!\n")
 
-        self.__hold()
+        
         
 
     def getScoreName(self):
