@@ -73,14 +73,27 @@ Commands:
    -!exit - Exits the game. Will prompt to save.
    -!quit - Exits the entire program. Will prompt to save.'''
 
-    # Launch terminal interface and gets user input and processes
-    # input while the game is not quit
+
+    def __cls(numLines=100):
+
+        if os.name == "posix":
+            # Unix/Linux/MacOS/BSD/etc
+            os.system('clear')
+        elif os.name in ("nt", "dos", "ce"):
+            # DOS/Windows
+            os.system('CLS')
+        else:
+            # Fallback for other operating systems.
+            print('\n' * numLines)
 
     def __clear(self):
-        os.system('cls' or 'clear')
+        self.__cls()
         print(self.__TITLE)
 
+    # Launch terminal interface and gets user input and processes
+    # input while the game is not quit
     def launch(self):
+        self.__cls()
         self.showHelp()
         self.__clear()
         try:
@@ -99,7 +112,7 @@ Commands:
 
     # Flag if the game is quit
     def quitInterface(self):
-        os.system('cls' or 'clear')
+        self.__cls()
         self.quit = True
 
     # Gets user input from cli and checks if there is a command that
