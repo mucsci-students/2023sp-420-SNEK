@@ -82,6 +82,8 @@ class GameController:
 
                 elif save == self.myUserInterface.defaultCancel:
                     exitGame = self.myUserInterface.defaultCancel
+            else:
+                exitGame = choice
 
         return exitGame == self.myUserInterface.defaultYes
 
@@ -325,7 +327,7 @@ class GameController:
                 exit = self.__askExitAndSave(explicit=False)
 
                 if exit:
-                    newBaseWord = self.myUserInterface.getBaseWord()
+                    newBaseWord = self.myUserInterface.getBaseWord().lower()
                     if (len(set(newBaseWord)) < 7):
                         self.myUserInterface.showError(
                             f"The word {newBaseWord.upper()} does not have 7 different letters.", "Reverting operation...")
@@ -405,10 +407,7 @@ class GameController:
         # self.myUserInterface.showPuzzle(self.myPuzzle)
         self.myUserInterface.showCorrectGuess(userGuess.upper())
         if currentPoints == maxPoints:
-            self.myUserInterface.showEnd()
-            confirm = self.myUserInterface.getConfirmation("You are in the top 10 players for this puzzle!\nDo you want to save your score?")
-            if confirm == "y" or confirm == "Yes":
-                self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
             self.playing = False
+            self.myUserInterface.showEnd()
+            self.__handleHighScores()
+            self.myUserInterface.showExit()

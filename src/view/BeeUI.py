@@ -168,7 +168,8 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="", nokStr="", canStr=""):
+    def getConfirmation(self, inputString: str, okStr="", nokStr="", canStr=""):
+        inputString = inputString.replace("\t", "")
         choice = ""
 
         if okStr == "":
@@ -192,8 +193,8 @@ class BeeUI(UserInterface):
         self.win = Toplevel()  # Popout screen
         self.win.protocol("WM_DELETE_WINDOW",
                           lambda: self.__textHelper(canStr))
-        self.win.title(title)
-        self.win.geometry("300x75")
+        #self.win.title(title)
+        self.win.geometry("400x100")
 
         self.x = self.root.winfo_x()
         self.y = self.root.winfo_y()

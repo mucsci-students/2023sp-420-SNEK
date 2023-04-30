@@ -19,16 +19,16 @@ class TerminalInterface(UserInterface):
         self.defaultNo = 'n'
         self.defaultCancel = 'c'
         self.myInputer: Inputer = Inputer()
-        self.__CMD_PREFIX: str = Style.BRIGHT + Fore.BLUE + "\n>>" + Style.RESET_ALL
-        self.__DONE_PROGRESS: str = Fore.YELLOW + "⬢" + Style.RESET_ALL
-        self.__LEFT_PROGRESS: str = "⬡" + Style.RESET_ALL
+        self.__CMD_PREFIX: str = Style.BRIGHT + Fore.BLUE + Back.BLACK + "\n>>" + Style.RESET_ALL + Back.BLACK
+        self.__DONE_PROGRESS: str = Fore.YELLOW + "⬢" + Style.RESET_ALL + Back.BLACK
+        self.__LEFT_PROGRESS: str = "⬡" + Style.RESET_ALL + Back.BLACK
         self.__TITLE:str = f'''{Back.BLACK}
     ┌───────────────────────┬─────────────────────────────────┐
-    │ Team {Fore.LIGHTGREEN_EX}SNEK{Fore.RESET} presents:   │  Type {Fore.LIGHTBLUE_EX}!help{Fore.RESET} to show how to play │
-    │	 {Fore.LIGHTYELLOW_EX}SPELLING BEE{Fore.RESET}       │    And don't forget to enjoy!   │
-    └───────────────────────┴─────────────────────────────────┘\n'''
+    │ Team {Fore.LIGHTGREEN_EX}SNEK{Fore.RESET + Back.BLACK} presents:   │  Type {Fore.LIGHTBLUE_EX}!help{Fore.RESET + Back.BLACK} to show how to play │
+    │     {Fore.LIGHTYELLOW_EX}SPELLING BEE{Fore.RESET + Back.BLACK}      │    And don't forget to enjoy!   │
+    └───────────────────────┴─────────────────────────────────┘\n''' + Back.BLACK
 
-        self.__HELP_TITLE: str = "\n\tSpelling Bee Game!              🍯 🐝"
+        self.__HELP_TITLE: str = f"{Back.BLACK}\n\tSpelling Bee Game!              🍯 🐝"
         self.__HELP_STRING: str = '''
 
 How to play:
@@ -73,15 +73,29 @@ Commands:
    -!exit - Exits the game. Will prompt to save.
    -!quit - Exits the entire program. Will prompt to save.'''
 
+    def __makeBackgroundBlack(self):
+        if os.name == "posix":
+            # Unix/Linux/MacOS/BSD/etc
+            os.system('setterm -background black -foreground white -store')
+        elif os.name in ("nt", "dos", "ce"):
+            # DOS/Windows
+            os.system('color 07')
+            os.system('color /?')
+            input()
+            # os.system('color 7f')
+
 
     def __cls(numLines=100):
 
         if os.name == "posix":
             # Unix/Linux/MacOS/BSD/etc
             os.system('clear')
+            os.system('setterm -background black -foreground white -store')
+            
         elif os.name in ("nt", "dos", "ce"):
             # DOS/Windows
             os.system('CLS')
+            os.system('color 07')
         else:
             # Fallback for other operating systems.
             print('\n' * numLines)
@@ -93,22 +107,23 @@ Commands:
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
     def launch(self):
+        self.__makeBackgroundBlack()
         self.__cls()
         self.showHelp()
         self.__clear()
-        try:
-            commandStrings = Commands.getCommandNameList()
-            while not self.quit:
-                userInput = self.__getUserInput(options=commandStrings)
-                if Commands.isCommand(userInput):
-                    userInput = Commands.getCommandFromName(userInput)
+        # try:
+        commandStrings = Commands.getCommandNameList()
+        while not self.quit:
+            userInput = self.__getUserInput(options=commandStrings)
+            if Commands.isCommand(userInput):
+                userInput = Commands.getCommandFromName(userInput)
 
-                self.__clear()
-                self.myController.processInput(userInput)
-        except:
-            sys.stdout.flush()
-            print()
-            exit()
+            self.__clear()
+            self.myController.processInput(userInput)
+        # except:
+        #     sys.stdout.flush()
+        #     print()
+        #     exit()
 
     # Flag if the game is quit
     def quitInterface(self):
@@ -131,7 +146,7 @@ Commands:
     # Reset colorama text so that it does not
     # change other text to a bold print
     def __boldPrint(self, message: str, endStr: str = "\n") -> None:
-        print(Style.BRIGHT + message + Style.RESET_ALL, end=endStr)
+        print(Style.BRIGHT + message + Style.RESET_ALL + Back.BLACK, end=endStr)
 
     # Print name of error on cli
     def __titleDescriptionPrint(self, title: str, description: str) -> None:
@@ -142,7 +157,7 @@ Commands:
     # Print the words base word so that the user can
     # enter what base word they want to use for the puzzle
     def getBaseWord(self) -> str:
-        self.__boldPrint("Base word: ")
+        self.__boldPrint("\nBase word: ")
         baseWord = input(self.__CMD_PREFIX + " ").lower().strip()
 
         self.__clear()
@@ -156,7 +171,7 @@ Commands:
     # how many ranks are left to get to top rank
     def showProgress(self, rank: str, thresholds: list[int], currentPoints: int) -> None:
         rankAndPoints = f"{rank} ({currentPoints})"
-        print(Style.BRIGHT + f"\n  {rankAndPoints:16s} ", end=Style.RESET_ALL)
+        print(Style.BRIGHT + f"\n  {rankAndPoints:16s} ", end=Style.RESET_ALL + Back.BLACK)
         print(" 🍯  ", end="")
         if currentPoints == 0:
             print(self.__LEFT_PROGRESS + "╶──", end="")
@@ -165,7 +180,7 @@ Commands:
 
         maxPoints = thresholds[-1]
         for rankPoints in thresholds[1:-1]:
-            if currentPoints >= rankPoints:
+            if currentPoints >= rankPoints and currentPoints != 0:
                 print(self.__DONE_PROGRESS + "╶──", end="")
             else:
                 print(self.__LEFT_PROGRESS + "╶──", end="")
@@ -187,7 +202,7 @@ Commands:
         Y = Fore.YELLOW
         B = Fore.LIGHTBLUE_EX
         NB = Fore.WHITE + Style.BRIGHT
-        W = Style.RESET_ALL + Fore.WHITE
+        W = Style.RESET_ALL + Fore.WHITE  + Back.BLACK
         guessed = myPuzzle.getGuessedWords().copy()
         n: int = len(guessed)
         if n < 12:
@@ -214,13 +229,13 @@ Commands:
                 N + myLetters[4] + YB, N + myLetters[5] + YB, B, W + guessed[6].center(17), guessed[7].center(17) + B, YB,
                 N + myLetters[6] + YB, B, W + guessed[8].center(17), guessed[9].center(17) + B, YB,
                 B, W + guessed[10].center(17), guessed[11].center(17) + B, YB,
-                B, Style.RESET_ALL)
+                B, Style.RESET_ALL  + Back.BLACK)
       )
 
     # Prints errors in the cli when a a user does not use the right command
     def showError(self, errorMessage, errorDescription="") -> None:
         self.__titleDescriptionPrint(
-            Style.BRIGHT + Fore.RED + errorMessage + Style.RESET_ALL, errorDescription)
+            Style.BRIGHT + Fore.RED + errorMessage + Style.RESET_ALL + Back.BLACK, errorDescription)
 
     # If the user types !help command, then it will print the help
     # instructions on how to play the game
@@ -248,30 +263,30 @@ Commands:
     # If the user completes the game, then it will print an end
     # screen that the user has found all the words
     def showEnd(self) -> None:
-        print("                🐝")
+        print("\n\n                🐝")
         self.__boldPrint("Congratulations!", endStr=" ")
         print("You found all the words!")
         print("\tYou are the " + Fore.LIGHTYELLOW_EX +
-              "bee" + Fore.RESET + "st\t\t    🍯")
+              "bee" + Fore.RESET + Back.BLACK + "st\t\t    🍯\n\n")
 
     # Prints Exiting when a user wants to exit a puzzle
     def showExit(self) -> None:
-        self.__boldPrint(Fore.BLUE + "Game exited." + Fore.RESET)
-        self.__boldPrint("You are at the main program", endStr=Fore.LIGHTWHITE_EX + " (not playing).\n\n" + Fore.RESET)
+        self.__boldPrint(Fore.BLUE + "Game exited." + Fore.RESET + Back.BLACK)
+        self.__boldPrint("You are at the main program", endStr=Fore.LIGHTWHITE_EX + " (not playing).\n\n" + Fore.RESET + Back.BLACK)
 
     # If a user does not make a right guess, then it will
     # print that they did not make a right guess
     def showWrongGuess(self, message="") -> None:
-        self.__boldPrint(Fore.RED + "Wrong guess" + Fore.RESET, endStr="")
+        self.__boldPrint(Fore.RED + "Wrong guess" + Fore.RESET + Back.BLACK, endStr="")
         if message == "":
-            print(Fore.RED +"..." + Fore.RESET)
+            print(Fore.RED +"..." + Fore.RESET + Back.BLACK)
         else:
-            print(Fore.RED +": \n\t" + Fore.RESET + message)
+            print(Fore.RED +": \n\t" + Fore.RESET + Back.BLACK + message)
 
     # When a user makes the right guess, then it will
     # tell the user that they made the right guess
     def showCorrectGuess(self, word:str) -> None:
-        self.__boldPrint(Fore.GREEN + "Good guess!" + Fore.RESET)
+        self.__boldPrint(Fore.GREEN + "Good guess!" + Fore.RESET + Back.BLACK)
         print(f"\t{word}")
 
     def __getPath(self, SaveOrLoad) -> str:
@@ -392,7 +407,7 @@ Commands:
 
         if "WARNING:" in message:
             pieces = message.split("WARNING:", 1)
-            message = pieces[0] + f"{Fore.MAGENTA}WARNING:{Fore.RESET}" + pieces[1]
+            message = pieces[0] + f"{Fore.MAGENTA}WARNING:{Fore.RESET + Back.BLACK}" + pieces[1]
 
         self.__boldPrint(message + f" [{okStr}/{nokStr}/{canStr}]: ")
         if len(okStr) == 1 and len(nokStr) == 1 and len(canStr) == 1:
@@ -420,7 +435,7 @@ Commands:
         self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
         print("\t● Puzzle Letters (Required first):  ", end="")
         self.__boldPrint(
-            Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL, endStr=" ")
+            Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL + Back.BLACK, endStr=" ")
         for letter in puzzleLetters[1:]:
             print(letter.upper(), end=" ")
         print()
@@ -466,14 +481,14 @@ Commands:
 
 
     def __hold(self):
-        self.__boldPrint("\n\n\t" + Style.BRIGHT + Fore.BLUE + "Press ENTER to exit the page and continue..." + Style.RESET_ALL)
+        self.__boldPrint("\n\n\t" + Style.BRIGHT + Fore.BLUE + "Press ENTER to exit the page and continue..." + Style.RESET_ALL + Back.BLACK)
         input()
         self.__clear()
 
     def showHighScores(self, myPuzzle: Puzzle, isEnd = False):
         B = Style.BRIGHT
         Y = Fore.YELLOW
-        R = Style.RESET_ALL
+        R = Style.RESET_ALL + Back.BLACK
         G = Fore.GREEN
         W = Fore.WHITE
         D = Style.DIM

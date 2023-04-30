@@ -5,6 +5,7 @@ from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.filters import Filter
 from prompt_toolkit import print_formatted_text, ANSI
 from prompt_toolkit.keys import Keys
+from prompt_toolkit.styles import Style
 import os
 
 
@@ -80,10 +81,16 @@ class Inputer:
                 Output:
                     Yields every possible completion based on the input already given.
             '''
+            style = Style.from_dict(
+                {
+                    # Default style.
+                    "": "bg:black fg:white"
+                }
+            )
             self.userInput = document.text
             self.options = self.__orderStrings(self.options)
             for possible in self.options:
-                yield Completion(possible, start_position=-document.cursor_position)
+                yield Completion(possible, start_position=-document.cursor_position, style=style)
 
     class MyCustomPathCompleter(Completer):
         ''' Class for completing paths extending the 'Completer' base class.
@@ -108,14 +115,21 @@ class Inputer:
                 if not os.path.exists(self.basedir):
                     self.basedir = os.getcwd()
 
-        def __calcDirs(self, basedir):
+        def __calcDirs(self, basedir:str):
             basedir = os.path.normpath(basedir)
             basedir = os.path.abspath(basedir)
             basedir = basedir.strip()
             if basedir != None and basedir != "" and os.path.exists(basedir) and os.path.isdir(basedir):
                 return os.listdir(basedir)
             else:
-                return []
+                termination = os.path.basename(basedir)
+                dirName = os.path.dirname(basedir)
+                if dirName != None and dirName != "" and os.path.exists(dirName) and os.path.isdir(dirName):
+                    listDir = os.listdir(dirName)
+                    listDir = [name for name in listDir if name.startswith(termination) ]
+                    return listDir
+                else:
+                    return []
 
         def get_completions(self, document, complete_event):
             ''' Input:
@@ -124,11 +138,17 @@ class Inputer:
                 Output:
                     Yields every possible completion based on the input already given.
             '''
+            style = Style.from_dict(
+                {
+                    # Default style.
+                    "": "bg:black fg:white"
+                }
+            )
             self.userInput = document.text
             self.basedir = document.text
             dirs = self.__calcDirs(self.basedir)
             for possible in dirs:
-                yield Completion(possible, start_position=0)
+                yield Completion(possible, start_position=-document.cursor_position, style=style)
 
     def input(self, msg: str = "", possibles=[]):
         ''' Input:
@@ -138,9 +158,15 @@ class Inputer:
             Output:
                 A string containing the desired (typed) user input.
         '''
+        style = Style.from_dict(
+            {
+                # Default style.
+                "": "bg:black fg:white"
+            }
+        )
 
         userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
-            possibles), complete_while_typing=False)
+            possibles), complete_while_typing=False, style=style)
 
         return userInput
 
@@ -153,8 +179,14 @@ class Inputer:
                 A string containing the desired (typed) user input.
         '''
 
+        style = Style.from_dict(
+            {
+                # Default style.
+                "": "bg:black fg:white"
+            }
+        )
         userInput = prompt(ANSI(msg), completer=self.MyCustomPathCompleter(
-            basedir), complete_while_typing=True)
+            basedir), complete_while_typing=True, style=style)
 
         return userInput
 
@@ -166,6 +198,13 @@ class Inputer:
             Output:
                 A string containing the desired (typed) user input, without waiting for an enter.
         '''
+        
+        style = Style.from_dict(
+            {
+                # Default style.
+                "": "bg:black fg:white"
+            }
+        )
         bindings = KeyBindings()
 
         @bindings.add('<any>')
@@ -179,6 +218,6 @@ class Inputer:
                 event.app.exit(event.data)
 
         userInput = prompt(ANSI(msg), completer=self.MyCustomCompleter(
-            options), key_bindings=bindings)
+            options), key_bindings=bindings, style=style)
 
         return userInput
