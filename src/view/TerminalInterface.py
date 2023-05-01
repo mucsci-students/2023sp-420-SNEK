@@ -42,36 +42,28 @@ How to play:
    pangram that it is generated from.  The pangram will
    include every letter in the honeycomb.
 '''
-        self.__HELP_COMMANDS: str = '''
-
+        self.__HELP_COMMANDS: str = f'''
 Commands:
-   Call commands with a preceding '!'. Commands may be
-   called at anytime.
+   Call commands with a preceding '{Fore.LIGHTBLUE_EX}!{Fore.RESET + Back.BLACK}'. Commands may be called at anytime.
 
-   -!new random - Generate a new random puzzle
-   -!new word - Generate a new puzzle with a user given
-               word.  Console will prompt for the word after
-               command is given.
-   -!scores - Displays both the high scores for the puzzle and 
-              the current score for the player.
-   -!save - Bring up the prompts for saving your current game.
-   -!save secret - Bring up the prompts for saving your current 
-                   game with encryption.
-   -!save score - Bring up prompts for saving your score into
-                  High Scores if applicable.
-   -!save image - Saves image of the CLI honeycomb.
-   -!load - Bring up the prompts for loading a saved game.
-   -!scores - Display the scoreboard for the current game and current points.
-   -!rank - Display available ranks and point thresholds per rank.
-   -!shuffle - Shuffle the shown puzzle honeycomb randomly, changing
-               the order of the letter randomly other than the
-               required center letter.  You can use this to
-               help you find other words.
-   -!guessed - Shows all the already correctly guessed words.
-   -!hints - prints out all the hints for the given puzzle
-   -!help - Prints out the help menu.
-   -!exit - Exits the game. Will prompt to save.
-   -!quit - Exits the entire program. Will prompt to save.'''
+   -{Fore.LIGHTBLUE_EX}!new random{Fore.RESET + Back.BLACK} - Generate a new random puzzle.
+   -{Fore.LIGHTBLUE_EX}!new word{Fore.RESET + Back.BLACK} - Generate a new puzzle with a user given word. Console will
+                prompt for the word after command is given.
+   -{Fore.LIGHTBLUE_EX}!scores{Fore.RESET + Back.BLACK} - Displays both the high scores for the puzzle and the current 
+              score for the player.
+   -{Fore.LIGHTBLUE_EX}!save{Fore.RESET + Back.BLACK} - Bring up the prompts for saving your current game.
+   -{Fore.LIGHTBLUE_EX}!save secret{Fore.RESET + Back.BLACK} - Bring up the prompts for saving your game with encryption.
+   -{Fore.LIGHTBLUE_EX}!save image{Fore.RESET + Back.BLACK} - Saves image of the CLI honeycomb.
+   -{Fore.LIGHTBLUE_EX}!load{Fore.RESET + Back.BLACK} - Bring up the prompts for loading a saved game.
+   -{Fore.LIGHTBLUE_EX}!scores{Fore.RESET + Back.BLACK} - Display the scoreboard for the current game and current points.
+   -{Fore.LIGHTBLUE_EX}!rank{Fore.RESET + Back.BLACK} - Display available ranks and point thresholds per rank.
+   -{Fore.LIGHTBLUE_EX}!shuffle{Fore.RESET + Back.BLACK} - Shuffle the shown puzzle honeycomb randomly, other than the 
+               required center letter.
+   -{Fore.LIGHTBLUE_EX}!guessed{Fore.RESET + Back.BLACK} - Shows all the already correctly guessed words.
+   -{Fore.LIGHTBLUE_EX}!hints{Fore.RESET + Back.BLACK} - Prints out all the hints for the given puzzle.
+   -{Fore.LIGHTBLUE_EX}!help{Fore.RESET + Back.BLACK} - Prints out the help menu.
+   -{Fore.LIGHTBLUE_EX}!exit{Fore.RESET + Back.BLACK} - Exits the game. Will prompt to save.
+   -{Fore.LIGHTBLUE_EX}!quit{Fore.RESET + Back.BLACK} - Exits the entire program. Will prompt to save.'''
 
     def __makeBackgroundBlack(self):
         if os.name == "posix":
@@ -104,8 +96,7 @@ Commands:
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
     def launch(self):
-        self.__cls()
-        self.__makeBackgroundBlack()
+        self.__clear()
         self.showHelp()
         self.__clear()
         # try:
@@ -244,6 +235,8 @@ Commands:
         if choice == 'y':
             print(self.__HELP_COMMANDS)
             self.__hold()
+        else:
+            self.__clear()
 
     # Print rankings based on what puzzle is open and it shows how
     # many points the user needs to achieve the next rank status
