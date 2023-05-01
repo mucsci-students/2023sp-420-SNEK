@@ -80,35 +80,32 @@ Commands:
         elif os.name in ("nt", "dos", "ce"):
             # DOS/Windows
             os.system('color 07')
-            os.system('color /?')
-            input()
             # os.system('color 7f')
 
 
-    def __cls(numLines=100):
+    def __cls(self, numLines=100):
 
         if os.name == "posix":
             # Unix/Linux/MacOS/BSD/etc
             os.system('clear')
-            os.system('setterm -background black -foreground white -store')
             
         elif os.name in ("nt", "dos", "ce"):
             # DOS/Windows
             os.system('CLS')
-            os.system('color 07')
         else:
             # Fallback for other operating systems.
             print('\n' * numLines)
 
     def __clear(self):
         self.__cls()
+        self.__makeBackgroundBlack()
         print(self.__TITLE)
 
     # Launch terminal interface and gets user input and processes
     # input while the game is not quit
     def launch(self):
-        self.__makeBackgroundBlack()
         self.__cls()
+        self.__makeBackgroundBlack()
         self.showHelp()
         self.__clear()
         # try:
@@ -289,16 +286,16 @@ Commands:
         self.__boldPrint(Fore.GREEN + "Good guess!" + Fore.RESET + Back.BLACK)
         print(f"\t{word}")
 
-    def __getPath(self, SaveOrLoad) -> str:
+    def __getPath(self, extension, SaveOrLoad) -> str:
         baseDir = os.getcwd()
         self.__boldPrint(f"Desired path to {SaveOrLoad}:")
         print(f"\tDefault directory: {baseDir}")
         name = self.__getUserInputPath()
-        while name == "" or name == ".json":
+        while name == "" or name == extension:
             self.showError("The file has to have a name.", "Please try again:")
             name = self.__getUserInputPath()
 
-        name = name if name.endswith(".json") else name + ".json"
+        name = name if name.endswith(extension) else name + extension
 
         if not os.path.isabs(name):
             name = os.path.join(baseDir, name)
@@ -311,11 +308,12 @@ Commands:
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
-    def getSaveFileName(self) -> str:
-        fileName = self.__getPath("save")
+    def getSaveFileName(self, extension) -> str:
+        fileName = self.__getPath(extension, "save")
 
         if os.path.exists(fileName):
-            self.showMessage("This file already exists")
+            baseName = os.path.basename(fileName)
+            self.showMessage(f"The file {baseName} already exists")
             overwrite = self.getConfirmation("Do you want to overwrite it?")
 
             if overwrite == self.defaultYes:
@@ -332,9 +330,9 @@ Commands:
             rank = myPuzzle.getCurrentRank()
             score = myPuzzle.getCurrentPoints()
             prog = "Rank: " + rank + "   " + "Score: " + str(score)
-            fileName = self.getSaveFileName()
-            fileName = os.path.splitext(fileName)[0]
-            fileName = fileName + ".png"
+            fileName = self.getSaveFileName(".png")
+            # fileName = os.path.splitext(fileName)[0]
+            # fileName = fileName + ".png"
 
             
             return     ['''  {}
@@ -358,14 +356,14 @@ Commands:
 
     # When a user wants to open their saved game, then it will
     # ask what save file they want to open
-    def getLoadFileName(self) -> str:
-        path = self.__getPath("load")
+    def getLoadFileName(self, extension) -> str:
+        path = self.__getPath(extension, "load")
         return path
 
     # When !guessed is types, then it will print a list of all
     # the words that the user has found in the game
     def showGuessedWords(self, guessedWords: list) -> None:
-        self.__boldPrint("Guessed Words:")
+        self.__boldPrint(f"Guessed Words ({len(guessedWords)}):")
         cols = os.get_terminal_size().columns
         accumulator = 4
         print("\t")
@@ -433,26 +431,26 @@ Commands:
         puzzleLetters = myPuzzle.getPuzzleLetters()
 
         self.__boldPrint("             🐝\nBᴇᴇ Gʀɪᴅ Hɪɴᴛs")
-        print("\t● Puzzle Letters (Required first):  ", end="")
+        self.__boldPrint("\t● Puzzle Letters ", endStr="")
+        print("(Required first):  ", end="")
         self.__boldPrint(
             Fore.YELLOW + puzzleLetters[0].upper() + Style.RESET_ALL + Back.BLACK, endStr=" ")
         for letter in puzzleLetters[1:]:
             print(letter.upper(), end=" ")
         print()
-
-        print(f"\t● Words: {myHints.numberOfWords}")
-        print(f"\t● Points: {myPuzzle.getMaxPoints()}")
-        print(f"\t● Pangrams: {myHints.pangram} ", end="")
+        self.__boldPrint("\t● Words: ", endStr="")
+        print(f"{myHints.numberOfWords}  ({myPuzzle.getMaxPoints()} points total)")
+        self.__boldPrint("\t● Pangrams: ", endStr="")
+        print(f"{myHints.pangram}  ", end="")
         if myHints.perfectPangram > 0:
             print(f"({myHints.perfectPangram} perfect)")
         else:
             print()
 
-        if myHints.bingo:
-            print("\t● Bingo")
 
         # Print matrix
-        print("\n\t● Hint matrix:")
+        bingo = "\tBingo" if myHints.bingo else "\n"
+        self.__boldPrint("\n\t● Hint matrix:", endStr=bingo)
         print("\n", end="\t         ")
         headers = list(myHints.letterMatrix.items())[0][1].items()
         for header, _ in headers:
@@ -468,7 +466,7 @@ Commands:
                 else:
                     print(f"{column:^4}", end=" ")
 
-        print("\n\n\n\t● Two letter list:")
+        self.__boldPrint("\n\n\t● Two letter list:", endStr="")
         # Print 2 letter lists
         previousLetter = None
         for firstLetters, num in myHints.beginningList.items():

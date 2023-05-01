@@ -95,7 +95,7 @@ class GameController:
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
         if saveMode != "cancel":
-            fileName = self.myUserInterface.getSaveFileName()
+            fileName = self.myUserInterface.getSaveFileName(".json")
             if fileName == "":
                 return
             elif fileName == None:
@@ -118,7 +118,7 @@ class GameController:
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
         if saveMode != "cancel":
-            fileName = self.myUserInterface.getSaveFileName()
+            fileName = self.myUserInterface.getSaveFileName(".json")
             print(fileName)
             if fileName == "":
                 return
@@ -239,7 +239,7 @@ class GameController:
                 elif exitGame == self.myUserInterface.defaultCancel:
                     return
 
-            loadingFile = self.myUserInterface.getLoadFileName()
+            loadingFile = self.myUserInterface.getLoadFileName(".json")
             if loadingFile == ".json":
                 self.myUserInterface.showError("The file has to have a name.")
                 return

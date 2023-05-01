@@ -84,13 +84,13 @@ class Inputer:
             style = Style.from_dict(
                 {
                     # Default style.
-                    "": "bg:black fg:white"
+                    "": "bg:ansiblack fg:ansiwhite"
                 }
             )
             self.userInput = document.text
             self.options = self.__orderStrings(self.options)
             for possible in self.options:
-                yield Completion(possible, start_position=-document.cursor_position, style=style)
+                yield Completion(possible, start_position=-document.cursor_position)
 
     class MyCustomPathCompleter(Completer):
         ''' Class for completing paths extending the 'Completer' base class.
@@ -141,14 +141,14 @@ class Inputer:
             style = Style.from_dict(
                 {
                     # Default style.
-                    "": "bg:black fg:white"
+                    "": "bg:ansiblack fg:ansiwhite"
                 }
             )
             self.userInput = document.text
             self.basedir = document.text
             dirs = self.__calcDirs(self.basedir)
             for possible in dirs:
-                yield Completion(possible, start_position=-document.cursor_position, style=style)
+                yield Completion(possible, start_position=-document.cursor_position)
 
     def input(self, msg: str = "", possibles=[]):
         ''' Input:
@@ -161,7 +161,7 @@ class Inputer:
         style = Style.from_dict(
             {
                 # Default style.
-                "": "bg:black fg:white"
+                "": "bg:ansiblack fg:ansiwhite"
             }
         )
 
@@ -182,7 +182,7 @@ class Inputer:
         style = Style.from_dict(
             {
                 # Default style.
-                "": "bg:black fg:white"
+                "": "bg:ansiblack fg:ansiwhite"
             }
         )
         userInput = prompt(ANSI(msg), completer=self.MyCustomPathCompleter(
@@ -202,7 +202,7 @@ class Inputer:
         style = Style.from_dict(
             {
                 # Default style.
-                "": "bg:black fg:white"
+                "": "bg:ansiblack fg:ansiwhite"
             }
         )
         bindings = KeyBindings()

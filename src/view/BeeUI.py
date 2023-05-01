@@ -236,13 +236,13 @@ class BeeUI(UserInterface):
     # Public method getSaveFileName
     # Proceeds to open a filedialog that will allow user to save
     # a game as needed.
-    def getSaveFileName(self):
+    def getSaveFileName(self, extension):
         return filedialog.asksaveasfilename(filetypes=[("Json File", "*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
 
     # Public method getLoadFileName
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
-    def getLoadFileName(self):
+    def getLoadFileName(self, extension):
         return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
@@ -263,7 +263,7 @@ class BeeUI(UserInterface):
     # Pulls the typed word from the newWord entry box on the
     # pre-game page to be sent to controller.
     def getBaseWord(self):
-        return self.newWord.get()
+        return self.newWord.get().lower()
 
     # Public method launch
     # Launches the BeeUI.  Call on a BeeUI object.
