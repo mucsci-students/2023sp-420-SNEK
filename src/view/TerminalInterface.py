@@ -70,6 +70,9 @@ Commands:
     # input while the game is not quit
 
     def launch(self):
+        self.__clear()
+        self.showHelp()
+        self.__clear()
         try:
             commandStrings = Commands.getCommandNameList()
             while not self.quit:
@@ -77,10 +80,11 @@ Commands:
                 if Commands.isCommand(userInput):
                     userInput = Commands.getCommandFromName(userInput)
 
+                self.__clear()
                 self.myController.processInput(userInput)
         except:
             sys.stdout.flush()
-            print()
+            self.showError("Exiting...", "Unexpected error.")
             exit()
 
     # Flag if the game is quit
@@ -242,8 +246,8 @@ Commands:
         fileName = self.__getPath()
 
         if os.path.exists(fileName):
-            self.showMessage("This file already exists")
-            overwrite = self.getConfirmation("Do you want to overwrite it?")
+            baseName = os.path.basename(fileName)
+            overwrite = self.getConfirmation(f"WARNING:\n\tThe file {baseName} already exists\n\tDo you want to overwrite it?")
 
             if overwrite == self.defaultYes:
                 pass

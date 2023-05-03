@@ -80,6 +80,12 @@ class Inputer:
                 Output:
                     Yields every possible completion based on the input already given.
             '''
+            style = Style.from_dict(
+                {
+                    # Default style.
+                    "": "bg:ansiwhite fg:ansiblack"
+                }
+            )
             self.userInput = document.text
             self.options = self.__orderStrings(self.options)
             for possible in self.options:
