@@ -153,6 +153,7 @@ class BeeUI(UserInterface):
     # Private method __onLoad
     # Notifies myController that the user intends to load
     def __onLoad(self):
+        self.first = True
         self.myController.processInput(Commands.LOAD)
 
     def __onSaveScreenshot(self):
@@ -293,7 +294,13 @@ class BeeUI(UserInterface):
     #   guessList - a list of words already guessed by the user.
     # Shows list of guessed words to the player
     def showGuessedWords(self, guessList):
-        str = '\n'.join(guessList)
+        k = 4
+        str = f"Guessed words: {len(guessList)}"
+        for i, word in enumerate(guessList):
+            if (i % k) == 0:
+                str += "\n"
+            str += f"{word:20}"
+            
         self.showMessage(str)
 
     # Public method showHelp
@@ -489,7 +496,7 @@ class BeeUI(UserInterface):
 
         maxPoints = thresholds[-1]
         for rankPoints in thresholds[1:-1]:
-            if currentPoints >= rankPoints:
+            if currentPoints >= rankPoints and currentPoints != 0:
                 str += self.__DONE_PROGRESS + "───"
             else:
                 str += self.__LEFT_PROGRESS + "───"
