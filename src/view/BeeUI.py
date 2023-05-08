@@ -51,6 +51,7 @@ class BeeUI(UserInterface):
 
     def __init__(self):
         super().__init__()
+        self.first = True
         self.defaultYes = 'Yes'
         self.defaultNo = 'No'
         self.defaultCancel = 'Cancel'
@@ -152,6 +153,7 @@ class BeeUI(UserInterface):
     # Private method __onLoad
     # Notifies myController that the user intends to load
     def __onLoad(self):
+        self.first = True
         self.myController.processInput(Commands.LOAD)
 
     def __onSaveScreenshot(self):
@@ -167,7 +169,8 @@ class BeeUI(UserInterface):
     # Returns a True or False confirmation between two options
     # given to the user.  This information is used by GameController
     # to know what to run and when.
-    def getConfirmation(self, inputString, okStr="", nokStr="", canStr=""):
+    def getConfirmation(self, inputString: str, okStr="", nokStr="", canStr=""):
+        inputString = inputString.replace("\t", "")
         choice = ""
 
         if okStr == "":
@@ -191,8 +194,8 @@ class BeeUI(UserInterface):
         self.win = Toplevel()  # Popout screen
         self.win.protocol("WM_DELETE_WINDOW",
                           lambda: self.__textHelper(canStr))
-        self.win.title(title)
-        self.win.geometry("300x75")
+        #self.win.title(title)
+        self.win.geometry("400x100")
 
         self.x = self.root.winfo_x()
         self.y = self.root.winfo_y()
@@ -234,13 +237,13 @@ class BeeUI(UserInterface):
     # Public method getSaveFileName
     # Proceeds to open a filedialog that will allow user to save
     # a game as needed.
-    def getSaveFileName(self):
+    def getSaveFileName(self, extension):
         return filedialog.asksaveasfilename(filetypes=[("Json File", "*.json")], defaultextension=[("Json File", "*.json")], initialdir=os.getcwd())
 
     # Public method getLoadFileName
     # Proceeds to open a filedialog that will allow user to load
     # a game as needed.
-    def getLoadFileName(self):
+    def getLoadFileName(self, extension):
         return filedialog.askopenfilename(title="Select the file", filetypes=(("Json File", "json"), ("all files", "*")), initialdir=os.getcwd())
 
     # Public method showMessage
@@ -261,7 +264,7 @@ class BeeUI(UserInterface):
     # Pulls the typed word from the newWord entry box on the
     # pre-game page to be sent to controller.
     def getBaseWord(self):
-        return self.newWord.get()
+        return self.newWord.get().lower()
 
     # Public method launch
     # Launches the BeeUI.  Call on a BeeUI object.
@@ -275,7 +278,7 @@ class BeeUI(UserInterface):
     # Public method showCorrectGuess
     # If the controller signals that the given guess was correct,
     # then the label at the top of the game page will be changed.
-    def showCorrectGuess(self):
+    def showCorrectGuess(self, word):
         self.correctLabel.configure(
             text=f"Your guess was correct!", font=('Arial', 25))
 
@@ -291,7 +294,13 @@ class BeeUI(UserInterface):
     #   guessList - a list of words already guessed by the user.
     # Shows list of guessed words to the player
     def showGuessedWords(self, guessList):
-        str = '\n'.join(guessList)
+        k = 4
+        str = f"Guessed words: {len(guessList)}"
+        for i, word in enumerate(guessList):
+            if (i % k) == 0:
+                str += "\n"
+            str += f"{word:20}"
+            
         self.showMessage(str)
 
     # Public method showHelp
@@ -421,7 +430,7 @@ class BeeUI(UserInterface):
 
     # Public method showHighScores
     #
-    def showHighScores(self, myPuzzle):
+    def showHighScores(self, myPuzzle, isEnd = False):
         self.scoresWin = Toplevel() # popout window
         self.scoresWin.resizable(0,0) # forces window to stay same size
         self.scoresWin.title("High Scores!")
@@ -429,13 +438,6 @@ class BeeUI(UserInterface):
         # Grab scores data for the puzzle
         highScores = myPuzzle.getHighScores()
         minScore = myPuzzle.getMinimumHighScore()
-
-        # print('here1')
-        # print(highScores)
-        # print(minScore)
-        # for i in highScores:
-        #     print('here2')
-        #     print(highScores[i])
         
         self.scoresTextBox = tk.Text(self.scoresWin, width=75, bg="white", fg="black", font=('Arial', 14))
         self.scoresTextBox.pack()
@@ -458,14 +460,21 @@ class BeeUI(UserInterface):
 
         self.scoresTextBox.insert('end', f"=============================================================\n", 'tag_center')
 
-        print(minScore)
         diff = minScore - myPuzzle.currentPoints
-        self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
-        if diff < 0:
-            self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+        if isEnd:
+            if diff < 0:
+                self.scoresTextBox.insert('end', "\nCongrats! :)\n", 'tag_center_title')
+                self.scoresTextBox.insert('end', "\tYour score is now entered into the top 10 leaderboard for this puzzle!\n", 'tag_center_title')
+            else:
+                self.scoresTextBox.insert('end', "\nSorry! :(\n", 'tag_center_title')
+                self.scoresTextBox.insert('end', "\tYour score is NOT high enough to enter into the top 10 leaderboard for this puzzle.\n", 'tag_center_title')
         else:
-            self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
-        self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
+            self.scoresTextBox.insert('end', f"\n\nYou currently have {myPuzzle.currentPoints} Points!\n", 'tag_center_title')
+            if diff < 0:
+                self.scoresTextBox.insert('end', f"Congrats! You have made the leaderboard!\n", 'tag_center_title')
+            else:
+                self.scoresTextBox.insert('end', f"You are {diff} points away from getting on the leaderboard!\n", 'tag_center_title')
+            self.scoresTextBox.insert('end', "Keep Going! 🍯 🐝\n", 'tag_center_title')
 
         # Disable textbox so that data can not be edited by user.
         self.scoresTextBox.configure(state="disabled")
@@ -487,7 +496,7 @@ class BeeUI(UserInterface):
 
         maxPoints = thresholds[-1]
         for rankPoints in thresholds[1:-1]:
-            if currentPoints >= rankPoints:
+            if currentPoints >= rankPoints and currentPoints != 0:
                 str += self.__DONE_PROGRESS + "───"
             else:
                 str += self.__LEFT_PROGRESS + "───"
@@ -507,7 +516,9 @@ class BeeUI(UserInterface):
     def showPuzzle(self, puzzle):
         self.puzzle = puzzle
         self.wordPuzzle = puzzle.getPuzzleLetters()
-        self.__gamePage()
+        if self.first:
+            self.__gamePage()
+            self.first = False
         self.showProgress(puzzle.getCurrentRank(), list(
             puzzle.getRankingsAndPoints().values()), puzzle.getCurrentPoints())
         self.rank.configure(text=puzzle.getCurrentRank())
@@ -579,6 +590,7 @@ class BeeUI(UserInterface):
     # Displays a message box when the user closes the window
     # Can be used to ask user if they want to save before quitting.
     def __onClosing(self):
+        self.first = True
         self.myController.processInput(Commands.QUIT)
 
     # Private method __setText
@@ -644,6 +656,7 @@ class BeeUI(UserInterface):
     # Private method __checkQuit
     # Tells the controller we are ready to exit the game.
     def __checkQuit(self):
+        self.first = True
         self.myController.processInput(Commands.EXIT)
         if not self.myController.playing:
             self.__mainMenuPage()
@@ -652,6 +665,7 @@ class BeeUI(UserInterface):
     # Tells the controller we wish to quit and
     # terminates the program.
     def __checkTerminate(self):
+        self.first = True
         self.myController.processInput(Commands.EXIT)
         if not self.myController.playing:
             self.root.destroy()
@@ -660,12 +674,14 @@ class BeeUI(UserInterface):
     # Shuffles the honeycomb on screen during gameplay.
     # Modifies the word puzzle.
     def __shuffleText(self):
+        self.first = True
         self.myController.processInput(Commands.SHUFFLE)
 
     # Private method __startGame
     # Notifies the controller that the user wants a new
     # random game.
     def __startGame(self):
+        self.first = True
         self.myController.processInput(Commands.NEW_GAME_RND)
 
     # # # # # # # # # # # # # Pages # # # # # # # # # # # # #
@@ -673,7 +689,7 @@ class BeeUI(UserInterface):
     # Private method __mainMenuPage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
-    # add all usefull information for the main menu
+    # add all useful information for the main menu
     # to the mainFrame to be seen on screen, and will then display.
     def __mainMenuPage(self):
         self.__clearFrame()
@@ -759,6 +775,10 @@ class BeeUI(UserInterface):
             self.mainFrame, border='0', image=self.goBackSized, command=self.__mainMenuPage)
         self.goBack.pack()
 
+
+    def __setFirst(self):
+        self.first = True
+
     # Private method __preGamePage
     # Upon calling will clear the frame of anything currently
     # on screen (in the mainFrame).  After that it will
@@ -786,7 +806,7 @@ class BeeUI(UserInterface):
         # New Game Random
         self.randBtnImg = PhotoImage(file='src/img/newRand.png')
         self.randBtn = tk.Button(self.mainFrame, border='0', image=self.randBtnImg,
-                                 command=lambda: self.myController.processInput(Commands.NEW_GAME_RND))
+                                 command=lambda: [self.__setFirst(), self.myController.processInput(Commands.NEW_GAME_RND)])
         self.randBtn.pack(pady=25)
 
         # New Game Custom
@@ -802,7 +822,7 @@ class BeeUI(UserInterface):
 
         self.customBtnImg = PhotoImage(file='src/img/newCustom.png')
         self.customBtn = tk.Button(self.newWordGrid, border='0', image=self.customBtnImg,
-                                   command=lambda: self.myController.processInput(Commands.NEW_GAME_WRD))
+                                   command=lambda: [self.__setFirst(), self.myController.processInput(Commands.NEW_GAME_WRD)])
         self.customBtn.grid(row=1, columnspan=2)
         self.newWordGrid.pack(pady=25)
 

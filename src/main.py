@@ -37,7 +37,6 @@ def main():
         myUserInterface = myFactory.produceInterface("CLI")
         myGameController.setUserInterface(myUserInterface)
         myUserInterface.setController(myGameController)
-        myUserInterface.showHelp()
         myUserInterface.launch()
 
     # Any other case

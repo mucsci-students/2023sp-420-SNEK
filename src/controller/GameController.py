@@ -10,11 +10,10 @@ from controller.customExcept import *
 import view.UserInterface
 from model.DataSource import DataSource
 from controller.SaveAndLoad import SaveAndLoad
-from model.Hint import Hint
 
 
 class GameController:
-    __EXIT_MSG = "Do you want to exit the game? (You'll be able to save it)"
+    __EXIT_MSG = "WARNING:\n\tYou are implicitly exiting this game,\n\tbut you'll be able to save it later.\n\nDo you want to exit the game? "
     __EXPLICIT_EXIT_MSG = "Do you want to save before exiting?"
     __SAVE_MSG = "Do you want to save the game?"
     __OVERRIDE_MSG = "Do you want to overwrite the game?"
@@ -48,13 +47,34 @@ class GameController:
         else:
             self.processGuess(userInput)
 
+            
+        if self.playing:
+            self.myUserInterface.showPuzzle(self.myPuzzle)
+
     # A private function that asks whether the user wants to save when the program is in the process of exiting.
     def __askExitAndSave(self, explicit=False) -> bool:
         if not explicit:
             exitGame = self.myUserInterface.getConfirmation(self.__EXIT_MSG)
+
             if exitGame == self.myUserInterface.defaultYes:
+                choice = self.__handleHighScores()
+                if choice != self.myUserInterface.defaultYes:
+                    save = self.myUserInterface.getConfirmation(
+                        "Do you want to save?")
+                    if save == self.myUserInterface.defaultYes:
+                        canceled = self.__saveFile()
+                        if canceled:
+                            exitGame = self.myUserInterface.defaultCancel
+
+                    elif save == self.myUserInterface.defaultCancel:
+                        exitGame = self.myUserInterface.defaultCancel
+
+        else:
+            choice = self.__handleHighScores()
+            if choice != self.myUserInterface.defaultYes:
+                exitGame = self.myUserInterface.defaultYes
                 save = self.myUserInterface.getConfirmation(
-                    "Do you want to save?")
+                    self.__EXPLICIT_EXIT_MSG)
                 if save == self.myUserInterface.defaultYes:
                     canceled = self.__saveFile()
                     if canceled:
@@ -62,18 +82,8 @@ class GameController:
 
                 elif save == self.myUserInterface.defaultCancel:
                     exitGame = self.myUserInterface.defaultCancel
-
-        else:
-            exitGame = self.myUserInterface.defaultYes
-            save = self.myUserInterface.getConfirmation(
-                self.__EXPLICIT_EXIT_MSG)
-            if save == self.myUserInterface.defaultYes:
-                canceled = self.__saveFile()
-                if canceled:
-                    exitGame = self.myUserInterface.defaultCancel
-
-            elif save == self.myUserInterface.defaultCancel:
-                exitGame = self.myUserInterface.defaultCancel
+            else:
+                exitGame = choice
 
         return exitGame == self.myUserInterface.defaultYes
 
@@ -85,7 +95,7 @@ class GameController:
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
         if saveMode != "cancel":
-            fileName = self.myUserInterface.getSaveFileName()
+            fileName = self.myUserInterface.getSaveFileName(".json")
             if fileName == "":
                 return
             elif fileName == None:
@@ -108,7 +118,7 @@ class GameController:
             "How do you want to save?", okStr="scratch", nokStr="current", canStr="cancel")
 
         if saveMode != "cancel":
-            fileName = self.myUserInterface.getSaveFileName()
+            fileName = self.myUserInterface.getSaveFileName(".json")
             print(fileName)
             if fileName == "":
                 return
@@ -166,25 +176,30 @@ class GameController:
         self.myPuzzle.setMinimumHighScore(self.myDataSource.getMinimumHighScore(self.myPuzzle.getPuzzleLetters()))
 
         self.playing = True
-        self.myUserInterface.showPuzzle(self.myPuzzle)
+        # self.myUserInterface.showPuzzle(self.myPuzzle)
+
+    def __handleHighScores(self) -> bool:
+        if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
+            confirm = self.myUserInterface.getConfirmation("WARNING:\n\t You won't be able to save the puzzle if you save your score!\n\nSave your score?")
+            if confirm == self.myUserInterface.defaultYes:
+                self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
+                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                # self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
+                self.playing = False
+                self.myUserInterface.showHighScores(self.myPuzzle, isEnd = True)
+                
+            return confirm
+        else:
+            # self.myUserInterface.showMessage("Sorry! Your score is NOT high enough to enter into the top 10 leaderboard for this puzzle :(\n")
+            self.myUserInterface.showHighScores(self.myPuzzle, isEnd = True)
+            return self.myUserInterface.defaultNo
 
     # Function to process the command from a user. processCommand is called from processUserInput.
     # Handles all commands, such as exit, help, load, save, rank, guessed words, shuffle, new random, new word, and show status
     def processCommand(self, command: Commands) -> None:
 
         if command == Commands.QUIT:
-            if self.playing:
-                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
-                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
-                    if confirm == "y" or confirm == "Yes":
-                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
-                        self.playing = False
-                        self.myUserInterface.showExit()
-                        self.myUserInterface.quitInterface()
-                        return
-                        
+            if self.playing:                        
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
                     self.playing = False
@@ -195,15 +210,6 @@ class GameController:
 
         elif command == Commands.EXIT:
             if self.playing:
-                if self.myPuzzle.getCurrentPoints() > self.myPuzzle.getMinimumHighScore(): 
-                    confirm = self.myUserInterface.getConfirmation("Congrats you are in the top 10 players! Save your score?\nWARNING- you will lose this puzzle!")
-                    if confirm == "y" or confirm == "Yes":
-                        self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                        self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                        self.myUserInterface.showMessage("Congrats! Your score is now entered into the top 10 leaderboard for this puzzle!\n")
-                        self.playing = False
-                        self.myUserInterface.showExit()
-                        return
 
                 exit = self.__askExitAndSave(explicit=True)
                 if exit:
@@ -233,7 +239,7 @@ class GameController:
                 elif exitGame == self.myUserInterface.defaultCancel:
                     return
 
-            loadingFile = self.myUserInterface.getLoadFileName()
+            loadingFile = self.myUserInterface.getLoadFileName(".json")
             if loadingFile == ".json":
                 self.myUserInterface.showError("The file has to have a name.")
                 return
@@ -243,21 +249,16 @@ class GameController:
             if SaveAndLoad.isSaved(loadingFile):
                 try:
                     self.myPuzzle = SaveAndLoad.load(loadingFile)
+                    newHints = self.myDataSource.getHints(self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
+                    self.myPuzzle.setHint(newHints)
+                    self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
+                    self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
+                    self.playing = True
+                    self.myUserInterface.showMessage("The file has been loaded: " + loadingFile)
                 except:
-                    self.myUserInterface.showError("Load Failed")
-                    return
-                newHints = self.myDataSource.getHints(
-                    self.myPuzzle.wordList, self.myPuzzle.puzzleLetters)
-                self.myPuzzle.setHint(newHints)
-                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myPuzzle.setMinimumHighScore(self.myPuzzle.getCurrentPoints())
-                self.playing = True
-                self.myUserInterface.showMessage(
-                    "The file has been loaded: " + loadingFile)
-                self.myUserInterface.showPuzzle(self.myPuzzle)
-
+                    self.myUserInterface.showError("Load Failed", "Reverting operation...")
             else:
-                self.myUserInterface.showError("That file does not exist.")
+                self.myUserInterface.showError("That file does not exist.", "Reverting operation...")
 
         elif command == Commands.SAVE:
             if self.playing:
@@ -305,7 +306,7 @@ class GameController:
         elif command == Commands.SHUFFLE:
             if self.playing:
                 self.myPuzzle.shuffle()
-                self.myUserInterface.showPuzzle(self.myPuzzle)
+                # self.myUserInterface.showPuzzle(self.myPuzzle)
             else:
                 self.myUserInterface.showError(
                     self.__NO_GAME_TITLE, self.__NO_GAME_DESC("shuffle letters of"))
@@ -326,26 +327,26 @@ class GameController:
                 exit = self.__askExitAndSave(explicit=False)
 
                 if exit:
-                    newBaseWord = self.myUserInterface.getBaseWord()
+                    newBaseWord = self.myUserInterface.getBaseWord().lower()
                     if (len(set(newBaseWord)) < 7):
                         self.myUserInterface.showError(
-                            "That word does not have 7 different letters.")
+                            f"The word {newBaseWord.upper()} does not have 7 different letters.", "Reverting operation...")
                     elif (len(set(newBaseWord)) > 7):
                         self.myUserInterface.showError(
-                            "That word has more then 7 different letters.")
+                            f"The word {newBaseWord.upper()} has more then 7 different letters.", "Reverting operation...")
                     elif (not self.myDataSource.checkWord(newBaseWord)):
                         self.myUserInterface.showError(
-                            "That word is not in the DB.")
+                            f"The word {newBaseWord.upper()} is not in the DB.", "Reverting operation...")
                     else:
                         self.__createGame(newBaseWord)
             else:
                 newBaseWord = self.myUserInterface.getBaseWord()
                 if (len(set(newBaseWord)) != 7):
                     self.myUserInterface.showError(
-                        "That word does not have 7 different letters.")
+                        f"The word {newBaseWord.upper()} does not have 7 different letters.", "Reverting operation...")
                 elif (not self.myDataSource.checkWord(newBaseWord)):
                     self.myUserInterface.showError(
-                        "That word is not in the DB.")
+                        f"The word {newBaseWord.upper()} is not in the DB.", "Reverting operation...")
                 else:
                     self.__createGame(newBaseWord)
 
@@ -373,35 +374,40 @@ class GameController:
     # (not a word, or not in the database), and more specifically when the guess isn't longer than 3 letters,
     # if the guess doesn't have the required letter, and the word was already guessed.
     def processGuess(self, userGuess: str):
+        userLetters = list(userGuess)
+        puzzleLetters = self.myPuzzle.getPuzzleLetters()
+        for letter in userLetters:
+            if letter not in puzzleLetters:
+                self.myUserInterface.showWrongGuess(f"The letter {letter.upper()} is not valid.")
+                return
+
         if len(userGuess) < Puzzle.MIN_WRD_LEN:
             self.myUserInterface.showWrongGuess(
-                f"The word doesn't have {Puzzle.MIN_WRD_LEN} letters.")
+                f"The word {userGuess.upper()} doesn't have {Puzzle.MIN_WRD_LEN} letters.")
             return
+        
         requiredLetter = self.myPuzzle.getPuzzleLetters()[0]
         if requiredLetter not in list(userGuess):
             self.myUserInterface.showWrongGuess(
-                f"The word doesn't have the required letter ({requiredLetter.upper()}).")
+                f"The word {userGuess.upper()} doesn't have the required letter ({requiredLetter.upper()}).")
             return
 
         if userGuess in self.myPuzzle.getGuessedWords():
             self.myUserInterface.showWrongGuess(
-                f"The word has already been guessed.")
+                f"The word {userGuess.upper()} has already been guessed.")
             return
 
         if userGuess not in self.myPuzzle.getWordList():
-            self.myUserInterface.showWrongGuess(f"The word is not recognized.")
+            self.myUserInterface.showWrongGuess(f"The word {userGuess.upper()} is not recognized.")
             return
 
         self.myPuzzle.addGuessWord(userGuess)
         currentPoints = self.myPuzzle.getCurrentPoints()
         maxPoints = self.myPuzzle.getMaxPoints()
-        self.myUserInterface.showPuzzle(self.myPuzzle)
-        self.myUserInterface.showCorrectGuess()
+        # self.myUserInterface.showPuzzle(self.myPuzzle)
+        self.myUserInterface.showCorrectGuess(userGuess.upper())
         if currentPoints == maxPoints:
-            self.myUserInterface.showEnd()
-            confirm = self.myUserInterface.getConfirmation("You are in the top 10 players for this puzzle!\nDo you want to save your score?")
-            if confirm == "y" or confirm == "Yes":
-                self.myDataSource.setHighScore(self.myPuzzle.getPuzzleLetters(), self.myUserInterface.getScoreName(), self.myPuzzle.getCurrentPoints())
-                self.myPuzzle.setHighScores(self.myDataSource.getHighScores(self.myPuzzle.getPuzzleLetters()))
-                self.myUserInterface.showMessage("Congrats! your score is now entered into the top 10 leaderboard for this puzzle!\n")
             self.playing = False
+            self.myUserInterface.showEnd()
+            self.__handleHighScores()
+            self.myUserInterface.showExit()
